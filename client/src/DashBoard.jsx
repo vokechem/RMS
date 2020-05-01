@@ -516,296 +516,162 @@ TravelledApplicant = () => {
       let d = [k.Month, k.Count];
       data.push(d);
     });
+    let bodymargin={
+      margin:"20px"
+          }
 
     return (
-      <div>
-        <br/>
-              <div class="row">
-            <div class="col-lg-3">
-                {this.state.SystemUsers.map((r, i) =>
-                <div className="row">
-                  <div className="col-lg-12 ">
-                    <div className="small-box bg-aqua">
-                      <div className="inner">
-                        <h3>{r.SystemUsers}</h3>
+      <div class="app-content content">
+      <div class="content-overlay"></div>
+      <div class="header-navbar-shadow"></div>
+      <div class="content-wrapper">
+          <div class="content-header row">
+              <div class="content-header-left col-md-9 col-12 mb-2">
+                  <div class="row breadcrumbs-top">
+                      <div class="col-12">
+                          <h2 class="content-header-title float-left mb-0">Dashboard</h2>
+                      </div>
+                  </div>
+              </div>
+          </div>
+          <div class="content-body">
+          <section id="dashboard-ecommerce">
+                <div class="row">
+                    <div class="col-lg-3 col-sm-6 col-12">
+                    {this.state.SystemUsers.map((r, i) =>
+                        <div class="card">
+                            <div class="card-header d-flex flex-column align-items-start pb-0">
+                                <div class="avatar bg-rgba-primary p-50 m-0">
+                                    <div class="avatar-content">
+                                        <i class="feather icon-users text-primary font-medium-5"></i>
+                                    </div>
+                                </div>
+                                <h3>{r.SystemUsers}</h3>
                         <p>System users</p>
-                      </div>
-                      <div className="icon">
-                        <i className="ion ion-stats-bars" />
-                      </div>
-                      <a href="/#" className="small-box-footer ">
-                                <Link to="/Registration" className="text-white">
+                        <Link to="/Registration" className="text-info">
                                   More info <i className="fa fa-arrow-circle-right" />
                                 </Link>
-                              </a>
+                            </div>        
+                        </div>
+                          )}
                     </div>
-                  </div>
-                </div>
-            )}
-            </div>
-            <div class="col-lg-3">
-                <div class="ibox ">
-                {this.state.TotalApplicants.map((r, i) =>
-                <div className="row">
-                  <div className="col-lg-12 ">
-                    <div className="small-box bg-green">
-                      <div className="inner">
-                        <h3>{r.totalApplicants}</h3>
-                        <p>Total  applicants</p>
-                      </div>
-                      <div className="icon">
-                        <i className="ion ion-stats-bars" />
-                      </div>
-                      <a href="/#" className="small-box-footer ">
-                                <Link to="/Registration" className="text-white">
-                                  More info <i className="fa fa-arrow-circle-right" />
-                                </Link>
-                              </a>
-                    </div>
-                  </div>
-                </div>
-            )}
-                </div>
-            </div>
-            <div class="col-lg-3">
-                <div class="ibox ">
-                {this.state.TotalCost.map((r, i) =>
-                <div className="row">
-                  <div className="col-lg-12 ">
-                    <div className="small-box bg-yellow">
-                      <div className="inner">
-                        <h3>{r.TotalCost}</h3>
-                        <p>Total Cost</p>
-                      </div>
-                      <div className="icon">
-                        <i className="ion ion-stats-bars" />
-                      </div>
-                      <a href="/#" className="small-box-footer ">
-                                <Link to="/Registration" className="text-white">
-                                  More info <i className="fa fa-arrow-circle-right" />
-                                </Link>
-                              </a>
-                    </div>
-                  </div>
-                </div>
-            )}
-                </div>
-            </div>
-            <div class="col-lg-3">
-                <div class="ibox ">
-                {this.state.TravelledApplicant.map((r, i) =>
-                <div className="row">
-                  <div className="col-lg-12 ">
-                    <div className="small-box bg-red">
-                      <div className="inner">
-                        <h3>{r.travelled}</h3>
-                        <p>Total Travelled Applicants</p>
-                      </div>
-                      <div className="icon">
-                        <i className="ion ion-stats-bars" />
-                      </div>
-                      <a href="/#" className="small-box-footer ">
-                           <Link to="/Travelling" className="text-white">
-                                  More info <i className="fa fa-arrow-circle-right" />
-                                </Link>
-                              </a>
-                    </div>
-                  </div>
-                </div>
-            )}
-                </div>
-            </div>
-            </div>   
-            <div class="row">
-            <div class="col-lg-7">
-                <div class="ibox ">
-                    <div class="ibox-content">
-                    <hr />
-                <br />
-                {this.state.Data.length > 0 ? (
-                  <div className="App">
-                    <Chart
-                      chartType="Bar"
-                      width={'100%'}
-                      height={'300px'}
-                      data={data}
-                      loader={<div>Loading Chart</div>}
-                      options={{
-                       //colors: [ 'silver'],
-                        // Material design options
-                        chart: {
-                          title: "Monthly Registration"
-                        }
-                      }}
-                    />
-                  </div>
-                ) : null}
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-5">
-                <div class="ibox ">
-                    <div class="ibox-title">
-                        <span class="label label-danger float-right">Red Alerts</span>
-                        <h5 style={head}>Pending Notification</h5>
-                    </div>
-                    <div class="ibox-content">
-                        <div class="row">
-                        {this.state.MinorRedAlerts.map((r, i) =>  
-                            <div class="col-4">
-                               <h5 style={judy}>Minor Medical</h5>
-                               <h3 style={head}>{r.minormedicalRedAlerts}</h3>
-                                <a href="/#" className="small-box-footer ">
+                    <div class="col-lg-3 col-sm-6 col-12">
+                    {this.state.TotalApplicants.map((r, i) =>
+                        <div class="card">
+                            <div class="card-header d-flex flex-column align-items-start pb-0">
+                                <div class="avatar bg-rgba-success p-50 m-0">
+                                    <div class="avatar-content">
+                                        <i class="feather icon-credit-card text-success font-medium-5"></i>
+                                    </div>
+                                </div>
+                                <h3>{r.totalApplicants}</h3>
+                                <p>Total  applicants</p>
                                 <Link to="/Registration" className="text-info">
                                   More info <i className="fa fa-arrow-circle-right" />
                                 </Link>
-                              </a>
-                              </div>
-                 
-                      )}
-                            {this.state.DCIRedAlerts.map((r, i) =>
-                           <div class="col-4">
-                              <h5 style={judy}>DCI Clearance</h5>
-                              <h3 style={head}>{r.DCIRedAlerts}</h3>
-                               <a href="/#" className="small-box-footer ">
-                               <Link to="/Registration" className="text-info">
-                                 More info <i className="fa fa-arrow-circle-right" />
-                               </Link>
-                             </a>
                             </div>
-                
-                     )}
-                   
-                   {this.state.PassportRedAlerts.map((r, i) =>
-                           <div class="col-4">
-                              <h5 style={judy}>Passport Processing</h5>
-                              <h3 style={head}>{r.PassportRedAlerts}</h3>
-                               <a href="/#" className="small-box-footer ">
-                               <Link to="/Registration" className="text-info">
-                                 More info <i className="fa fa-arrow-circle-right" />
-                               </Link>
-                             </a>
+                            
+                        </div>
+                        )}
+                    </div>
+                    <div class="col-lg-3 col-sm-6 col-12">
+                    {this.state.SystemUsers.map((r, i) =>
+                        <div class="card">
+                            <div class="card-header d-flex flex-column align-items-start pb-0">
+                                <div class="avatar bg-rgba-primary p-50 m-0">
+                                    <div class="avatar-content">
+                                        <i class="feather icon-users text-primary font-medium-5"></i>
+                                    </div>
+                                </div>
+                                <h3>{r.SystemUsers}</h3>
+                        <p>System users</p>
+                        <Link to="/Registration" className="text-info">
+                                  More info <i className="fa fa-arrow-circle-right" />
+                                </Link>
+                            </div>        
+                        </div>
+                          )}
+                    </div>
+                    <div class="col-lg-3 col-sm-6 col-12">
+                    {this.state.TotalApplicants.map((r, i) =>
+                        <div class="card">
+                            <div class="card-header d-flex flex-column align-items-start pb-0">
+                                <div class="avatar bg-rgba-success p-50 m-0">
+                                    <div class="avatar-content">
+                                        <i class="feather icon-credit-card text-success font-medium-5"></i>
+                                    </div>
+                                </div>
+                                <h3>{r.totalApplicants}</h3>
+                                <p>Total  applicants</p>
+                                <Link to="/Registration" className="text-info">
+                                  More info <i className="fa fa-arrow-circle-right" />
+                                </Link>
                             </div>
-                
-                     )}
+                            
                         </div>
-                    </div>
-                    <div class="ibox-content">
-                        <div class="row">
-                        {this.state.TrainingRedAlerts.map((r, i) =>
-                           <div class="col-4">
-                              <h5 style={judy}>Training</h5>
-                              <h3 style={head}>{r.TrainingRedAlerts}</h3>
-                               <a href="/#" className="small-box-footer ">
-                               <Link to="/Registration" className="text-info">
-                                 More info <i className="fa fa-arrow-circle-right" />
-                               </Link>
-                             </a>
-                            </div>
-                
-                     )}
-
-                                  {this.state.MajorRedAlerts.map((r, i) =>
-                                    <div class="col-4">
-                                        <h5 style={judy}>Major Medical</h5>
-                                        <h3 style={head}>{r.majorRedAlerts}</h3>
-                                        <a href="/#" className="small-box-footer ">
-                                        <Link to="/Registration" className="text-info">
-                                          More info <i className="fa fa-arrow-circle-right" />
-                                        </Link>
-                                      </a>
-                                      </div>
-                          
-                              )}
-                           {this.state.ContractRedAlerts.map((r, i) =>
-                                    <div class="col-4">
-                                        <h5 style={judy}>Contract Processing</h5>
-                                        <h3 style={head}>{r.ContractRedAlerts}</h3>
-                                        <a href="/#" className="small-box-footer ">
-                                        <Link to="/Registration" className="text-info">
-                                          More info <i className="fa fa-arrow-circle-right" />
-                                        </Link>
-                                      </a>
-                                      </div>
-                          
-                              )}
-                        </div>
-                    </div>
-                    <div class="ibox-content">
-                        <div class="row">
-                        {this.state.NEARedAlerts.map((r, i) =>
-                                    <div class="col-4">
-                                        <h5 style={judy}>NEA Approval</h5>
-                                        <h3 style={head}>{r.NEARedAlerts}</h3>
-                                        <a href="/#" className="small-box-footer ">
-                                        <Link to="/Registration" className="text-info">
-                                          More info <i className="fa fa-arrow-circle-right" />
-                                        </Link>
-                                      </a>
-                                      </div>
-                          
-                              )}
-
-                         {this.state.VisaRedAlerts.map((r, i) =>
-                                    <div class="col-4">
-                                        <h5 style={judy}>Visa Processing</h5>
-                                        <h3 style={head}>{r.visaRedAlerts}</h3>
-                                        <a href="/#" className="small-box-footer ">
-                                        <Link to="/Registration" className="text-info">
-                                          More info <i className="fa fa-arrow-circle-right" />
-                                        </Link>
-                                      </a>
-                                      </div>
-                          
-                              )}
-                             {this.state.AttestationRedAlerts.map((r, i) =>
-                                    <div class="col-4">
-                                        <h5 style={judy}>Attestation</h5>
-                                        <h3 style={head}>{r.AttestationRedAlerts}</h3>
-                                        <a href="/#" className="small-box-footer ">
-                                        <Link to="/Registration" className="text-info">
-                                          More info <i className="fa fa-arrow-circle-right" />
-                                        </Link>
-                                      </a>
-                                      </div>
-                          
-                              )}
-                        </div>
-                    </div>
-                    <div class="ibox-content">
-                        <div class="row">
-                        {this.state.TicketingRedAlerts.map((r, i) =>
-                                    <div class="col-4">
-                                        <h5 style={judy}>Ticketing</h5>
-                                        <h3 style={head}>{r.TicketingRedAlerts}</h3>
-                                        <a href="/#" className="small-box-footer ">
-                                        <Link to="/Registration" className="text-info">
-                                          More info <i className="fa fa-arrow-circle-right" />
-                                        </Link>
-                                      </a>
-                                      </div>
-                          
-                              )}
-                              {this.state.FinalRedAlerts.map((r, i) =>
-                                    <div class="col-4">
-                                        <h5 style={judy}>Final Medical</h5>
-                                        <h3 style={head}>{r.finalmedicalRedAlerts}</h3>
-                                        <a href="/#" className="small-box-footer ">
-                                        <Link to="/Registration" className="text-info">
-                                          More info <i className="fa fa-arrow-circle-right" />
-                                        </Link>
-                                      </a>
-                                      </div>
-                          
-                              )}
-                          
-                        </div>
+                        )}
                     </div>
                 </div>
-            </div>
+                <div class="row">
+                        <div class="col-lg-8 col-md-6 col-12">
+                            <div class="card">
+                                <div class="card-content">
+                                        {this.state.Data.length > 0 ? (
+                                        <div className="App">
+                                          <Chart
+                                            chartType="Bar"
+                                            width={'100%'}
+                                            height={'300px'}
+                                            data={data}
+                                            loader={<div>Loading Chart</div>}
+                                            options={{
+                                            colors: [ '#bbeeff'],
+                                              // Material design options
+                                              chart: {
+                                                title: "Monthly Registration"
+                                              }
+                                            }}
+                                          />
+                                        </div>
+                                      ) : null}   
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4 col-md-6 col-12">
+                            <div class="card">
+                                <div class="card-header d-flex justify-content-between align-items-end">
+                                    <h4 class="mb-0">Pending Notification</h4>
+                                    <p class="font-medium-5 mb-0"><i class="feather icon-help-circle text-muted cursor-pointer"></i></p>
+                                </div>
+                                <div class="card-content">
+                                    <div class="card-body px-0 pb-0">
+                                        <div id="goal-overview-chart" class="mt-75"></div>
+                                        <div class="row text-center mx-0">
+                                        {this.state.MinorRedAlerts.map((r, i) =>  
+                                            <div class="col-6 border-top border-right d-flex align-items-between flex-column py-1">
 
-        </div>    
+
+                                                  <h5 style={judy}>Minor Medical</h5>
+                                                  <h3 style={head}>{r.minormedicalRedAlerts}</h3>
+                    
+                                            </div>
+                                             )}
+                                            {this.state.DCIRedAlerts.map((r, i) =>
+                                            <div class="col-6 border-top d-flex align-items-between flex-column py-1">
+                                           <h5 style={judy}>DCI Clearance</h5>
+                                           <h3 style={head}>{r.DCIRedAlerts}</h3>
+                                            </div>
+                                             )}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+            </section>
+          </div>
       </div>
+  </div>
           );
         }
       }

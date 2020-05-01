@@ -11,9 +11,15 @@ class SideBar extends Component {
       showMenuRecruitment: false,
       showMenuAnalytics: false,
       showMenuAdmin: true,
+      showMenuEmployement:false,
+      showHRPool:false,
+      showAdminstration:false,
+      showTravel:false,
+      showMedical:false,
       showMenuParameteres: false,
       showMenuFeesSettings: false,
       showMenuReports: false,
+      showTraining:false,
       CompanyDetails: [],
       Logo: ""
     };
@@ -45,6 +51,36 @@ class SideBar extends Component {
           showMenuAnalytics: !this.state.showMenuAnalytics
         });
       }
+      if (this.state.showMenuEmployement) {
+        this.setState({
+          showMenuEmployement: !this.state.showMenuEmployement
+        });
+      }
+      if (this.state.showHRPool) {
+        this.setState({
+          showHRPool: !this.state.showHRPool
+        });
+      }
+      if (this.state.showAdminstration) {
+        this.setState({
+          showAdminstration: !this.state.showAdminstration
+        });
+      }
+      if (this.state.showMedical) {
+        this.setState({
+          showMedical: !this.state.showMedical
+        });
+      }
+      if (this.state.showTravel) {
+        this.setState({
+          showTravel: !this.state.showTravel
+        });
+      }
+      if (this.state.showTraining) {
+        this.setState({
+          showTraining: !this.state.showTraining
+        });
+      }
     } else if (Module === "Fees Settings") {
       this.setState({ showMenuFeesSettings: !this.state.showMenuFeesSettings });
     } else if (Module === "Recruitment") {
@@ -72,6 +108,37 @@ class SideBar extends Component {
           showMenuAnalytics: !this.state.showMenuAnalytics
         });
       }
+      if (this.state.showMenuEmployement) {
+        this.setState({
+          showMenuEmployement: !this.state.showMenuEmployement
+        });
+      }
+      if (this.state.showHRPool) {
+        this.setState({
+          showHRPool: !this.state.showHRPool
+        });
+      }
+      if (this.state.showAdminstration) {
+        this.setState({
+          showAdminstration: !this.state.showAdminstration
+        });
+      }
+      if (this.state.showMedical) {
+        this.setState({
+          showMedical: !this.state.showMedical
+        });
+      }
+      if (this.state.showTravel) {
+        this.setState({
+          showTravel: !this.state.showTravel
+        });
+      }
+      if (this.state.showTraining) {
+        this.setState({
+          showTraining: !this.state.showTraining
+        });
+      }
+      
     }  else if (Module === "Reports") {
       this.setState({
         showMenuReports: !this.state.showMenuReports
@@ -92,6 +159,36 @@ class SideBar extends Component {
       if (this.state.showMenuAnalytics) {
         this.setState({
           showMenuAnalytics: !this.state.showMenuAnalytics
+        });
+      }
+      if (this.state.showMenuEmployement) {
+        this.setState({
+          showMenuEmployement: !this.state.showMenuEmployement
+        });
+      }
+      if (this.state.showHRPool) {
+        this.setState({
+          showHRPool: !this.state.showHRPool
+        });
+      }
+      if (this.state.showAdminstration) {
+        this.setState({
+          showAdminstration: !this.state.showAdminstration
+        });
+      }
+      if (this.state.showMedical) {
+        this.setState({
+          showMedical: !this.state.showMedical
+        });
+      }
+      if (this.state.showTravel) {
+        this.setState({
+          showTravel: !this.state.showTravel
+        });
+      }
+      if (this.state.showTraining) {
+        this.setState({
+          showTraining: !this.state.showTraining
         });
       }
       
@@ -119,6 +216,36 @@ class SideBar extends Component {
           showMenuAnalytics: !this.state.showMenuAnalytics
         });
       }
+      if (this.state.showMenuEmployement) {
+        this.setState({
+          showMenuEmployement: !this.state.showMenuEmployement
+        });
+      }
+      if (this.state.showHRPool) {
+        this.setState({
+          showHRPool: !this.state.showHRPool
+        });
+      }
+      if (this.state.showAdminstration) {
+        this.setState({
+          showAdminstration: !this.state.showAdminstration
+        });
+      }
+      if (this.state.showMedical) {
+        this.setState({
+          showMedical: !this.state.showMedical
+        });
+      }
+      if (this.state.showTravel) {
+        this.setState({
+          showTravel: !this.state.showTravel
+        });
+      }
+      if (this.state.showTraining) {
+        this.setState({
+          showTraining: !this.state.showTraining
+        });
+      }
     }  else if (Module === "Analytics") {
       this.setState({
         showMenuAnalytics: !this.state.showMenuAnalytics
@@ -143,9 +270,362 @@ class SideBar extends Component {
           showMenuParameteres: !this.state.showMenuParameteres
         });
       }
+      if (this.state.showMenuEmployement) {
+        this.setState({
+          showMenuEmployement: !this.state.showMenuEmployement
+        });
+      }
+      if (this.state.showHRPool) {
+        this.setState({
+          showHRPool: !this.state.showHRPool
+        });
+      }
+      if (this.state.showAdminstration) {
+        this.setState({
+          showAdminstration: !this.state.showAdminstration
+        });
+      }
+      if (this.state.showMedical) {
+        this.setState({
+          showMedical: !this.state.showMedical
+        });
+      }
+      if (this.state.showTravel) {
+        this.setState({
+          showTravel: !this.state.showTravel
+        });
+      }
+      if (this.state.showTraining) {
+        this.setState({
+          showTraining: !this.state.showTraining
+        });
+      }
+    } else if (Module === "Employement") {
+      this.setState({
+        showMenuEmployement: !this.state.showMenuEmployement
+      });
+      if (this.state.showMenuRecruitment) {
+        this.setState({
+          showMenuRecruitment: !this.state.showMenuRecruitment
+        });
+      }
+      if (this.state.showMenuAdmin) {
+        this.setState({
+          showMenuAdmin: !this.state.showMenuAdmin
+        });
+      }
+      if (this.state.showMenuReports) {
+        this.setState({
+          showMenuReports: !this.state.showMenuReports
+        });
+      }
+      if (this.state.showMenuParameteres) {
+        this.setState({
+          showMenuParameteres: !this.state.showMenuParameteres
+        });
+      }
+      if (this.state.showMenuAnalytics) {
+        this.setState({
+          showMenuAnalytics: !this.state.showMenuAnalytics
+        });
+      }
+      if (this.state.showHRPool) {
+        this.setState({
+          showHRPool: !this.state.showHRPool
+        });
+      }
+      if (this.state.showAdminstration) {
+        this.setState({
+          showAdminstration: !this.state.showAdminstration
+        });
+      }
+      if (this.state.showMedical) {
+        this.setState({
+          showMedical: !this.state.showMedical
+        });
+      }
+      if (this.state.showTravel) {
+        this.setState({
+          showTravel: !this.state.showTravel
+        });
+      }
+      if (this.state.showTraining) {
+        this.setState({
+          showTraining: !this.state.showTraining
+        });
+      }
+    }  else if (Module === "Hr Pool") {
+      this.setState({
+        showHRPool: !this.state.showHRPool
+      });
+      if (this.state.showMenuRecruitment) {
+        this.setState({
+          showMenuRecruitment: !this.state.showMenuRecruitment
+        });
+      }
+      if (this.state.showMenuAdmin) {
+        this.setState({
+          showMenuAdmin: !this.state.showMenuAdmin
+        });
+      }
+      if (this.state.showMenuReports) {
+        this.setState({
+          showMenuReports: !this.state.showMenuReports
+        });
+      }
+      if (this.state.showMenuParameteres) {
+        this.setState({
+          showMenuParameteres: !this.state.showMenuParameteres
+        });
+      }
+      if (this.state.showMenuAnalytics) {
+        this.setState({
+          showMenuAnalytics: !this.state.showMenuAnalytics
+        });
+      }
+      if (this.state.showMenuEmployement) {
+        this.setState({
+          showMenuEmployement: !this.state.showMenuEmployement
+        });
+      }
+      if (this.state.showAdminstration) {
+        this.setState({
+          showAdminstration: !this.state.showAdminstration
+        });
+      }
+      if (this.state.showMedical) {
+        this.setState({
+          showMedical: !this.state.showMedical
+        });
+      }
+      if (this.state.showTravel) {
+        this.setState({
+          showTravel: !this.state.showTravel
+        });
+      }
+      if (this.state.showTraining) {
+        this.setState({
+          showTraining: !this.state.showTraining
+        });
+      }
+    }  else if (Module === "Adminstration") {
+      this.setState({
+        showAdminstration: !this.state.showAdminstration
+      });
+      if (this.state.showMenuRecruitment) {
+        this.setState({
+          showMenuRecruitment: !this.state.showMenuRecruitment
+        });
+      }
+      if (this.state.showMenuAdmin) {
+        this.setState({
+          showMenuAdmin: !this.state.showMenuAdmin
+        });
+      }
+      if (this.state.showMenuReports) {
+        this.setState({
+          showMenuReports: !this.state.showMenuReports
+        });
+      }
+      if (this.state.showMenuParameteres) {
+        this.setState({
+          showMenuParameteres: !this.state.showMenuParameteres
+        });
+      }
+      if (this.state.showMenuAnalytics) {
+        this.setState({
+          showMenuAnalytics: !this.state.showMenuAnalytics
+        });
+      }
+      if (this.state.showMenuEmployement) {
+        this.setState({
+          showMenuEmployement: !this.state.showMenuEmployement
+        });
+      }
+      if (this.state.showHRPool) {
+        this.setState({
+          showHRPool: !this.state.showHRPool
+        });
+      }
+      if (this.state.showMedical) {
+        this.setState({
+          showMedical: !this.state.showMedical
+        });
+      }
+      if (this.state.showTravel) {
+        this.setState({
+          showTravel: !this.state.showTravel
+        });
+      }
+      if (this.state.showTraining) {
+        this.setState({
+          showTraining: !this.state.showTraining
+        });
+      }
+    } else if (Module === "Medical") {
+      this.setState({
+        showMedical: !this.state.showMedical
+      });
+      if (this.state.showMenuRecruitment) {
+        this.setState({
+          showMenuRecruitment: !this.state.showMenuRecruitment
+        });
+      }
+      if (this.state.showMenuAdmin) {
+        this.setState({
+          showMenuAdmin: !this.state.showMenuAdmin
+        });
+      }
+      if (this.state.showMenuReports) {
+        this.setState({
+          showMenuReports: !this.state.showMenuReports
+        });
+      }
+      if (this.state.showMenuParameteres) {
+        this.setState({
+          showMenuParameteres: !this.state.showMenuParameteres
+        });
+      }
+      if (this.state.showMenuAnalytics) {
+        this.setState({
+          showMenuAnalytics: !this.state.showMenuAnalytics
+        });
+      }
+      if (this.state.showMenuEmployement) {
+        this.setState({
+          showMenuEmployement: !this.state.showMenuEmployement
+        });
+      }
+      if (this.state.showAdminstration) {
+        this.setState({
+          showAdminstration: !this.state.showAdminstration
+        });
+      }
+      if (this.state.showHRPool) {
+        this.setState({
+          showHRPool: !this.state.showHRPool
+        });
+      }
+      if (this.state.showTravel) {
+        this.setState({
+          showTravel: !this.state.showTravel
+        });
+      }
+      if (this.state.showTraining) {
+        this.setState({
+          showTraining: !this.state.showTraining
+        });
+      }
+    } else if (Module === "Travel") {
+      this.setState({
+        showTravel: !this.state.showTravel
+      });
+      if (this.state.showMenuRecruitment) {
+        this.setState({
+          showMenuRecruitment: !this.state.showMenuRecruitment
+        });
+      }
+      if (this.state.showMenuAdmin) {
+        this.setState({
+          showMenuAdmin: !this.state.showMenuAdmin
+        });
+      }
+      if (this.state.showMenuReports) {
+        this.setState({
+          showMenuReports: !this.state.showMenuReports
+        });
+      }
+      if (this.state.showMenuParameteres) {
+        this.setState({
+          showMenuParameteres: !this.state.showMenuParameteres
+        });
+      }
+      if (this.state.showMenuAnalytics) {
+        this.setState({
+          showMenuAnalytics: !this.state.showMenuAnalytics
+        });
+      }
+      if (this.state.showMenuEmployement) {
+        this.setState({
+          showMenuEmployement: !this.state.showMenuEmployement
+        });
+      }
+      if (this.state.showAdminstration) {
+        this.setState({
+          showAdminstration: !this.state.showAdminstration
+        });
+      }
+      if (this.state.showMedical) {
+        this.setState({
+          showMedical: !this.state.showMedical
+        });
+      }
+      if (this.state.showHRPool) {
+        this.setState({
+          showHRPool: !this.state.showHRPool
+        });
+      }
+      if (this.state.showTraining) {
+        this.setState({
+          showTraining: !this.state.showTraining
+        });
+      }
+    } else if (Module === "Training") {
+      this.setState({
+        showTraining: !this.state.showTraining
+      });
+      if (this.state.showMenuRecruitment) {
+        this.setState({
+          showMenuRecruitment: !this.state.showMenuRecruitment
+        });
+      }
+      if (this.state.showMenuAdmin) {
+        this.setState({
+          showMenuAdmin: !this.state.showMenuAdmin
+        });
+      }
+      if (this.state.showMenuReports) {
+        this.setState({
+          showMenuReports: !this.state.showMenuReports
+        });
+      }
+      if (this.state.showMenuParameteres) {
+        this.setState({
+          showMenuParameteres: !this.state.showMenuParameteres
+        });
+      }
+      if (this.state.showMenuAnalytics) {
+        this.setState({
+          showMenuAnalytics: !this.state.showMenuAnalytics
+        });
+      }
+      if (this.state.showMenuEmployement) {
+        this.setState({
+          showMenuEmployement: !this.state.showMenuEmployement
+        });
+      }
+      if (this.state.showAdminstration) {
+        this.setState({
+          showAdminstration: !this.state.showAdminstration
+        });
+      }
+      if (this.state.showMedical) {
+        this.setState({
+          showMedical: !this.state.showMedical
+        });
+      }
+      if (this.state.showHRPool) {
+        this.setState({
+          showHRPool: !this.state.showHRPool
+        });
+      }
+      if (this.state.showTravel) {
+        this.setState({
+          showTravel: !this.state.showTravel
+        });
+      }
     } 
   };
-
   ProtectRoute() {
     fetch("/api/UserAccess", {
       method: "GET",
@@ -286,6 +766,9 @@ class SideBar extends Component {
       "border-radius": 2
     };
  
+    let menucolor= {
+      color:"#E7E7E7",
+    }
     let MenuStyle = {
       color: "#E7E7E7",
       cursor: "pointer",
@@ -296,22 +779,50 @@ class SideBar extends Component {
       // "font-family": `"Helvetica Neue", Helvetica, Arial, sans - serif`
     };
     return (
-      <nav className="navbar-default navbar-static-side" role="navigation" >
-        <div className="sidebar-collapse">
-          <ul className="nav metismenu" id="side-menu">
-            <li className="">
-              <div className="dropdown profile-element">
-                <img
-                  src={ require("./profilepics/download.png") }
-                  style={photostyle}
-                />
-              </div>
-            </li>
-            <DashBoards validaterole={this.validaterole} />
-            <SystemAdmin
+     <div class="horizontal-menu-wrapper" >
+        <div class="header-navbar navbar-expand-sm navbar navbar-horizontal fixed-top navbar-shadow menu-border" style={menucolor} role="navigation" data-menu="menu-wrapper">
+            <div class="navbar-header">
+                <ul class="nav navbar-nav flex-row">
+                    <li class="nav-item mr-auto"><a class="navbar-brand" href="../../../html/ltr/horizontal-menu-template/index.html">
+                            <div class="brand-logo"></div>
+                            <h2 class="brand-text mb-0">JObMajuu</h2>
+                        </a></li>
+                    <li class="nav-item nav-toggle"><a class="nav-link modern-nav-toggle pr-0"
+                     data-toggle="collapse"><i class="feather icon-x d-block d-xl-none font-medium-4 primary toggle-icon"></i>
+                     <i class="toggle-icon feather icon-disc font-medium-4 d-none d-xl-block collapse-toggle-icon primary" data-ticon="icon-disc">
+                       </i></a></li>
+                </ul>
+            </div>
+            <div class="navbar-container main-menu-content" data-menu="menu-container">
+                <ul class="nav navbar-nav" id="main-menu-navigation" data-menu="menu-navigation"style={menucolor}>
+               <DashBoards validaterole={this.validaterole} />
+               <HR
               validaterole={this.validaterole}
               showMenu={this.showMenu}
-              showmenuvalue={this.state.showMenuAdmin}
+              showmenuvalue={this.state.showHRPool}
+              MenuStyle={MenuStyle}
+            />
+              <Administration
+              validaterole={this.validaterole}
+              showMenu={this.showMenu}
+              showmenuvalue={this.state.showHRPool}
+              MenuStyle={MenuStyle}
+            />
+              <Employement
+              validaterole={this.validaterole}
+              showMenu={this.showMenu}
+              showmenuvalue={this.state.showMenuEmployement}
+              MenuStyle={MenuStyle}
+            />
+               <Medical
+              validaterole={this.validaterole}
+              showMenu={this.showMenu}
+              showmenuvalue={this.state.showMedical}
+            />
+             <Recruitment
+              validaterole={this.validaterole}
+              showMenu={this.showMenu}
+              showmenuvalue={this.state.showMenuRecruitment}
               MenuStyle={MenuStyle}
             />
             <Parameteres
@@ -320,167 +831,73 @@ class SideBar extends Component {
               showmenuvalue={this.state.showMenuParameteres}
               MenuStyle={MenuStyle}
             />
-
-            <Recruitment
+            <SystemAdmin
               validaterole={this.validaterole}
               showMenu={this.showMenu}
-              showmenuvalue={this.state.showMenuRecruitment}
-              MenuStyle={MenuStyle}
+              showmenuvalue={this.state.showMenuAdmin}
             />
-            {/* <Decision
-              validaterole={this.validaterole}
-              showMenu={this.showMenu}
-              showmenuvalue={this.state.showMenuDecision}
-              MenuStyle={MenuStyle}
-            />
-            <Boardmanagement
-              validaterole={this.validaterole}
-              showMenu={this.showMenu}
-              showmenuvalue={this.state.showMenuBoardmanagement}
-              MenuStyle={MenuStyle}
-            /> */}
             <Reports
               validaterole={this.validaterole}
               showMenu={this.showMenu}
               showmenuvalue={this.state.showMenuReports}
               MenuStyle={MenuStyle}
             />
-              <Analytics
+              {/* <Analytics
               validaterole={this.validaterole}
               showMenu={this.showMenu}
               showmenuvalue={this.state.showMenuAnalytics}
               MenuStyle={MenuStyle}
-            />
-          </ul>
+            /> */}
+                </ul>
+            </div>
+          
         </div>
-      </nav>
+    </div>
     );
   }
 }
-const Reports = props => {
-  if (props.validaterole("Reports", "View")) {
+const Employement = props => {
+  if (props.validaterole("Employement", "View")) {
     return (
-      <li className="">
-        <li onClick={e => props.showMenu("Reports", e)} style={props.MenuStyle}>
-          <i className="fa fa-cogs" />{" "}
-          <span className="nav-label">Reports</span>
-        </li>
-        {props.showmenuvalue ? (
-          <ul className="nav nav-second-level">
-            {props.validaterole("Custom Reports", "View") ? (
-              <li>
-                <Link to="/RegistrationCustom">
-                  <i className="fa fa-tasks" />
-                 Registration
+      <li class="dropdown dropdown-submenu" data-menu="dropdown-submenu">
+        <a class="dropdown-item dropdown-toggle" href="#" data-toggle="dropdown" data-i18n="Employment Request">
+          <i class="feather icon-codepen"></i>Employment Request</a>
+      <ul class="dropdown-menu">
+                      {props.validaterole("Contract Processing", "View") ? (
+                            <li data-menu="">
+                          <Link to="/Contract">
+                  <div className="dropdown-item" 
+                    data-i18n="Contract Processing">
+                <i class="feather icon-server"i/>{" "}
+                  <span className="nav-label">Contract Processing</span>
+                  </div>
                 </Link>
-              </li>
-            ) : null}
-             {props.validaterole("Custom Reports", "View") ? (
-              <li>
-                <Link to="/MinorCustom">
-                  <i className="fa fa-tasks" />
-                  Minor Medical
+                        </li>
+                          ) : null}
+                             {props.validaterole("NEAA", "View") ? (
+                            <li data-menu="">
+                          <Link to="/NEAA">
+                  <div className="dropdown-item" 
+                    data-i18n="NEA">
+                <i class="feather icon-server"i/>{" "}
+                  <span className="nav-label">NEA</span>
+                  </div>
                 </Link>
-              </li>
-            ) : null}
-              {props.validaterole("Custom Reports", "View") ? (
-              <li>
-                <Link to="/DCICustom">
-                  <i className="fa fa-user-plus" />
-                DCI reports
+                        </li>
+                          ) : null}
+                             {props.validaterole("Attestation", "View") ? (
+                            <li data-menu="">
+                          <Link to="/Attestation">
+                  <div className="dropdown-item" 
+                    data-i18n="Attestation">
+                <i class="feather icon-server"i/>{" "}
+                  <span className="nav-label">Attestation</span>
+                  </div>
                 </Link>
-              </li>
-            ) : null}
-             {props.validaterole("Custom Reports", "View") ? (
-              <li>
-                <Link to="/PassportCustom">
-                  <i className="fa fa-user-plus" />
-                Passport reports
-                </Link>
-              </li>
-            ) : null}
-            {props.validaterole("Custom Reports", "View") ? (
-              <li>
-                <Link to="/TrainingCustom">
-                  <i className="fa fa-user-plus" />
-                Training reports
-                </Link>
-              </li>
-            ) : null}
-            
-            {props.validaterole("Applicants Profile", "View") ? (
-              <li>
-                <Link to="/ApplicantsProfile">
-                  <i className="fa fa-user-plus" />
-                  Applicants Profile
-                </Link>
-              </li>
-            ) : null}
-             {props.validaterole("Total Cost", "View") ? (
-              <li>
-                <Link to="/Cost">
-                  <i className="fa fa-user-plus" />
-                  Total Cost
-                </Link>
-              </li>
-            ) : null}
-            {props.validaterole("Monthly", "View") ? (
-              <li>
-                <Link to="/requesthandled">
-                  <i className="fa fa-user-plus" />
-                  Fail Applicant
-                </Link>
-              </li>
-            ) : null}
-        
-          </ul>
-        ) : null}
-      </li>
-    );
-  } else {
-    return <div />;
-  }
-};
-
-const Analytics = props => {
-  if (props.validaterole("Analytics", "View")) {
-    return (
-      <li className="">
-        <li onClick={e => props.showMenu("Analytics", e)} style={props.MenuStyle}>
-          <i className="fa fa-cogs" />{" "}
-          <span className="nav-label">Analytics</span>
-        </li>
-        {props.showmenuvalue ? (
-          <ul className="nav nav-second-level">
-            {props.validaterole("Monthly", "View") ? (
-              <li>
-                <Link to="/MonthlyRegistration">
-                  <i className="fa fa-tasks" />
-                  Monthy Analytics
-                </Link>
-              </li>
-            ) : null}
-            
-             {props.validaterole("Total Cost", "View") ? (
-              <li>
-                <Link to="/Cost">
-                  <i className="fa fa-user-plus" />
-                 Cost Analytics
-                </Link>
-              </li>
-            ) : null}
-            {props.validaterole("Monthly", "View") ? (
-              <li>
-                <Link to="/requesthandled">
-                  <i className="fa fa-user-plus" />
-                  Fail Applicant
-                </Link>
-              </li>
-            ) : null}
-        
-          </ul>
-        ) : null}
-      </li>
+                        </li>
+                          ) : null}
+      </ul>
+  </li>
     );
   } else {
     return <div />;
@@ -489,124 +906,186 @@ const Analytics = props => {
 const Recruitment = props => {
   if (props.validaterole("Recruitment", "View")) {
     return (
-      <li className="">
-        <li
-          onClick={e => props.showMenu("Recruitment", e)}
-          style={props.MenuStyle}
-        >
-          <i className="fa fa-cogs" />{" "}
-          <span className="nav-label">Recruitment</span>
+      <li class="dropdown dropdown-submenu" data-menu="dropdown-submenu">
+        <a class="dropdown-item dropdown-toggle" href="#" data-toggle="dropdown" data-i18n="Other">
+          <i class="feather icon-layers"></i>Other</a>
+      <ul class="dropdown-menu">
+                      {props.validaterole("Training", "View") ? (
+                            <li data-menu="">
+                          <Link to="/Training">
+                  <div className="dropdown-item" 
+                    data-i18n="Training">
+                <i class="feather icon-server"i/>{" "}
+                  <span className="nav-label">Training</span>
+                  </div>
+                </Link>
+                        </li>
+                          ) : null}
+                             {props.validaterole("Ticketing", "View") ? (
+                            <li data-menu="">
+                          <Link to="/Ticketing">
+                  <div className="dropdown-item" 
+                    data-i18n="Ticketing">
+                <i class="feather icon-server"i/>{" "}
+                  <span className="nav-label">Ticketing </span>
+                  </div>
+                </Link>
+                        </li>
+                          ) : null}
+                             {props.validaterole("Travelling", "View") ? (
+                            <li data-menu="">
+                          <Link to="/Travelling">
+                  <div className="dropdown-item" 
+                    data-i18n="Travel">
+                <i class="feather icon-server"i/>{" "}
+                  <span className="nav-label">Travel</span>
+                  </div>
+                </Link>
+                        </li>
+                          ) : null}
+      </ul>
+  </li>
+    );
+  } else {
+    return <div />;
+  }
+};
+const Administration = props => {
+  if (props.validaterole("Administration", "View")) {
+    return (
+      <li class="dropdown dropdown-submenu" data-menu="dropdown-submenu">
+        <a class="dropdown-item dropdown-toggle" href="#" data-toggle="dropdown" data-i18n="Extenal Services">
+          <i class="feather icon-layers"></i>Extenal Services</a>
+      <ul class="dropdown-menu">
+                      {props.validaterole("DCI Clearance", "View") ? (
+                            <li data-menu="">
+                          <Link to="/DCI">
+                  <div className="dropdown-item" 
+                    data-i18n="DCI Clearance">
+                <i class="feather icon-server"i/>{" "}
+                  <span className="nav-label">DCI Clearance</span>
+                  </div>
+                </Link>
+                        </li>
+                          ) : null}
+                             {props.validaterole("Passport processing", "View") ? (
+                            <li data-menu="">
+                          <Link to="/Passport">
+                  <div className="dropdown-item" 
+                    data-i18n="Passport processing">
+                <i class="feather icon-server"i/>{" "}
+                  <span className="nav-label">Passport processing</span>
+                  </div>
+                </Link>
+                        </li>
+                          ) : null}
+                             {props.validaterole("Visa Prcoessing", "View") ? (
+                            <li data-menu="">
+                          <Link to="/Visa">
+                  <div className="dropdown-item" 
+                    data-i18n="Visa Prcoessing">
+                <i class="feather icon-server"i/>{" "}
+                  <span className="nav-label">Visa Prcoessing</span>
+                  </div>
+                </Link>
+                        </li>
+                          ) : null}
+      </ul>
+  </li>
+    );
+  } else {
+    return <div />;
+  }
+};
+const HR = props => {
+  if (props.validaterole("Hr Pool", "View")) {
+    return (
+      <li class="dropdown dropdown-submenu" data-menu="dropdown-submenu">
+        <a class="dropdown-item dropdown-toggle" href="#" data-toggle="dropdown" data-i18n="HR Pool">
+          <i class="feather icon-layers"></i>HR Pool</a>
+      <ul class="dropdown-menu">
+      {props.validaterole("Registration", "View") ? (
+             <li data-menu="">
+          <Link to="/Registration">
+  <div className="dropdown-item" 
+    data-i18n="Registration">
+<i class="feather icon-grid"i/>{" "}
+  <span className="nav-label">Registration</span>
+  </div>
+</Link>
         </li>
-        {props.showmenuvalue ? (
-          <ul className="nav nav-second-level">
-            {props.validaterole("Registration", "View") ? (
-              <li>
-                <Link to="/Registration">
-                  <i className="fa fa-tasks" />
-                 Registration
+          ) : null}
+      </ul>
+  </li>
+    );
+  } else {
+    return <div />;
+  }
+};
+const Reports = props => {
+  if (props.validaterole("Reports", "View")) {
+    return (
+      <li class="dropdown dropdown-submenu" data-menu="dropdown-submenu">
+        <a class="dropdown-item dropdown-toggle" href="#" data-toggle="dropdown" data-i18n="Reports">
+          <i class="feather icon-bar-chart-2"></i>Reports</a>
+      <ul class="dropdown-menu">
+                      {props.validaterole("Custom Reports", "View") ? (
+                            <li data-menu="">
+                          <Link to="/RegistrationCustom">
+                  <div className="dropdown-item" 
+                    data-i18n="Custom Reports">
+                <i class="feather icon-server"i/>{" "}
+                  <span className="nav-label">Registration Reports</span>
+                  </div>
                 </Link>
-              </li>
-            ) : null}
-            {props.validaterole("Minor Medical", "View") ? (
-              <li>
-                <Link to="/Minor">
-                  <i className="fa fa-tasks" />
-                  Minor Medical
+                        </li>
+                          ) : null}
+                             {props.validaterole("Custom Reports", "View") ? (
+                            <li data-menu="">
+                          <Link to="/MinorCustom">
+                  <div className="dropdown-item" 
+                    data-i18n="CustomReports">
+                <i class="feather icon-server"i/>{" "}
+                  <span className="nav-label">Minor Reports</span>
+                  </div>
                 </Link>
-              </li>
-            ) : null}
-                   {props.validaterole("DCI Clearance", "View") ? (
-              <li>
-                <Link to="/DCI">
-                  <i className="fa fa-tasks" />
-                  DCI Clearance
+                        </li>
+                          ) : null}
+                             {props.validaterole("Custom Reports", "View") ? (
+                            <li data-menu="">
+                          <Link to="/DCICustom">
+                  <div className="dropdown-item" 
+                    data-i18n="Prcoesing">
+                <i class="feather icon-server"i/>{" "}
+                  <span className="nav-label"> DCI reports</span>
+                  </div>
                 </Link>
-              </li>
-            ) : null}
-            {props.validaterole("Passport processing", "View") ? (
-              <li>
-                <Link to="/Passport">
-                  <i className="fa fa-tasks" />
-                  Passport processing 
+                        </li>
+                          ) : null}
+                           {props.validaterole("Custom Reports", "View") ? (
+                            <li data-menu="">
+                          <Link to="/PassportCustom">
+                  <div className="dropdown-item" 
+                    data-i18n="Proessing">
+                <i class="feather icon-server"i/>{" "}
+                  <span className="nav-label"> Passport reports</span>
+                  </div>
                 </Link>
-              </li>
-            ) : null}
-            {props.validaterole("Training", "View") ? (
-              <li>
-                <Link to="/Training">
-                  <i className="fa fa-tasks" />
-                  Training
+                        </li>
+                          ) : null}
+                           {props.validaterole("Custom Reports", "View") ? (
+                            <li data-menu="">
+                          <Link to="/TrainingCustom">
+                  <div className="dropdown-item" 
+                    data-i18n="Prcossing">
+                <i class="feather icon-server"i/>{" "}
+                  <span className="nav-label"> Training reports</span>
+                  </div>
                 </Link>
-              </li>
-            ) : null}
-             {props.validaterole("Major Medical", "View") ? (
-              <li>
-                <Link to="/Major">
-                  <i className="fa fa-tasks" />
-                Major medical
-                </Link>
-              </li>
-            ) : null}
-              {props.validaterole("Contract Processing", "View") ? (
-              <li>
-                <Link to="/Contract">
-                  <i className="fa fa-tasks" />
-                  Contract Processing
-                </Link>
-              </li>
-            ) : null}
-               {props.validaterole("NEAA", "View") ? (
-              <li>
-                <Link to="/NEAA">
-                  <i className="fa fa-tasks" />
-                  NEA
-                </Link>
-              </li>
-            ) : null}
-             {props.validaterole("Visa Prcoessing", "View") ? (
-              <li>
-                <Link to="/Visa">
-                  <i className="fa fa-tasks" />
-                  Visa Processing
-                </Link>
-              </li>
-            ) : null}
-               {props.validaterole("Attestation", "View") ? (
-              <li>
-                <Link to="/Attestation">
-                  <i className="fa fa-tasks" />
-                  Attestation
-                </Link>
-              </li>
-            ) : null}
-              
-               {props.validaterole("Ticketing", "View") ? (
-              <li>
-                <Link to="/Ticketing">
-                  <i className="fa fa-tasks" />
-                  Ticketing
-                </Link>
-              </li>
-            ) : null}
-               {props.validaterole("Final Medical", "View") ? (
-              <li>
-                <Link to="/Final">
-                  <i className="fa fa-tasks" />
-                  Final Medical
-                </Link>
-              </li>
-            ) : null}
-              {props.validaterole("Travelling", "View") ? (
-              <li>
-                <Link to="/Travelling">
-                  <i className="fa fa-tasks" />
-                  Travelling
-                </Link>
-              </li>
-            ) : null}
-          </ul>
-        ) : null}
-      </li>
+                        </li>
+                          ) : null}
+      </ul>
+  </li>
     );
   } else {
     return <div />;
@@ -615,73 +1094,119 @@ const Recruitment = props => {
 const SystemAdmin = props => {
   if (props.validaterole("System Administration", "View")) {
     return (
-      <li>
-        <li
-          className=""
-          onClick={e => props.showMenu("System Administration", e)}
-          style={props.MenuStyle}
-        >
-          <i className="fa fa-cogs" />{" "}
-          <span className="nav-label">System Administration</span>
-        </li>
-        {props.showmenuvalue ? (
-          <ul className="nav nav-second-level">
-            {props.validaterole("System Users", "View") ? (
-              <li>
-                <Link to="/Users">
-                  <i className="fa fa-user-plus " />
-                  System users
-                </Link>
-              </li>
-            ) : null}
-             {/* {props.validaterole("System Configurations", "View") ? (
-              <li>
-                <Link to="/configurations">
-                  <i className="fa fa-user-plus " />
-                  Configurations
-                </Link>
-              </li>
-            ) : null} */}
-            {props.validaterole("Roles", "View") ? (
-              <li>
-                <Link to="/Roles">
-                  <i className="fa fa-user-plus " />
-                  Roles
-                </Link>
-              </li>
-            ) : null}
-            {props.validaterole("Security Groups", "View") ? (
-              <li>
-                <Link to="/Usergroups">
-                  <i className="fa fa-user-plus " />
-                  Security Groups
-                </Link>
-              </li>
-            ) : null}
-            {props.validaterole("Audit Trails", "View") ? (
-              <li>
-                <Link to="/Auditrails">
-                  <i className="fa fa-user-plus " />
-                  Auditrails
-                </Link>
-              </li>
-            ) : null}
-          </ul>
-        ) : null}
-      </li>
+      <li class="dropdown nav-item" data-menu="dropdown">
+                        <a class="dropdown-toggle nav-link" href="#" data-toggle="dropdown">
+                            <i class="feather icon-settings"></i>
+                            <span data-i18n="Starter kit">System Administration</span></a>
+                            {props.showmenuvalue ? (
+                        <ul class="dropdown-menu">
+                                {props.validaterole("System Users", "View") ? (
+                            <li data-menu="">
+                           <Link to="/users">
+                             <div className="dropdown-item" 
+                              data-i18n="System Users">
+                           <i class="feather icon-users"i/>{" "}
+                             <span className="nav-label">System Users</span>
+                             </div>
+                           </Link>
+                             </li>
+                               ) : null}
+                                 {props.validaterole("Security Groups", "View") ? (
+                            <li data-menu="">
+                           <Link to="/Usergroups">
+                             <div className="dropdown-item" 
+                              data-i18n="Security Groups">
+                           <i class="feather icon-user"i/>{" "}
+                             <span className="nav-label">Security Groups</span>
+                             </div>
+                           </Link>
+                             </li>
+                               ) : null}
+                                 {props.validaterole("Audit Trails", "View") ? (
+                            <li data-menu="">
+                           <Link to="/Auditrails">
+                             <div className="dropdown-item"
+                              data-i18n="Audit Trails">
+                          <i class="fab fa-accessible-icon"></i>{" "}
+                             <span className="nav-label">Audit Trails</span>
+                             </div>
+                           </Link>
+                             </li>
+                               ) : null}
+                                 {props.validaterole("Roles", "View") ? (
+                            <li data-menu="">
+                           <Link to="/Roles">
+                             <div className="dropdown-item" data-toggle="dropdown"
+                              data-i18n="Roles">
+                           <i class="feather icon-user"i/>{" "}
+                             <span className="nav-label">Roles</span>
+                             </div>
+                           </Link>
+                             </li>
+                               ) : null}
+                        </ul>
+                           ) : null}
+                    </li>
     );
   } else {
     return <div />;
   }
 };
-
+const Medical = props => {
+  if (props.validaterole("Medical", "View")) {
+    return (
+      <li class="dropdown dropdown-submenu" data-menu="dropdown-submenu">
+        <a class="dropdown-item dropdown-toggle"
+         href="#" data-toggle="dropdown" data-i18n="Icons">
+           <i class="feather  icon-package"></i>Medical</a>
+                <ul class="dropdown-menu">
+                {props.validaterole("Minor Medical", "View") ? (
+                                    <li data-menu="">
+                                     <Link to="/Minor">
+                             <div className="dropdown-item" 
+                              data-i18n="Minor medical">
+                           <i class="feather icon-eye"i/>{" "}
+                             <span className="nav-label">Minor Medical</span>
+                             </div>
+                           </Link>
+                                    </li>
+                                     ) : null}
+                                      {props.validaterole("Major Medical", "View") ? (
+                                    <li data-menu="">
+                                     <Link to="/Major">
+                             <div className="dropdown-item" 
+                              data-i18n="Major medical">
+                           <i class="feather icon-eye"i/>{" "}
+                             <span className="nav-label">Major Medical</span>
+                             </div>
+                           </Link>
+                                    </li>
+                                     ) : null}
+                                        {props.validaterole("Final Medical", "View") ? (
+                                    <li data-menu="">
+                                     <Link to="/Final">
+                             <div className="dropdown-item" 
+                              data-i18n="Final medical">
+                           <i class="feather icon-eye"i/>{" "}
+                             <span className="nav-label">Final Medical</span>
+                             </div>
+                           </Link>
+                                    </li>
+                                     ) : null}
+                                </ul>
+                            </li>
+    );
+  } else {
+    return <div />;
+  }
+};
 const DashBoards = props => {
   if (props.validaterole("Dashboard", "View")) {
     return (
       <li className="">
         <Link to="/Home">
-          <i className="fa fa-th-large" />{" "}
-          <span className="nav-label">DashBoard</span>
+        <i class="feather icon-home"i/>{" "}
+          <span className="nav-label">Dashboard</span>
         </Link>
       </li>
     );
@@ -692,59 +1217,46 @@ const DashBoards = props => {
 const Parameteres = props => {
   if (props.validaterole("System parameteres", "View")) {
     return (
-      <li className="">
-        <li
-          onClick={e => props.showMenu("System parameteres", e)}
-          style={props.MenuStyle}
-        >
-          <i className="fa fa-cogs" />{" "}
-          <span className="nav-label">System Parameters</span>
-        </li>
-        {props.showmenuvalue ? (
-          <ul className="nav nav-second-level">
-            {props.validaterole("Facility", "View") ? (
-              <li>
-                <Link to="/Facility">
-                  <i className="fa fa-user-plus " />
-                  Medical Facility
-                </Link>
-              </li>
-            ) : null}
-              {props.validaterole("County", "View") ? (
-              <li>
-                <Link to="/Counties">
-                  <i className="fa fa-money" />
-                  Counties
-                </Link>
-              </li>
-            ) : null}
-            {props.validaterole("Country", "View") ? (
-              <li>
-                <Link to="/Countries">
-                  <i className="fa fa-money" />
-                  Countries
-                </Link>
-              </li>
-            ) : null}
-            {/* {props.validaterole("SMS Details", "View") ? (
-              <li>
-                <Link to="/SMSdetails">
-                  <i className="fa fa-user-plus " />
-                  SMS Details
-                </Link>
-              </li>
-            ) : null} */}
-            {/* {props.validaterole("SMTP Details", "View") ? (
-              <li>
-                <Link to="/smtpdetails">
-                  <i className="fa fa-folder" />
-                  SMTP Details
-                </Link>
-              </li>
-            ) : null} */}
-          </ul>
-        ) : null}
-      </li>
+      <li class="dropdown dropdown-submenu" data-menu="dropdown-submenu">
+        <a class="dropdown-item dropdown-toggle"
+         href="#" data-toggle="dropdown" data-i18n="Organisation">
+           <i class="feather  icon-chrome"></i>Organisation</a>
+                <ul class="dropdown-menu">
+                {props.validaterole("Facility", "View") ? (
+                                    <li data-menu="">
+                                     <Link to="/Facility">
+                             <div className="dropdown-item" 
+                              data-i18n="Medical Facility">
+                           <i class="feather icon-eye"i/>{" "}
+                             <span className="nav-label">Medical Facility</span>
+                             </div>
+                           </Link>
+                                    </li>
+                                     ) : null}
+                                      {props.validaterole("Major Medical", "View") ? (
+                                    <li data-menu="">
+                                     <Link to="/Major">
+                             <div className="dropdown-item" 
+                              data-i18n="Major medical">
+                           <i class="feather icon-eye"i/>{" "}
+                             <span className="nav-label">PartentShip</span>
+                             </div>
+                           </Link>
+                                    </li>
+                                     ) : null}
+                                        {props.validaterole("Final Medical", "View") ? (
+                                    <li data-menu="">
+                                     <Link to="/Final">
+                             <div className="dropdown-item" 
+                              data-i18n="Final medical">
+                           <i class="feather icon-eye"i/>{" "}
+                             <span className="nav-label">Airlines</span>
+                             </div>
+                           </Link>
+                                    </li>
+                                     ) : null}
+                                </ul>
+                            </li>
     );
   } else {
     return <div />;

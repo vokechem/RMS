@@ -78,10 +78,7 @@ class Header extends Component {
     };
     const pStyle1 = {
       color: "#FFC527",
-      float: "left",
       fontSize: "22px",
-      "margin-left": 70,
-      textAlign: "Center",
       "font-family": "Montserrat, sans-serif"
     };
     const pStyle3 = {
@@ -107,12 +104,12 @@ class Header extends Component {
       width: 40
     };
     let photostyle1 = {
-      height: 90,
-      width: 90
+      height: 50,
+      width: 130
     };
     let style2 = {
-      "text-align": "center"
-      //"background-color": "#3c8dbc"
+      "text-align": "center",
+      "background-color": "#3c8dbc"
     };
     let dropdownmenu = {
       width: "280px",
@@ -124,77 +121,57 @@ class Header extends Component {
     "margin-bottom": "0px",
    };
    let bgpage={
-     background :"#e3f0f2"
+     background :"#ffffff"
    }
     return (
-      <div id="page-wrapper" className="bg"style={bgpage}>
-       <div class="row border-bottom">
-        <nav class="navbar navbar-static-top gray-bg" role="navigation"style={margin}>
-            <div className="navbar-header">
-              <a className="navbar-minimalize minimalize-styl-2 btn btn-primary">
-                <i className="fa fa-bars" />{" "}
-              </a>
-            </div>
-            <ul className="nav navbar-top-links navbar-centre">
-              <li>
-                <span className="m-r-sm text-muted welcome-message">
-                  <b style={pStyle}>{this.state.ComapnyName}</b>
-                  <br />
-                  <b style={pStyle1}>Recruitment Management System </b>
-                  <br />
-                  <b style={pStyle3}>{this.state.LoogedinCompay}</b>
-                </span>
-              </li>
-            </ul>
-            <ul class="nav navbar-top-links navbar-right">
-            <li>
-              <span class="m-r-sm text-muted welcome-message"style={pStyle2}>Welcome {localStorage.getItem("UserName")}</span>
-                </li>
-            <li class="dropdown user user-menu">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                  <img
+      <div class="horizontal-layout horizontal-menu 2-columns  navbar-sticky fixed-footer " data-open="hover" data-menu="horizontal-menu" data-col="2-columns">
+      <div class="content-overlay"></div>
+      <nav class="header-navbar navbar-expand-lg navbar navbar-with-menu navbar-fixed navbar-brand-center ">
+          <div class="navbar-header d-xl-block d-none">
+              <ul class="nav navbar-nav flex-row">
+                  <li class="nav-item">
+                  <b style={pStyle1}>RMS</b>
+                  </li>
+              </ul>
+          </div>
+          <div class="navbar-wrapper">
+              <div class="navbar-container content">
+                  <div class="navbar-collapse" id="navbar-mobile">
+                      <div class="mr-auto float-left bookmark-wrapper d-flex align-items-center">
+                          <ul class="nav navbar-nav bookmark-icons">
+                              <img src={ require("./profilepics/download.png") } style={photostyle1} /> 
+                          </ul>
+                      </div>
+                      <ul class="nav navbar-nav float-right">
+                          <li class="dropdown dropdown-user nav-item">
+                            <a class="dropdown-toggle nav-link dropdown-user-link" href="#" data-toggle="dropdown">
+                                  <div class="user-nav d-sm-flex d-none">
+                                    <span class="user-name text-bold-600"> {localStorage.getItem("UserName")}</span>
+                                    <span class="user-status">Available</span></div>
+                                    <span>
+                                    <img
                     src={process.env.REACT_APP_BASE_URL + "/Photos/" + profile}
                     className="rounded-circle"
                     alt="User Image"
-                    style={photostyle}
-                    
+                    style={photostyle}   
                   />
-                </a>
-                <ul className="dropdown-menu" style={dropdownmenu}>
-                  <li className="user-header" style={style2}>
-                    <img
-                      src={
-                        process.env.REACT_APP_BASE_URL + "/Photos/" + profile
-                      }
-                      className="img-circle"
-                      alt="User Image"
-                      style={photostyle1}
-                      onClick={this.profile}
-                      href="/"
-                    />
-                  </li>
-                  <li className="user-footer">
-                    <div className="pull-right">
-                      <Link to="/Profile">
+                 </span>
+                              </a>
+                              <div class="dropdown-menu dropdown-menu-right">
+                              <Link to="/Profile">
                         <b className="btn btn-default btn-flat">Profile</b>
                       </Link>
-                    </div>
-                  </li>
-                </ul>
-                <ul />
-              </li>
-                <li>
-                    <a
-                        onClick={this.logout}
-                        href="/"
-                        className="btn fa fa-sign-out"
-                      >
-                    Log out
-                    </a>
-                </li>
-            </ul>
-          </nav>
-        </div>
+                                
+                                  <div class="dropdown-divider"></div><a class="dropdown-item"                         
+                                  onClick={this.logout}
+                        href="/"><i class="feather icon-power"></i> Logout</a>
+                              </div>
+                          </li>
+                      </ul>
+                  </div>
+              </div>
+          </div>
+      </nav>
         {this.props.children}
       </div>
     );

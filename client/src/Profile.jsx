@@ -203,8 +203,28 @@ class Profile extends Component {
     }
 
     return (
-      <div className="container-fluid">
-        <div className="col-sm-12">
+      <div class="app-content content">
+        <div class="content-overlay"></div>
+        <div class="header-navbar-shadow"></div>
+        <div class="content-wrapper">
+            <div class="content-header row">
+                <div class="content-header-left col-md-9 col-12 mb-2">
+                    <div class="row breadcrumbs-top">
+                        <div class="col-12">
+                            <h2 class="content-header-title float-left mb-0">Update Profile</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="content-body">
+                <section id="description" class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">Profile</h4>
+                    </div>
+                    <div class="card-content">
+                        <div class="card-body">
+                            <div class="card-text">
+                            <div className="col-sm-12">
           <div className="row">
             <div className="col-sm-2">
               <img
@@ -218,11 +238,20 @@ class Profile extends Component {
               <h2> {localStorage.getItem("UserName")}</h2>
               <h2> {this.state.Phone}</h2>
               <h3> {this.state.UserGroup}</h3>
+              <h3>{this.state.Name}</h3>
             </div>
           </div>
         </div>
-        <br />
-        <div className="col-sm-12">
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <section id="css-classes" class="card">
+
+                    <div class="card-content">
+                        <div class="card-body">
+                            <div class="card-text">
+                            <div className="col-sm-12">
           <div className="ibox ">
             <div className="ibox-content">
               <form onSubmit={this.handleSubmit} encType="multipart/form-data">
@@ -331,7 +360,13 @@ class Profile extends Component {
             </div>
           </div>
         </div>
-      </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
     );
   }
 }

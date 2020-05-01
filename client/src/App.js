@@ -66,8 +66,8 @@ function App() {
       return (
         <div id="wrapper">
           <HashRouter>
-            <SideBar />
             <Header>
+                <SideBar />
               <Switch>
                 <Route path="/Logout" exact component={Logout} />;
                 <Route exact path="/" component={DashBoard} />

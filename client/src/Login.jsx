@@ -1,5 +1,17 @@
 import React, { Component } from "react";
+import {
+  Button,
+  Card,
+  CardBody,
+  Row,
+  Col,
+  Form,
+  FormGroup,
+  Input,
+  Label
+} from "reactstrap"
 import swal from "sweetalert";
+import { User, Lock } from "react-feather"
 import { Link } from "react-router-dom";
 class Login extends Component {
   constructor() {
@@ -202,57 +214,61 @@ class Login extends Component {
       color: "white"
     };
     return (
-      <div className="container">
-        <div className="row vertical-center-row">
-          <div className="col-sm-9 col-md-7 col-lg-5 mx-auto">
-            <div className="card card-signin my-5">
-              <div className="card">
-                <div className="card-body">
-                  <h3 className="card-title text-center">Sign In</h3>
-                  <form className="form-signin" onSubmit={this.handleSubmit}>
-                    <label htmlFor="Datereceived" className="font-weight-bold">
-                      Username/Email
-                    </label>
-                    {/* <p>{process.env.REACT_APP_BASE_URL}</p> */}
-                    <div className="input-group form-group">
-                      <div className="input-group-prepend">
-                        <span className="input-group-text">
-                          <i className="fa fa-user" />
-                        </span>
-                      </div>
-                      <input
-                        type="text"
-                        id="inputEmail"
-                        className="form-control"
-                        placeholder="Username"
-                        required
-                        onChange={this.handleInputChange}
-                        name="username"
-                        value={this.state.username}
-                      />
-                    </div>
-                    <label htmlFor="Datereceived" className="font-weight-bold">
-                      Password
-                    </label>
-                    <div className="input-group form-group">
-                      <div className="input-group-prepend">
-                        <span className="input-group-text">
-                          <i className="fa fa-key" />
-                        </span>
-                      </div>
-                      <input
-                        type="password"
-                        id="inputpassword"
-                        className="form-control"
-                        placeholder="password"
-                        required
-                        onChange={this.handleInputChange}
-                        value={this.state.password}
-                        name="password"
-                      />
-                    </div>
-                    <div>
-                      <label
+      <div class="app-content content">
+      <div class="content-overlay"></div>
+      <div class="header-navbar-shadow"></div>
+      <div class="content-wrapper">
+          <div class="content-header row">
+          </div>
+          <div class="content-body">
+              <section class="row flexbox-container">
+                  <div class="col-xl-8 col-11 d-flex justify-content-center">
+                      <div class="card bg-authentication rounded-0 mb-0">
+                          <div class="row m-0">
+                              <div class="col-lg-6 d-lg-block d-none text-center align-self-center px-1 py-0">
+                                  <img src="../../../app-assets/images/pages/login.png" alt="branding logo"/>
+                              </div>
+                              <div class="col-lg-6 col-12 p-0">
+                                  <div class="card rounded-0 mb-0 px-2">
+                                      <div class="card-header pb-1">
+                                          <div class="card-title">
+                                              <h4 class="mb-0">Login</h4>
+                                          </div>
+                                      </div>
+                                      <p class="px-2">Welcome back, please login to your account.</p>
+                                      <div class="card-content">
+                                          <div class="card-body pt-1">
+                                          <Form onSubmit={this.handleSubmit}>
+                          <FormGroup className="form-label-group position-relative has-icon-left">
+                            <Input
+                              type="text"
+                              required
+                              placeholder="Username"
+                              onChange={this.handleInputChange}
+                              name="username"
+                              value={this.state.username}
+                            />
+                            <div className="form-control-position">
+                              <User size={15} />
+                            </div>
+                            <Label>Username</Label>
+                          </FormGroup>
+                          <FormGroup className="form-label-group position-relative has-icon-left">
+                            <Input
+                              type="password"
+                              required
+                              placeholder="Password"
+                              onChange={this.handleInputChange}
+                              value={this.state.password}
+                              name="password"
+                            />
+                            <div className="form-control-position">
+                              <Lock size={15} />
+                            </div>
+                            <Label>Password</Label>
+                          </FormGroup>
+                          <FormGroup className="d-flex justify-content-between align-items-center">
+                          <label
                         htmlFor="Datereceived"
                         className="font-weight-bold"
                       >
@@ -271,14 +287,14 @@ class Login extends Component {
                         {this.state.stopcounter ? (
                           <button
                             type="submit"
-                            className="btn btn-sm btn-primary  text-uppercase float-left"
+                            className="btn btn-sm btn-success  text-uppercase float-left"
                           >
-                            Get SMS Code
+                           Get SMS
                           </button>
                         ) : (
                             <b
                               style={btnstyle}
-                              className="btn btn-sm btn-btn-primary"
+                              className="btn btn-sm btn-btn-success"
                               id="counter"
                             ></b>
                           )}
@@ -290,34 +306,31 @@ class Login extends Component {
                       >
                         {this.state.msg1}
                       </label>
-                    </div>
-                  </form>
-                  <div className="input-group form-group text">
-                    <button
-                      style={btnstyle}
-                      className="btn  btn-primary form-control"
-                      onClick={this.VerifySMS}
-                    >
-                      Login
-                    </button>
+                          </FormGroup>
+                        </Form>
+                             </div>
+                           </div>
+                                      <div className="d-flex justify-content-between">
+                                <Link to="ForgotPassword">Forgot password?</Link>
+                            <button type="submit"
+                                      onClick={this.VerifySMS}
+                                      style={btnstyle}
+                                       class="btn btn-success float-center btn-inline">Login</button>
+                          </div>
+                      <div className="auth-footer">
+                        <div className="divider">
+                        </div>
+                      </div>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
                   </div>
-                </div>
-              </div>
+              </section>
 
-              <div className="card-footer">
-                {/* <div className="d-flex justify-content-center links">
-                  Don't have an account?{" "}
-                  <Link to="/createacc">Create Account</Link>
-                </div> */}
-                <br />
-                <div className="d-flex justify-content-center">
-                  <Link to="ForgotPassword">Forgot your password?</Link>
-                </div>
-              </div>
-            </div>
           </div>
-        </div>
       </div>
+  </div>
     );
   }
 }

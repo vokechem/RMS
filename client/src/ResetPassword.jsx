@@ -105,11 +105,29 @@ class ResetPassword extends Component {
       return <Redirect to="/" push />;
     }
     return (
-      <div>
-        <div className="row"></div>
-        <br />
-        <br />
-        <br />
+      <div class="app-content content">
+      <div class="content-overlay"></div>
+      <div class="header-navbar-shadow"></div>
+      <div class="content-wrapper">
+          <div class="content-header row">
+              <div class="content-header-left col-md-9 col-12 mb-2">
+                  <div class="row breadcrumbs-top">
+                      <div class="col-12">
+                        
+                      </div>
+                  </div>
+              </div>
+     
+          </div>
+          <div class="content-body">
+              <section id="description" class="card">
+                  <div class="card-header">
+                      <h4 class="card-title">Change Password</h4>
+                  </div>
+                  <div class="card-content">
+                      <div class="card-body">
+                          <div class="card-text">
+                          <div>
         <div style={divconatinerstyle}>
           <form
             style={formstyle}
@@ -157,7 +175,7 @@ class ResetPassword extends Component {
             </div>
             <div className=" row">
               <div className="col-sm-7"></div>
-              <div className="col-sm-3">
+              <div className="d-flex justify-content-between">
                 <button type="submit" className="btn btn-primary">
                   Update Now
                 </button>
@@ -174,6 +192,13 @@ class ResetPassword extends Component {
           </form>
         </div>
       </div>
+                          </div>
+                      </div>
+                  </div>
+              </section>
+          </div>
+      </div>
+  </div>
     );
   }
 }

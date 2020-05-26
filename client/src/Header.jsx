@@ -105,7 +105,8 @@ class Header extends Component {
     };
     let photostyle1 = {
       height: 50,
-      width: 130
+      width: 130,
+      background :"#0079AD"
     };
     let style2 = {
       "text-align": "center",
@@ -121,12 +122,18 @@ class Header extends Component {
     "margin-bottom": "0px",
    };
    let bgpage={
-     background :"#ffffff"
-   }
+    background :"#0079AD"
+  }
+  let page={
+    color:"#ffffff"
+  }
+  let body={
+    background: "#ECF0F5"
+  }
     return (
-      <div class="horizontal-layout horizontal-menu 2-columns  navbar-sticky fixed-footer " data-open="hover" data-menu="horizontal-menu" data-col="2-columns">
+      <div class="horizontal-layout horizontal-menu 2-columns  navbar-sticky fixed-footer " data-open="hover" data-menu="horizontal-menu" data-col="2-columns"style={body}>
       <div class="content-overlay"></div>
-      <nav class="header-navbar navbar-expand-lg navbar navbar-with-menu navbar-fixed navbar-brand-center ">
+      <nav class="header-navbar navbar-expand-lg navbar navbar-with-menu navbar-fixed navbar-brand-center"style={bgpage}>
           <div class="navbar-header d-xl-block d-none">
               <ul class="nav navbar-nav flex-row">
                   <li class="nav-item">
@@ -146,8 +153,8 @@ class Header extends Component {
                           <li class="dropdown dropdown-user nav-item">
                             <a class="dropdown-toggle nav-link dropdown-user-link" href="#" data-toggle="dropdown">
                                   <div class="user-nav d-sm-flex d-none">
-                                    <span class="user-name text-bold-600"> {localStorage.getItem("UserName")}</span>
-                                    <span class="user-status">Available</span></div>
+                                    <span class="user-name text-bold-600"style={page}> {localStorage.getItem("UserName")}</span>
+                                    </div>
                                     <span>
                                     <img
                     src={process.env.REACT_APP_BASE_URL + "/Photos/" + profile}

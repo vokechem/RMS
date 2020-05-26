@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>PDF Result Template</title>
+    <style>
+        .logo {
+            height: 130px;
+            width: 170px;
+        }
+
+        .img-container {
+            text-align: center;
+            display: block;
+        }
+
+        .headings {
+            text-align: center;
+        }
+
+        .Container {
+            width: 80%;
+            margin: 0 auto;
+        }
+
+        .Footer {
+            text-align: right;
+        }
+
+        .dotted {
+            border-bottom: 1px dashed #000000;
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="Container">
+        <span class="img-container">
+            <img class="logo" src="{{ "logopath" }}" alt="" />
+        </span>
+        <h3 class="headings">JOB MAJUU</h3>
+        <H4 class="headings">MEDICAL DECLARATION FORM</H4>
+        <H4 class="headings">Address: Lyric House- 6th Floor Kimathi Street</H4>
+        <H4 class="headings">Email: jobs@jobmajuu.com</H4>
+        <H4 class="headings">Phone: 0790 121 121</H4>
+        <hr> 
+        <div class="col-sm-12">
+     <div className="col-lg-6">
+          <p>FullName :{{Fullname}}</p>
+        <P>IDNumber: {{IDNumber}} </P>
+        <p>Gender:{{Gender}}</p>
+     </div>
+      <div className="col-lg-6">
+          <p>FullName :{{Fullname}}</p>
+        <P>IDNumber: {{IDNumber}} </P>
+        <p>Gender:{{Gender}}</p>
+     </div>
+    </div>
+        <br>
+        <h3 class="Footer">CEO</h3>
+    </div>
+</body>
+
+</html>

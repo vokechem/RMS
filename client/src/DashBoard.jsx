@@ -19,6 +19,7 @@ class DashBoard extends Component {
       Applications: [],
       Data: [],
       ChangePassword: data.ChangePassword,
+      PendingApplication:[],
       TotalApplicants: [],
       SystemUsers:[],
       TotalCost:[],
@@ -95,9 +96,10 @@ class DashBoard extends Component {
     //   swal("", "Select Date to Continue", "error");
     // }
   };
-  TotalApplicants = () => {
-       fetch(
-      "/api/Dashboard/" ,
+ 
+  fetchPendingApplication = () => {
+    fetch(
+      "/api/Dashboard/" + localStorage.getItem("UserName") + "/Notresolved",
       {
         method: "GET",
         headers: {
@@ -107,9 +109,9 @@ class DashBoard extends Component {
       }
     )
       .then(res => res.json())
-      .then(TotalApplicants=> {
-        if (TotalApplicants.length > 0) {
-          this.setState({ TotalApplicants: TotalApplicants});
+      .then(PendingApplication => {
+        if (PendingApplication.length > 0) {
+          this.setState({ PendingApplication: PendingApplication });
         } else {
           //swal("", PendingApplication.message, "error");
         }
@@ -118,6 +120,29 @@ class DashBoard extends Component {
         // swal("", err.message, "error");
       });
   };
+  TotalApplicants = () => {
+    fetch(
+   "/api/TotalApplicant/" ,
+   {
+     method: "GET",
+     headers: {
+       "Content-Type": "application/json",
+       "x-access-token": localStorage.getItem("token")
+     }
+   }
+ )
+   .then(res => res.json())
+   .then(TotalApplicants=> {
+     if (TotalApplicants.length > 0) {
+       this.setState({ TotalApplicants: TotalApplicants});
+     } else {
+       //swal("", PendingApplication.message, "error");
+     }
+   })
+   .catch(err => {
+     // swal("", err.message, "error");
+   });
+};
   TotalCost = () => {
     fetch(
    "/api/TotalCost/" ,
@@ -474,6 +499,7 @@ TravelledApplicant = () => {
               this.TicketingRedAlerts();
               this.FinalRedAlerts();
               this.TravelledApplicant();
+              this.fetchPendingApplication();
             } else {
               localStorage.clear();
               return (window.location = "/#/Logout");
@@ -503,13 +529,13 @@ TravelledApplicant = () => {
       
     };
     let head = {
-      font: "16px",
-      color:"red"
+      font: "12px",
+      color:"#FF0000"
       
     };
     let judy={
-      font:"10px",
-      color:"navy",
+      font:"12px",
+      color:"#0D3140",
     }
     const data = [["Month", "Registration"]];
     [...this.state.Data].map((k, i) => {
@@ -548,7 +574,7 @@ TravelledApplicant = () => {
                                 </div>
                                 <h3>{r.SystemUsers}</h3>
                         <p>System users</p>
-                        <Link to="/Registration" className="text-info">
+                        <Link to="/Users" className="text-info">
                                   More info <i className="fa fa-arrow-circle-right" />
                                 </Link>
                             </div>        
@@ -557,34 +583,15 @@ TravelledApplicant = () => {
                     </div>
                     <div class="col-lg-3 col-sm-6 col-12">
                     {this.state.TotalApplicants.map((r, i) =>
-                        <div class="card">
-                            <div class="card-header d-flex flex-column align-items-start pb-0">
-                                <div class="avatar bg-rgba-success p-50 m-0">
-                                    <div class="avatar-content">
-                                        <i class="feather icon-credit-card text-success font-medium-5"></i>
-                                    </div>
-                                </div>
-                                <h3>{r.totalApplicants}</h3>
-                                <p>Total  applicants</p>
-                                <Link to="/Registration" className="text-info">
-                                  More info <i className="fa fa-arrow-circle-right" />
-                                </Link>
-                            </div>
-                            
-                        </div>
-                        )}
-                    </div>
-                    <div class="col-lg-3 col-sm-6 col-12">
-                    {this.state.SystemUsers.map((r, i) =>
                         <div class="card">
                             <div class="card-header d-flex flex-column align-items-start pb-0">
                                 <div class="avatar bg-rgba-primary p-50 m-0">
                                     <div class="avatar-content">
-                                        <i class="feather icon-users text-primary font-medium-5"></i>
+                                    <i class="feather icon-credit-card text-success font-medium-5"></i>
                                     </div>
                                 </div>
-                                <h3>{r.SystemUsers}</h3>
-                        <p>System users</p>
+                                <h3>{r.totalApplicants}</h3>
+                        <p>Applicants</p>
                         <Link to="/Registration" className="text-info">
                                   More info <i className="fa fa-arrow-circle-right" />
                                 </Link>
@@ -593,27 +600,44 @@ TravelledApplicant = () => {
                           )}
                     </div>
                     <div class="col-lg-3 col-sm-6 col-12">
-                    {this.state.TotalApplicants.map((r, i) =>
+                    {this.state.TotalCost.map((r, i) =>
                         <div class="card">
                             <div class="card-header d-flex flex-column align-items-start pb-0">
-                                <div class="avatar bg-rgba-success p-50 m-0">
+                                <div class="avatar bg-rgba-primary p-50 m-0">
                                     <div class="avatar-content">
-                                        <i class="feather icon-credit-card text-success font-medium-5"></i>
+                                    <i class="feather icon-package text-warning font-medium-5"></i>
                                     </div>
                                 </div>
-                                <h3>{r.totalApplicants}</h3>
-                                <p>Total  applicants</p>
-                                <Link to="/Registration" className="text-info">
+                                <h3>{r.TotalCost}</h3>
+                        <p>Cost</p>
+                        <Link to="/Registration" className="text-info">
                                   More info <i className="fa fa-arrow-circle-right" />
                                 </Link>
-                            </div>
-                            
+                            </div>        
                         </div>
-                        )}
+                          )}
+                    </div>
+                    <div class="col-lg-3 col-sm-6 col-12">
+                    {this.state.TravelledApplicant.map((r, i) =>
+                        <div class="card">
+                            <div class="card-header d-flex flex-column align-items-start pb-0">
+                                <div class="avatar bg-rgba-primary p-50 m-0">
+                                    <div class="avatar-content">
+                                    <i class="feather icon-shopping-cart text-danger font-medium-5"></i>
+                                    </div>
+                                </div>
+                                <h3>{r.travelled}</h3>
+                        <p>Travel</p>
+                        <Link to="/Registration" className="text-info">
+                                  More info <i className="fa fa-arrow-circle-right" />
+                                </Link>
+                            </div>        
+                        </div>
+                          )}
                     </div>
                 </div>
                 <div class="row">
-                        <div class="col-lg-8 col-md-6 col-12">
+                        <div class="col-lg-9 col-md-6 col-12">
                             <div class="card">
                                 <div class="card-content">
                                         {this.state.Data.length > 0 ? (
@@ -637,37 +661,237 @@ TravelledApplicant = () => {
                                 </div>
                             </div>
                         </div>
-                        <div class="col-lg-4 col-md-6 col-12">
+                        <div class="col-lg-3 col-md-6 col-12">
                             <div class="card">
                                 <div class="card-header d-flex justify-content-between align-items-end">
-                                    <h4 class="mb-0">Pending Notification</h4>
-                                    <p class="font-medium-5 mb-0"><i class="feather icon-help-circle text-muted cursor-pointer"></i></p>
-                                </div>
-                                <div class="card-content">
-                                    <div class="card-body px-0 pb-0">
-                                        <div id="goal-overview-chart" class="mt-75"></div>
-                                        <div class="row text-center mx-0">
-                                        {this.state.MinorRedAlerts.map((r, i) =>  
-                                            <div class="col-6 border-top border-right d-flex align-items-between flex-column py-1">
-
-
-                                                  <h5 style={judy}>Minor Medical</h5>
-                                                  <h3 style={head}>{r.minormedicalRedAlerts}</h3>
-                    
-                                            </div>
-                                             )}
-                                            {this.state.DCIRedAlerts.map((r, i) =>
-                                            <div class="col-6 border-top d-flex align-items-between flex-column py-1">
-                                           <h5 style={judy}>DCI Clearance</h5>
-                                           <h3 style={head}>{r.DCIRedAlerts}</h3>
-                                            </div>
-                                             )}
-                                        </div>
+                                    <h4 class="mb-0" style={head}>Pending Notification</h4>
+                                    <div class="avatar bg-rgba-primary p-50 m-0">
+                                    <div class="avatar-content">
+                                    <i class="feather  icon-help-circle text-danger font-medium-5"></i>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
+                                </div>
+                                <br/>
+                                <div class="card-content">
+            {this.state.PendingApplication.map((r, i) =>
+              i % 2 == 0 ? (
+                <div className="row">
+                  <div className="col-lg-12 ">
+                    <div className="small-box bg-green">
+                      <div className="inner">
+                        <h5 style={judy}>{r.Total}</h5>
+                        <h6 style={head}>{r.Description}</h6>
+                      </div>
+                      <div className="icon">
+                        <i className="ion ion-stats-bars" />
+                      </div>
+                      {r.Category === "Applications Approval" ? (
+                        <a href="/#" className="small-box-footer ">
+                          <Link
+                            to="/ApplicationsApprovals"
+                            className="text-info"
+                          >
+                            More info <i className="fa fa-arrow-circle-right" />
+                          </Link>
+                        </a>
+                      ) : null}
+                                           {r.Category === "Minor Medical Approval" ? (
+                        <a href="/#" className="small-box-footer ">
+                          <Link
+                            to="/ApplicationsApprovals"
+                            className="text-info"
+                          >
+                            More info <i className="fa fa-arrow-circle-right" />
+                          </Link>
+                        </a>
+                      ) : null}
+                       {r.Category === "DCI Approval" ? (
+                          <a href="/#" className="small-box-footer ">
+                            <Link to="/DCIApproval" className="text-info">
+                              More info <i className="fa fa-arrow-circle-right" />
+                            </Link>
+                          </a>
+                        ) : null}
+                          {r.Category === "Passport Approval" ? (
+                          <a href="/#" className="small-box-footer ">
+                            <Link to="/PassportApproval" className="text-info">
+                              More info <i className="fa fa-arrow-circle-right" />
+                            </Link>
+                          </a>
+                        ) : null}
+                            {r.Category === "Major Medical Approval" ? (
+                          <a href="/#" className="small-box-footer ">
+                            <Link to="/MajorApproval" className="text-info">
+                              More info <i className="fa fa-arrow-circle-right" />
+                            </Link>
+                          </a>
+                        ) : null}
+                         {r.Category === "Contract Processing Approval" ? (
+                          <a href="/#" className="small-box-footer ">
+                            <Link to="/ContractApproval" className="text-info">
+                              More info <i className="fa fa-arrow-circle-right" />
+                            </Link>
+                          </a>
+                        ) : null}
+                         {r.Category === "Training Approval" ? (
+                          <a href="/#" className="small-box-footer ">
+                            <Link to="/TrainingApproval" className="text-info">
+                              More info <i className="fa fa-arrow-circle-right" />
+                            </Link>
+                          </a>
+                        ) : null}
+                         {r.Category === "Attestation Approval" ? (
+                          <a href="/#" className="small-box-footer ">
+                            <Link to="/AttestationApproval" className="text-info">
+                              More info <i className="fa fa-arrow-circle-right" />
+                            </Link>
+                          </a>
+                        ) : null}
+                          {r.Category === "Final Medical Approval " ? (
+                          <a href="/#" className="small-box-footer ">
+                            <Link to="/FinalApproval" className="text-info">
+                              More info <i className="fa fa-arrow-circle-right" />
+                            </Link>
+                          </a>
+                        ) : null}
+                          {r.Category === "Ticketing Approval" ? (
+                          <a href="/#" className="small-box-footer ">
+                            <Link to="/TicketingApproval" className="text-info">
+                              More info <i className="fa fa-arrow-circle-right" />
+                            </Link>
+                          </a>
+                        ) : null}
+                          {r.Category === "Travelling Approval" ? (
+                          <a href="/#" className="small-box-footer ">
+                            <Link to="/Travelpproval" className="text-info">
+                              More info <i className="fa fa-arrow-circle-right" />
+                            </Link>
+                          </a>
+                        ) : null}
+                        {r.Category === "Visa Approval" ? (
+                          <a href="/#" className="small-box-footer ">
+                            <Link to="/VisaApproval" className="text-info">
+                              More info <i className="fa fa-arrow-circle-right" />
+                            </Link>
+                          </a>
+                        ) : null}
                     </div>
+                  </div>
+                </div>
+              ) : (
+                  <div className="row">
+                    <div className="col-lg-12 ">
+                      <div className="small-box bg-aqua">
+                        <div className="inner">
+                        <h5 style={judy}>{r.Total}</h5>
+                        <h6 style={head}>{r.Description}</h6>
+                        </div>
+                        <div className="icon">
+                          <i className="ion ion-stats-bars" />
+                        </div>
+                        {r.Category === "Applications Approval" ? (
+                          <a href="/#" className="small-box-footer ">
+                            <Link
+                              to="/ApplicationsApprovals"
+                              className="text-info"
+                            >
+                              More info <i className="fa fa-arrow-circle-right" />
+                            </Link>
+                          </a>
+                        ) : null}
+                        {r.Category === "Minor Medical Approval" ? (
+                          <a href="/#" className="small-box-footer ">
+                            <Link to="/MinormedicalApproval" className="text-info">
+                              More info <i className="fa fa-arrow-circle-right" />
+                            </Link>
+                          </a>
+                        ) : null}
+                         {r.Category === "DCI Approval" ? (
+                          <a href="/#" className="small-box-footer ">
+                            <Link to="/DCIApproval" className="text-info">
+                              More info <i className="fa fa-arrow-circle-right" />
+                            </Link>
+                          </a>
+                        ) : null}
+                         {r.Category === "Passport Approval" ? (
+                          <a href="/#" className="small-box-footer ">
+                            <Link to="/PassportApproval" className="text-info">
+                              More info <i className="fa fa-arrow-circle-right" />
+                            </Link>
+                          </a>
+                        ) : null}
+                            {r.Category === "Major Medical Approval" ? (
+                          <a href="/#" className="small-box-footer ">
+                            <Link to="/MajorApproval" className="text-info">
+                              More info <i className="fa fa-arrow-circle-right" />
+                            </Link>
+                          </a>
+                        ) : null}
+                         {r.Category === "Contract Processing Approval" ? (
+                          <a href="/#" className="small-box-footer ">
+                            <Link to="/ContractApproval" className="text-info">
+                              More info <i className="fa fa-arrow-circle-right" />
+                            </Link>
+                          </a>
+                        ) : null}
+                         {r.Category === "Training Approval" ? (
+                          <a href="/#" className="small-box-footer ">
+                            <Link to="/TrainingApproval" className="text-info">
+                              More info <i className="fa fa-arrow-circle-right" />
+                            </Link>
+                          </a>
+                        ) : null}
+                        {r.Category === "NEA Approval" ? (
+                          <a href="/#" className="small-box-footer ">
+                            <Link to="/NEAApproval" className="text-info">
+                              More info <i className="fa fa-arrow-circle-right" />
+                            </Link>
+                          </a>
+                        ) : null}
+                                                {r.Category === "Attestation Approval" ? (
+                          <a href="/#" className="small-box-footer ">
+                            <Link to="/AttestationApproval" className="text-info">
+                              More info <i className="fa fa-arrow-circle-right" />
+                            </Link>
+                          </a>
+                        ) : null}
+                          {r.Category === "Final Medical Approval " ? (
+                          <a href="/#" className="small-box-footer ">
+                            <Link to="/FinalApproval" className="text-info">
+                              More info <i className="fa fa-arrow-circle-right" />
+                            </Link>
+                          </a>
+                        ) : null}
+                          {r.Category === "Ticketing Approval" ? (
+                          <a href="/#" className="small-box-footer ">
+                            <Link to="/TicketingApproval" className="text-info">
+                              More info <i className="fa fa-arrow-circle-right" />
+                            </Link>
+                          </a>
+                        ) : null}
+                          {r.Category === "Travelling Approval" ? (
+                          <a href="/#" className="small-box-footer ">
+                            <Link to="/Travelpproval" className="text-info">
+                              More info <i className="fa fa-arrow-circle-right" />
+                            </Link>
+                          </a>
+                        ) : null}
+                        {r.Category === "Visa Approval" ? (
+                          <a href="/#" className="small-box-footer ">
+                            <Link to="/VisaApproval" className="text-info">
+                              More info <i className="fa fa-arrow-circle-right" />
+                            </Link>
+                          </a>
+                        ) : null}
+                      </div>
+                    </div>
+                  </div>
+                )
+            )}
+          </div>
+          </div>
+           </div>
+           </div>
             </section>
           </div>
       </div>

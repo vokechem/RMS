@@ -487,61 +487,71 @@ class UserGroups extends Component {
     let handleCheckBoxChange = this.handleCheckBoxChange;
 
     return (
-      <div>
-        <div>
-          <div className="row wrapper border-bottom white-bg page-heading">
-            <div className="col-lg-9">
-              <ol className="breadcrumb">
-                <li className="breadcrumb-item">
-                  <h2>User groups</h2>
-                </li>
-              </ol>
-            </div>
-            <div className="col-lg-3">
-              <div className="row wrapper ">
-                {this.validaterole("Security Groups", "AddNew") ? (
-                  <button
-                    type="button"
-                    style={{ marginTop: 40 }}
-                    onClick={this.openModal}
-                    className="btn btn-primary float-left fa fa-plus"
-                  >
-                    &nbsp; New
-                  </button>
-                ) : null}
-                &nbsp;
-                {this.validaterole("Security Groups", "Export") ? (
-                  <button
-                    onClick={this.exportpdf}
-                    type="button"
-                    style={{ marginTop: 40 }}
-                    className="btn btn-primary float-left fa fa-file-pdf-o fa-2x"
-                  >
-                    &nbsp;PDF
-                  </button>
-                ) : null}
-                &nbsp;
-                {this.validaterole("Security Groups", "Export") ? (
-                  <ExcelFile
-                    element={
-                      <button
-                        type="button"
-                        style={{ marginTop: 40 }}
-                        className="btn btn-primary float-left fa fa-file-excel-o fa-2x"
-                      >
-                        &nbsp; Export
-                      </button>
-                    }
-                  >
-                    <ExcelSheet data={rows} name="userGroups">
+      <div class="app-content content">
+      <div class="content-overlay"></div>
+      <div class="header-navbar-shadow"></div>
+      <div class="content-wrapper">
+          <div class="content-header row">
+              <div class="content-header-left col-md-9 col-12 mb-2">
+                  <div class="row breadcrumbs-top">
+                      <div class="col-12">
+                          <h2 class="content-header-title float-left mb-0">System User Groups</h2>
+                      </div>
+                  </div>
+              </div>
+              <div class="content-header-right text-md-right col-md-3 col-12 d-md-block d-none">
+              <div class="form-group breadcrum-right">
+              {this.validaterole("Security Groups", "AddNew") ? (
+                <button
+                  type="button"
+                  onClick={this.openModal}
+                  className="btn btn-success  fa fa-plus"
+                >
+                 New
+                </button>
+              ) : null}
+              &nbsp;&nbsp;&nbsp;
+              {this.validaterole("Security Groups", "Export") ? (
+                <button
+                  type="button"
+                  onClick={this.exportpdf}
+                  className="btn btn-success fa fa-file-pdf-o"
+                >
+                  &nbsp;Export
+                </button>
+              ) : null}
+           &nbsp;&nbsp;&nbsp;
+              {this.validaterole("Security Groups", "Export") ? (
+                <ExcelFile
+                  element={
+                    <button
+                      type="button"
+                      className="btn btn-success  fa fa-file-excel-o "
+                    >
+                      &nbsp; Excel
+                    </button>
+                  }
+                >
+                      <ExcelSheet data={rows} name="userGroups">
                       <ExcelColumn label="GroupID" value="UserGroupID" />
                       <ExcelColumn label="Name" value="Name" />
                       <ExcelColumn label="Description" value="Description" />
                     </ExcelSheet>
                   </ExcelFile>
-                ) : null}
-                &nbsp; &nbsp; &nbsp; &nbsp;
-                <Popup
+              ) : null}
+            
+                    </div>
+              </div>
+          </div>
+          <div class="content-body">
+              <section id="description" class="card">
+                  <div class="card-content">
+                      <div class="card-body">
+                          <div class="card-text">
+                          <TableWrapper>
+          <Table Rows={Rowdata1} columns={ColumnData} />
+        </TableWrapper>
+        <Popup
                   open={this.state.open}
                   closeOnDocumentClick
                   onClose={this.closeModal}
@@ -603,12 +613,12 @@ class UserGroups extends Component {
                               <div className="col-sm-12 ">
                                 <div className=" row">
                                   <div className="col-sm-2" />
-                                  <div className="col-sm-8" />
+                                  <div className="col-sm-7" />
                                   <div className="col-sm-1">
                                     {this.state.isUpdate ? (
                                       <input
                                         type="button"
-                                        className="btn btn-primary float-right"
+                                        className="btn btn-success float-right"
                                         value="Roles"
                                         onClick={this.OpenRolesOpoup}
                                       />
@@ -617,7 +627,7 @@ class UserGroups extends Component {
                                   <div className="col-sm-1">
                                     <button
                                       type="submit"
-                                      className="btn btn-primary float-left"
+                                      className="btn btn-success float-left"
                                     >
                                       Save
                                     </button>
@@ -1549,16 +1559,14 @@ class UserGroups extends Component {
                     </div>
                   </div>
                 </Popup>
-                &nbsp;&nbsp;
-              </div>
-            </div>
+                          </div>
+                      </div>
+                  </div>
+              </section>
           </div>
-        </div>
-
-        <TableWrapper>
-          <Table Rows={Rowdata1} columns={ColumnData} />
-        </TableWrapper>
       </div>
+  </div>
+
     );
   }
 }

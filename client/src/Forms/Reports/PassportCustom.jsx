@@ -184,27 +184,24 @@ class PassportCustom extends Component {
       }
     ];
     return (
-      <div>
-        <div>
-          <div className="row wrapper border-bottom white-bg page-heading">
-            <div className="col-lg-9">
-              <ol className="breadcrumb">
-                <li className="breadcrumb-item">
-                  <h2>DCI CLearance Report</h2>
-                </li>
-              </ol>
-            </div>
+      <div class="app-content content">
+      <div class="content-overlay"></div>
+      <div class="header-navbar-shadow"></div>
+      <div class="content-wrapper">
+          <div class="content-header row">
+              <div class="content-header-left col-md-9 col-12 mb-2">
+                  <div class="row breadcrumbs-top">
+                      <div class="col-12">
+                          <h2 class="content-header-title float-left mb-0" style={{ color: "#1c84c6" }}>Passport Processing Report</h2>   
+                      </div>
+                  </div>
+              </div>
           </div>
-        </div>
-
-        <div>
-          <br />
-          <div className="row">
-            <div
-              style={{ margin: "10px" }}
-              className="col-lg-12 border border-success rounded bg-white"
-            >
-              <div style={FormStyle}>
+          <div class="content-body">
+              <section id="description" class="card">
+                  <div class="card-content">
+                      <div class="card-body">
+                          <div class="card-text">
                 <div class="row">
                   <div class="col-sm-2 border border-success rounded">
                     <h3 style={{ color: "blue" }}>Filter Criteria</h3>
@@ -269,58 +266,24 @@ class PassportCustom extends Component {
                     <br />
                     <button
                       onClick={this.Downloadfile}
-                      className="btn btn-primary"
+                      className="btn btn-info"
                       type="button"
                     >
                       Submit
                     </button>{" "}
                     {this.state.Data.length > 0 ? (
-                      <ExcelFile
-                        element={
-                          <button
-                            type="button"
-                            className="btn btn-success  fa fa-file-excel-o fa-2x"
-                          >
-                            &nbsp; Excel
-                          </button>
-                        }
-                      >
-                          <ExcelSheet
-                            data={this.state.Data}
-                            name="DCI"
-                          >
-                            <ExcelColumn
-                              label="Fullname"
-                              value="Fullname"
-                            />
-
-                            <ExcelColumn label="Number" value="Number" />
-
-                            <ExcelColumn
-                              label="Commence date"
-                              value="COM"
-                            />
-
-                            <ExcelColumn
-                              label="Exam Date"
-                              value="EOM"
-                            />
-
-                            <ExcelColumn
-                              label="Transcript_status"
-                              value="Transcript_status"
-                            />
-                             <ExcelColumn
-                              label="Status"
-                              value="Status"
-                            />
-                          </ExcelSheet>
-                      </ExcelFile>
+                                  <button
+                                  onClick={() => window.print()}
+                                  className="btn btn-success"
+                                  type="button"
+                                >
+                                  Print
+                                </button>
                     ) : null}
                     <br />
                     <p></p>
                   </div>
-                  <div class="col-sm-10"style={{ overflow: "scroll" }}>
+                  <div class="col-sm-10 border border-success rounded"style={{ overflow: "scroll" }}>
                   <h3 style={{ cursor: "pointer", color: "#1c84c6" }}>
                    Passport processing And Booking
                         {/* {dateFormat(
@@ -343,9 +306,7 @@ class PassportCustom extends Component {
                           <th>Passport Number</th>
                           <th>Type</th>
                           <th>Collection Date</th>
-                          <th>Cost</th>
                           <th>Location</th>
-                          <th>Cost Incurred</th>
                         </thead>
                         {this.state.Data.map((r, i) => (
                           <tr>
@@ -397,35 +358,28 @@ class PassportCustom extends Component {
                             >
                                  {new Date(r.Passport_Collection_Date).toLocaleDateString()}
                             </td>
-                            <td
-                              style={{ cursor: "pointer" }}
-                             
-                            >
-                              {r.Cost}
-                            </td>
+                        
                             <td
                               style={{ cursor: "pointer" }}
                              
                             >
                               {r.Location}
                             </td>
-                            <td
-                              style={{ cursor: "pointer" }}
-                             
-                            >
-                              {r.CostIncurred}
-                            </td>
                           </tr>
                         ))}
                       </table>
                     <br />
-                  </div>
-                </div>
-              </div>
+                 
             </div>
           </div>
-        </div>
+        
+                          </div>
+                      </div>
+                  </div>
+              </section>
+          </div>
       </div>
+  </div>
     );
   }
 }

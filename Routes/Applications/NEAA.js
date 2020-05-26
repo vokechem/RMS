@@ -62,8 +62,8 @@ NEAA.post("/", auth.validateRole("NEAA"), function(req, res) {
     DOS:Joi.date().required(),
     Approved_Status: Joi.string().required(),
     DOA:Joi.date().required(),
-    Reason: Joi.string(),
-    RDate:Joi.date(),
+    Reason: Joi.string().allow(null).allow(""),
+    RDate:Joi.date().allow(null).allow(""),
   });
   const result = Joi.validate(req.body, schema);
   if (!result.error) {
@@ -116,8 +116,8 @@ NEAA.put("/:ID", auth.validateRole("NEAA"), function (req, res) {
         DOS:Joi.date().required(),
         Approved_Status: Joi.string().required(),
         DOA:Joi.date().required(),
-        Reason: Joi.string(),
-        RDate:Joi.date(),
+        Reason: Joi.string().allow(null).allow(""),
+        RDate:Joi.date().allow(null).allow(""),
     });
     const result = Joi.validate(req.body, schema);
     if (!result.error) {

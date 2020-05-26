@@ -3,9 +3,7 @@ import swal from "sweetalert";
 import Table from "./../../Table";
 import TableWrapper from "./../../TableWrapper";
 import Select from "react-select";
-import { Progress } from "reactstrap";
-import axios from "axios";
-import { ToastContainer, toast } from "react-toastify";
+import Modal from "react-awesome-modal";
 import "react-toastify/dist/ReactToastify.css";
 import ReactExport from "react-data-export";
 var dateFormat = require("dateformat");
@@ -32,27 +30,26 @@ class Minor extends Component {
       RepeatCost:"",
       Others:"0",
       ID: "",
+      Status:"",
       MedID:"",
       isUpdate: false,
       selectedFile: null
     };
-
     this.Resetsate = this.Resetsate.bind(this);
     this.handleSelectChange = this.handleSelectChange.bind(this);
     this.handleInputChange = this.handleInputChange.bind(this);
+    this.openModal = this.openModal.bind(this);
+    this.closeModal = this.closeModal.bind(this);
   }
   showDiv() {
     document.getElementById("nav-profile-tab").click();
   }
-  handleswitchMenu = e => {
-    e.preventDefault();
-    if (this.state.profile === false) {
-      this.setState({ profile: true });
-    } else {
-      this.setState({ profile: false });
-    }
-
-    //this.setnewstate();
+  openModal() {
+    this.setState({ open: true });
+    this.Resetsate();
+  }
+  closeModal = () => {
+    this.setState({ open: false });
   };
   handleSelectChange = (Facility, actionMeta) => {
     if (actionMeta.name == "MedicalFacility") {
@@ -133,109 +130,9 @@ class Minor extends Component {
       PIN: "",
       Companyregistrationdate: "",
       RegistrationNo: ""
-    
     };
     this.setState(data);
   }
-  maxSelectFile = event => {
-    let files = event.target.files; // create file object
-    if (files.length > 1) {
-      const msg = "Only One image can be uploaded at a time";
-      event.target.value = null; // discard selected file
-      toast.warn(msg);
-      return false;
-    }
-    return true;
-  };
-  checkMimeType = event => {
-    let files = event.target.files;
-    let err = []; // create empty array
-    const types = ["image/png", "image/jpeg", "image/gif"];
-    for (var x = 0; x < files.length; x++) {
-      if (types.every(type => files[x].type !== type)) {
-        err[x] = files[x].type + " is not a supported format\n";
-        // assign message to array
-      }
-    }
-    for (var z = 0; z < err.length; z++) {
-      // loop create toast massage
-      event.target.value = null;
-      toast.error(err[z]);
-    }
-    return true;
-  };
-  checkFileSize = event => {
-    let files = event.target.files;
-    let size = 2000000;
-    let err = [];
-    for (var x = 0; x < files.length; x++) {
-      if (files[x].size > size) {
-        err[x] = files[x].type + "is too large, please pick a smaller file\n";
-      }
-    }
-    for (var z = 0; z < err.length; z++) {
-      toast.error(err[z]);
-      event.target.value = null;
-    }
-    return true;
-  };
-  onClickHandler = () => {
-    if (this.state.selectedFile) {
-      const data = new FormData();
-      // var headers = {
-      //   "Content-Type": "multipart/form-data",
-      //   "x-access-token": localStorage.getItem("token")
-      // };
-
-      //for single files
-      //data.append("file", this.state.selectedFile);
-      //for multiple files
-      for (var x = 0; x < this.state.selectedFile.length; x++) {
-        data.append("file", this.state.selectedFile[x]);
-      }
-      axios
-        .post("/api/upload", data, {
-          // receive two parameter endpoint url ,form data
-          onUploadProgress: ProgressEvent => {
-            this.setState({
-              loaded: (ProgressEvent.loaded / ProgressEvent.total) * 100
-            });
-          }
-        })
-        .then(res => {
-          this.setState({
-            Logo: res.data
-          });
-          // localStorage.setItem("UserPhoto", res.data);
-          toast.success("upload success");
-        })
-        .catch(err => {
-          toast.error("upload fail");
-        });
-    } else {
-      toast.warn("Please select a photo to upload");
-    }
-  };
-  onChangeHandler = event => {
-    //for multiple files
-    var files = event.target.files;
-    if (
-      this.maxSelectFile(event) &&
-      this.checkFileSize(event) &&
-      this.checkMimeType(event)
-    ) {
-      this.setState({
-        selectedFile: files,
-        loaded: 0
-      });
-
-      //for single file
-      // this.setState({
-      //   selectedFile: event.target.files[0],
-      //   loaded: 0
-      // });
-    }
-  };
   fetchMinor = () => {
     fetch("/api/Minor", {
       method: "GET",
@@ -260,7 +157,6 @@ class Minor extends Component {
   componentDidMount() {
     let token = localStorage.getItem("token");
     if (token == null) {
-     
       localStorage.clear();
       return (window.location = "/#/Logout");
     } else {
@@ -301,11 +197,8 @@ class Minor extends Component {
       Cost: this.state.Cost,
       Type:this.state.Type,
       RepeatCost:this.state.RepeatCost,
-      Others:this.state.Others,
-     
-     
+      Others:this.state.Others  
     };
-
     if (this.state.isUpdate) {
       this.UpdateData("/api/Minor/" + this.state.ID, data);
     } else {
@@ -313,7 +206,6 @@ class Minor extends Component {
     }
   };
   handleEdit = Minor => {
- 
     const data = {
       Number: Minor.Number,
       DOM: dateFormat(
@@ -328,13 +220,8 @@ class Minor extends Component {
       Others:Minor.Others,
       ID:Minor.ID
     };
-
     this.setState(data);
-    if (this.state.profile === false) {
-      this.setState({ profile: true });
-    } else {
-      this.setState({ profile: false });
-    }
+    this.setState({ open: true });
     this.setState({ isUpdate: true });
   };
   exportpdf = () => {
@@ -417,8 +304,7 @@ class Minor extends Component {
     }
   };
   handleDelete = k => {
-    swal({
-      
+    swal({   
       text: "Are you sure that you want to delete this record?",
       icon: "warning",
       dangerMode: true,
@@ -450,6 +336,7 @@ class Minor extends Component {
     });
   };
   UpdateData(url = ``, data = {}) {
+  
     fetch(url, {
       method: "PUT",
       headers: {
@@ -458,18 +345,14 @@ class Minor extends Component {
       },
       body: JSON.stringify(data)
     })
-      .then(response =>
-        response.json().then(data => {
+  .then(response =>
+        response.json()
+        .then(data => {
           this.fetchMinor();
-
           if (data.success) {
             swal("", "Record has been Updated!", "success");
+            this.setState({ open: false });
             this.Resetsate();
-            if (this.state.profile === false) {
-              this.setState({ profile: true });
-            } else {
-              this.setState({ profile: false });
-            }
           } else {
             swal("", data.message, "error");
           }
@@ -491,15 +374,9 @@ class Minor extends Component {
       .then(response =>
         response.json().then(data => {
           this.fetchMinor();
-
           if (data.success) {
             swal("", "Record has been saved!", "success");
             this.setState({ open: false });
-            if (this.state.profile === false) {
-              this.setState({ profile: true });
-            } else {
-              this.setState({ profile: false });
-            }
             this.Resetsate();
           } else {
             swal("", data.message, "error");
@@ -582,8 +459,8 @@ class Minor extends Component {
         sort: "asc"
       },
       {
-        label: "Cost",
-        field: "Cost",
+        label: "Status",
+        field: "Status",
         sort: "asc"
       },
       {
@@ -603,28 +480,34 @@ class Minor extends Component {
           DOM: new Date(k.DOM).toLocaleDateString(),
           Phone: k.Phone,
           Type:k.Type,
-          MedicalFacility: k.MedicalFacility,
-          Cost: k.Cost,
+          MedicalFacility: k.MedicalFacility ,
+          Status: k.Status,
           ID:k.ID,
           action: (
             <span>
-              <a
-                className="fa fa-edit"
-                style={{ color: "#007bff" }}
-                onClick={e => this.handleEdit(k, e)}
-              >
-                {" "}
-                Edit
-              </a>
-              |{" "}
-              <a
-                className="fa fa-trash"
-                style={{ color: "#f44542" }}
-                onClick={e => this.handleDelete(k.ID, e)}
-              >
-                {" "}
-                Delete
-              </a>
+              {this.validaterole("Minor Medical", "Edit") ? (
+                <a
+                  className="fa fa-edit"
+                  style={{ color: "#007bff" }}
+                  onClick={e => this.handleEdit(k, e)}
+                >
+                  Update |
+                </a>
+              ) : (
+                <i>-</i>
+              )}
+              &nbsp;
+              {this.validaterole("Minor Medical", "Remove") ? (
+                <a
+                  className="fa fa-trash"
+                  style={{ color: "#f44542" }}
+                  onClick={e => this.handleDelete(k.ID, e)}
+                >
+                  Delete
+                </a>
+              ) : (
+                <i>-</i>
+              )}
             </span>
           )
         };
@@ -647,103 +530,112 @@ class Minor extends Component {
     let FormStyle = {
       margin: "20px"
     };
-    if (this.state.profile) {
       return (
-        <div>
-          <div>
-            <div className="row wrapper border-bottom white-bg page-heading">
-              <div className="col-lg-9">
-                <ol className="breadcrumb">
-                  <li className="breadcrumb-item">
-                    <h2>Minor Medical</h2>
-                  </li>
-                </ol>
-              </div>
-              <div className="col-lg-3">
-                <div className="row wrapper ">
-                  {this.validaterole("Minor Medical", "AddNew") ? (
-                    <button
-                      type="button"
-                      style={{ marginTop: 40 }}
-                      onClick={this.handleswitchMenu}
-                      className="btn btn-primary float-right fa fa-plus"
-                    >
-                      &nbsp; New
-                    </button>
-                  ) : null}
-                  &nbsp;
-                  {this.validaterole("Minor Medical", "Export") ? (
-                    <button
-                      onClick={this.exportpdf}
-                      type="button"
-                      style={{ marginTop: 40 }}
-                      className="btn btn-primary float-left fa fa-file-pdf-o fa-2x"
-                    >
-                      &nbsp;PDF
-                    </button>
-                  ) : null}
-                  &nbsp;
-                  {this.validaterole("Minor Medical", "Export") ? (
-                    <ExcelFile
-                      element={
-                        <button
-                          type="button"
-                          style={{ marginTop: 40 }}
-                          className="btn btn-primary float-left fa fa-file-excel-o fa-2x"
-                        >
-                          &nbsp; Excel
-                        </button>
-                      }
-                    >
-                      <ExcelSheet data={rows} name="Minor Medical">
-                        <ExcelColumn label="Fullname" value="Fullname" />
-                        <ExcelColumn label="IDNumber" value="IDNumber" />
-                        <ExcelColumn label="MedicalFacility" value="MedicalFacility" />
-                        <ExcelColumn label="Cost" value="Cost" />
-                      </ExcelSheet>
-                    </ExcelFile>
-                  ) : null}
+        <div class="app-content content">
+        <div class="content-overlay"></div>
+        <div class="header-navbar-shadow"></div>
+        <div class="content-wrapper">
+            <div class="content-header row">
+                <div class="content-header-left col-md-9 col-12 mb-2">
+                    <div class="row breadcrumbs-top">
+                        <div class="col-12">
+                            <h2 class="content-header-title float-left mb-0">Minor Medical</h2>
+                            <div class="breadcrumb-wrapper col-12">
+                                <ol class="breadcrumb">
+                                  
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-              </div>
-            </div>
-          </div>
-
-          <TableWrapper>
-            <Table Rows={Rowdata1} columns={ColumnData} />
-          </TableWrapper>
-        </div>
-      );
-    } else {
-      return (
-        <div>
-          <div className="row wrapper border-bottom white-bg page-heading">
-            <div className="col-lg-10">
-              <ol className="breadcrumb">
-                <li className="breadcrumb-item">
-                  <h2>Minor medical</h2>
-                </li>
-              </ol>
-            </div>
-            <div className="col-lg-2">
-              <div className="row wrapper ">
+                <div class="content-header-right text-md-right col-md-3 col-12 d-md-block d-none">
+                    <div class="form-group breadcrum-right">
+                  {this.validaterole("Minor Medical", "AddNew") ? (
                 <button
                   type="button"
-                  style={{ marginTop: 40 }}
-                  onClick={this.handleswitchMenu}
-                  className="btn btn-primary"
+                  onClick={this.openModal}
+                  className="btn btn-success  fa fa-plus"
                 >
-                  &nbsp; Back
+                 New
                 </button>
-              </div>
+              ) : null}
+              &nbsp;&nbsp;&nbsp;
+              {this.validaterole("Minor Medical", "Export") ? (
+                <button
+                  type="button"
+                  onClick={this.exportpdf}
+                  className="btn btn-success fa fa-file-pdf-o"
+                >
+                  &nbsp;Export
+                </button>
+              ) : null}
+           &nbsp;&nbsp;&nbsp;
+              {this.validaterole("Minor Medical", "Export") ? (
+                <ExcelFile
+                  element={
+                    <button
+                      type="button"
+                      className="btn btn-success  fa fa-file-excel-o "
+                    >
+                      &nbsp; Excel
+                    </button>
+                  }
+                >
+                  <ExcelSheet data={rows} name="Minor Medical">
+                    <ExcelColumn label="Name" value="Name" />
+                    <ExcelColumn label="Username" value="Username" />
+                    <ExcelColumn label="Email" value="Email" />
+                    <ExcelColumn label="Phone" value="Phone" />
+                    <ExcelColumn label="IsActive" value="IsActive" />
+                    <ExcelColumn label="UserGroup" value="UserGroup" />
+                  </ExcelSheet>
+                </ExcelFile>
+              ) : null}
+                    </div>
+                </div>
             </div>
-          </div>
-          <br />
-          <div style={divconatinerstyle}>
-            <ToastContainer />
-            <div style={formcontainerStyle}>
-              <div class="col-sm-12">
-                <form style={FormStyle} onSubmit={this.handleSubmit}>
-                  <div class="row">
+            <div class="content-body">
+              
+                <section id="description" class="card">
+                    <div class="card-content">
+                        <div class="card-body">
+                            <div class="card-text">
+                             Search
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <section id="css-classes" class="card">
+                    <div class="card-content">
+                        <div class="card-body">
+                            <div class="card-text">
+                            <TableWrapper>
+            <Table Rows={Rowdata1} columns={ColumnData} />
+          </TableWrapper>
+                            </div>
+                            <Modal
+                  visible={this.state.open}
+                  width="1200"
+                  height="300"
+                  effect="fadeInUp"
+                >
+                  <a
+                    style={{ float: "right", color: "red", margin: "10px" }}
+                    href="javascript:void(0);"
+                    onClick={() => this.closeModal()}
+                  >
+                    <i class="fa fa-close"></i>
+                  </a>
+                  <div>
+                    <h4 style={{ "text-align": "center", color: "#1c84c6" }}>
+                      {" "}
+                      Minor medical
+                    </h4>
+                    <div className="container-fluid">
+                      <div className="col-sm-12">
+                        <div className="ibox-content">
+                          <form onSubmit={this.handleSubmit}>
+                          <div class="row">
                     <div class="col-sm-1">
                       <label for="Number" className="font-weight-bold">
                        IDNumber
@@ -846,25 +738,42 @@ class Minor extends Component {
                       />
                     </div>
                   </div>
-                  <div className=" row">
-                    <div className="col-sm-2" />
-                    <div className="col-sm-8" />
-                    <div className="col-sm-2">
-                      <button
-                        className="btn btn-primary float-right"
-                        type="submit"
-                      >
-                        Save
-                      </button>
+                  <br />
+                  <div className="col-sm-12 ">
+                              <div className=" row">
+                                <div className="col-sm-2">
+                                  <button
+                                    className="btn btn-danger float-left"
+                                    onClick={this.closeModal}
+                                  >
+                                    Cancel
+                                  </button>
+                                </div>
+                                <div className="col-sm-8" />
+                                <div className="col-sm-2">
+                                  <button
+                                    type="submit"
+                                    className="btn btn-primary float-left"
+                                  >
+                                    Save
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          </form>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                </form>
-              </div>
+                </Modal>
+                        </div>
+                    </div>
+                </section>
             </div>
-          </div>
         </div>
+    </div>
       );
-    }
+
   }
 }
 

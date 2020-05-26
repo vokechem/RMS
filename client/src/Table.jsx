@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { MDBDataTable } from "mdbreact";
 
-// import "./Styles/tablestyle.css";
+import "./Styles/tablestyle.css";
 
 class Table extends Component {
   render() {

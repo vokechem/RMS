@@ -10,6 +10,7 @@
     "express": "~4.0.0",
     "express-fileupload": "^1.1.5",
     "express-formidable": "^1.2.0",
+    "follow-redirects": "^1.11.0",
     "handlebars-group-by": "^1.0.1",
     "handlebars-helpers": "^0.10.0",
     "html-pdf": "^2.2.0",
@@ -24,6 +25,7 @@
     "puppeteer-core": "^2.0.0",
     "randomstring": "^1.1.5",
     "react-canvas-js": "^1.0.1",
+    "react-easy-print": "^0.6.0",
     "react-to-print": "^2.6.3",
     "request": "^2.88.0"
   },

@@ -743,12 +743,6 @@ class Users extends Component {
         sort: "asc",
         width: 200
       },
-      // {
-      //   label: "UserCategory",
-      //   field: "UserCategory",
-      //   sort: "asc",
-      //   width: 200
-      // },
       {
         label: "action",
         field: "action",
@@ -845,42 +839,73 @@ class Users extends Component {
       width: "100%"
     };
     return (
-      <div>
-        <div className="row wrapper border-bottom white-bg page-heading">
-          <div className="col-lg-9">
-            <ol className="breadcrumb">
-              <li className="breadcrumb-item">
-                <h2>Users</h2>
-              </li>
-            </ol>
-          </div>
-          <div className="col-lg-3">
-            <div className="row wrapper ">
-              {" "}
-              &nbsp;
+      <div class="app-content content">
+        <div class="content-overlay"></div>
+        <div class="header-navbar-shadow"></div>
+        <div class="content-wrapper">
+            <div class="content-header row">
+                <div class="content-header-left col-md-9 col-12 mb-2">
+                    <div class="row breadcrumbs-top">
+                        <div class="col-12">
+                            <div class="breadcrumb-wrapper col-12">
+                                <h4 class="content-header-title">System Users</h4>     
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="content-header-right text-md-right col-md-3 col-12 d-md-block d-none">
+                    <div class="form-group breadcrum-right">
               {this.validaterole("System Users", "AddNew") ? (
                 <button
                   type="button"
-                  style={{ marginTop: 40 }}
                   onClick={this.openModal}
-                  className="btn btn-primary float-left fa fa-plus"
+                  className="btn btn-success  fa fa-plus"
                 >
-                  &nbsp;New
+                 New
                 </button>
               ) : null}
-              &nbsp;
+              &nbsp;&nbsp;&nbsp;
               {this.validaterole("System Users", "Export") ? (
                 <button
-                  onClick={this.exportpdf}
                   type="button"
-                  style={{ marginTop: 40 }}
-                  className="btn btn-primary float-left fa fa-file-pdf-o fa-2x"
+                  onClick={this.exportpdf}
+                  className="btn btn-success fa fa-file-pdf-o"
                 >
-                  &nbsp;PDF
+                  &nbsp;Export
                 </button>
               ) : null}
-              &nbsp;
-              <Popup
+           &nbsp;&nbsp;&nbsp;
+              {this.validaterole("System Users", "Export") ? (
+                <ExcelFile
+                  element={
+                    <button
+                      type="button"
+                      className="btn btn-success  fa fa-file-excel-o "
+                    >
+                      &nbsp; Excel
+                    </button>
+                  }
+                >
+                  <ExcelSheet data={Rows} name="System Users">
+                    <ExcelColumn label="Name" value="Name" />
+                    <ExcelColumn label="Username" value="Username" />
+                    <ExcelColumn label="Email" value="Email" />
+                    <ExcelColumn label="Phone" value="Phone" />
+                    <ExcelColumn label="IsActive" value="IsActive" />
+                    <ExcelColumn label="UserGroup" value="UserGroup" />
+                  </ExcelSheet>
+                </ExcelFile>
+              ) : null}
+            
+                    </div>
+                </div>
+            </div>
+            <div class="content-body">
+                <section id="description" class="card">
+                    <div class="card-content">
+                        <div class="card-body">
+                            <div class="card-text">
+            <Popup
                 open={this.state.open}
                 closeOnDocumentClick
                 onClose={this.closeModal}
@@ -907,7 +932,7 @@ class Users extends Component {
                                     htmlFor="Datereceived"
                                     className="font-weight-bold"
                                   >
-                                    Full Names
+                                     Full Names
                                   </label>
                                   <input
                                     type="text"
@@ -919,6 +944,30 @@ class Users extends Component {
                                     value={this.state.Name}
                                   />
                                 </div>
+                              </div>
+                            </div>
+                            {/* { this.state.Marital === "Married" ? */}
+                            <div className=" row">
+                              <div className="col-sm">
+                                <div className="form-group">
+                                  <label
+                                    htmlFor="Datereceived"
+                                    className="font-weight-bold"
+                                  >
+                                    Password
+                                  </label>
+                                  <input
+                                    type="password"
+                                    className="form-control"
+                                    name="Password"
+                                    id="Password"
+                                    required
+                                    onChange={this.handleInputChange}
+                                    value={this.state.Password}
+                                  />
+                                </div>
+                              </div>
+                              <div className="col-sm">
                                 <div className="form-group">
                                   <label
                                     htmlFor="Datereceived"
@@ -934,31 +983,13 @@ class Users extends Component {
                                     required
                                     onChange={this.handleInputChange}
                                     value={this.state.Username}
-                                    EnabledStatus
-                                  />
-                                </div>
-                              </div>
-                              <div className="col-sm">
-                              <div className="form-group">
-                                  <label
-                                    htmlFor="Datereceived"
-                                    className="font-weight-bold"
-                                  >
-                                    Password
-                                  </label>
-                                  <input
-                                    type="Password"
-                                    className="form-control"
-                                    name="Password"
-                                    id="Password"
-                                    required
-                                    onChange={this.handleInputChange}
-                                    value={this.state.Password}
                                   />
                                 </div>
                               </div>
                             </div>
-
+                            {/* : null
+                } */}
+                          
                             <div className=" row">
                               <div className="col-sm">
                                 <div className="form-group">
@@ -966,7 +997,7 @@ class Users extends Component {
                                     htmlFor="Datereceived"
                                     className="font-weight-bold"
                                   >
-                                    Email
+                                   Email
                                   </label>
                                   <input
                                     type="email"
@@ -1056,7 +1087,7 @@ class Users extends Component {
                                   />
                                 </div>
                               </div>
-                              {/* <div className="col-sm-2">
+                              <div className="col-sm-2">
                                 <div className="form-group">
                                   <br />
                                   <br />
@@ -1075,7 +1106,7 @@ class Users extends Component {
                                     Board
                                   </label>
                                 </div>
-                              </div> */}
+                              </div>
                               <div class="col-sm-4">
                                 <label
                                   for="Username"
@@ -1474,84 +1505,6 @@ class Users extends Component {
                                           </td>
                                           <td style={tdstyle}>
                                             <input
-                                              fclassName="checkbox"
-                                              id={i + 3}
-                                              type="checkbox"
-                                              name="Export"
-                                              defaultChecked={role.Export}
-                                              onChange={e =>
-                                                handleCheckBoxChange(role, e)
-                                              }
-                                            />
-                                          </td>
-                                        </tr>
-                                      );
-                                    }
-                                  )}
-                                </div>
-                              ) : null}
-                              {this.state.RecruitmentCategory ? (
-                                <div>
-                                  <h3>Recruitment</h3>
-                                  {this.state.RecruitmentCategory.map(
-                                    function(role, i) {
-                                      return (
-                                        <tr id={i}>
-                                          <td style={tablestyle}>
-                                            {role.RoleName}
-                                          </td>
-                                          <td>
-                                            <input
-                                              className="checkbox"
-                                              id={i}
-                                              type="checkbox"
-                                              name="Create"
-                                              defaultChecked={role.AddNew}
-                                              onChange={e =>
-                                                handleCheckBoxChange(role, e)
-                                              }
-                                              // onChange={handleCheckBoxChange(e)}
-                                            />
-                                          </td>
-                                          <td style={tdstyle}>
-                                            <input
-                                              className="checkbox"
-                                              id={i + 1}
-                                              type="checkbox"
-                                              name="View"
-                                              defaultChecked={role.View}
-                                              //   value=""
-                                              onChange={e =>
-                                                handleCheckBoxChange(role, e)
-                                              }
-                                            />
-                                          </td>
-                                          <td style={tdstyle}>
-                                            <input
-                                              className="checkbox"
-                                              id={i + 2}
-                                              type="checkbox"
-                                              name="Delete"
-                                              defaultChecked={role.Remove}
-                                              onChange={e =>
-                                                handleCheckBoxChange(role, e)
-                                              }
-                                            />
-                                          </td>
-                                          <td style={tdstyle}>
-                                            <input
-                                              className="checkbox"
-                                              id={i + 3}
-                                              type="checkbox"
-                                              name="Update"
-                                              defaultChecked={role.Edit}
-                                              onChange={e =>
-                                                handleCheckBoxChange(role, e)
-                                              }
-                                            />
-                                          </td>
-                                          <td style={tdstyle}>
-                                            <input
                                               className="checkbox"
                                               id={i + 3}
                                               type="checkbox"
@@ -1568,400 +1521,10 @@ class Users extends Component {
                                   )}
                                 </div>
                               ) : null}
-                               {this.state.AnalyticsCategory ? (
+                              {this.state.CaseManagementCategory ? (
                                 <div>
-                                  <h3>Analytics</h3>
-                                  {this.state.AnalyticsCategory.map(
-                                    function(role, i) {
-                                      return (
-                                        <tr id={i}>
-                                          <td style={tablestyle}>
-                                            {role.RoleName}
-                                          </td>
-                                          <td>
-                                            <input
-                                              className="checkbox"
-                                              id={i}
-                                              type="checkbox"
-                                              name="Create"
-                                              defaultChecked={role.AddNew}
-                                              onChange={e =>
-                                                handleCheckBoxChange(role, e)
-                                              }
-                                              // onChange={handleCheckBoxChange(e)}
-                                            />
-                                          </td>
-                                          <td style={tdstyle}>
-                                            <input
-                                              className="checkbox"
-                                              id={i + 1}
-                                              type="checkbox"
-                                              name="View"
-                                              defaultChecked={role.View}
-                                              //   value=""
-                                              onChange={e =>
-                                                handleCheckBoxChange(role, e)
-                                              }
-                                            />
-                                          </td>
-                                          <td style={tdstyle}>
-                                            <input
-                                              className="checkbox"
-                                              id={i + 2}
-                                              type="checkbox"
-                                              name="Delete"
-                                              defaultChecked={role.Remove}
-                                              onChange={e =>
-                                                handleCheckBoxChange(role, e)
-                                              }
-                                            />
-                                          </td>
-                                          <td style={tdstyle}>
-                                            <input
-                                              className="checkbox"
-                                              id={i + 3}
-                                              type="checkbox"
-                                              name="Update"
-                                              defaultChecked={role.Edit}
-                                              onChange={e =>
-                                                handleCheckBoxChange(role, e)
-                                              }
-                                            />
-                                          </td>
-                                          <td style={tdstyle}>
-                                            <input
-                                              className="checkbox"
-                                              id={i + 3}
-                                              type="checkbox"
-                                              name="Export"
-                                              defaultChecked={role.Export}
-                                              onChange={e =>
-                                                handleCheckBoxChange(role, e)
-                                              }
-                                            />
-                                          </td>
-                                        </tr>
-                                      );
-                                    }
-                                  )}
-                                </div>
-                              ) : null}
-                               {this.state.MedicalCategory ? (
-                                <div>
-                                  <h3>Medical</h3>
-                                  {this.state.MedicalCategory.map(
-                                    function(role, i) {
-                                      return (
-                                        <tr id={i}>
-                                          <td style={tablestyle}>
-                                            {role.RoleName}
-                                          </td>
-                                          <td>
-                                            <input
-                                              className="checkbox"
-                                              id={i}
-                                              type="checkbox"
-                                              name="Create"
-                                              defaultChecked={role.AddNew}
-                                              onChange={e =>
-                                                handleCheckBoxChange(role, e)
-                                              }
-                                              // onChange={handleCheckBoxChange(e)}
-                                            />
-                                          </td>
-                                          <td style={tdstyle}>
-                                            <input
-                                              className="checkbox"
-                                              id={i + 1}
-                                              type="checkbox"
-                                              name="View"
-                                              defaultChecked={role.View}
-                                              //   value=""
-                                              onChange={e =>
-                                                handleCheckBoxChange(role, e)
-                                              }
-                                            />
-                                          </td>
-                                          <td style={tdstyle}>
-                                            <input
-                                              className="checkbox"
-                                              id={i + 2}
-                                              type="checkbox"
-                                              name="Delete"
-                                              defaultChecked={role.Remove}
-                                              onChange={e =>
-                                                handleCheckBoxChange(role, e)
-                                              }
-                                            />
-                                          </td>
-                                          <td style={tdstyle}>
-                                            <input
-                                              className="checkbox"
-                                              id={i + 3}
-                                              type="checkbox"
-                                              name="Update"
-                                              defaultChecked={role.Edit}
-                                              onChange={e =>
-                                                handleCheckBoxChange(role, e)
-                                              }
-                                            />
-                                          </td>
-                                          <td style={tdstyle}>
-                                            <input
-                                              className="checkbox"
-                                              id={i + 3}
-                                              type="checkbox"
-                                              name="Export"
-                                              defaultChecked={role.Export}
-                                              onChange={e =>
-                                                handleCheckBoxChange(role, e)
-                                              }
-                                            />
-                                          </td>
-                                        </tr>
-                                      );
-                                    }
-                                  )}
-                                </div>
-                              ) : null}
-                                 {this.state.AdministrationCategory ? (
-                                <div>
-                                  <h3>Extenal Services</h3>
-                                  {this.state.AdministrationCategory.map(
-                                    function(role, i) {
-                                      return (
-                                        <tr id={i}>
-                                          <td style={tablestyle}>
-                                            {role.RoleName}
-                                          </td>
-                                          <td>
-                                            <input
-                                              className="checkbox"
-                                              id={i}
-                                              type="checkbox"
-                                              name="Create"
-                                              defaultChecked={role.AddNew}
-                                              onChange={e =>
-                                                handleCheckBoxChange(role, e)
-                                              }
-                                              // onChange={handleCheckBoxChange(e)}
-                                            />
-                                          </td>
-                                          <td style={tdstyle}>
-                                            <input
-                                              className="checkbox"
-                                              id={i + 1}
-                                              type="checkbox"
-                                              name="View"
-                                              defaultChecked={role.View}
-                                              //   value=""
-                                              onChange={e =>
-                                                handleCheckBoxChange(role, e)
-                                              }
-                                            />
-                                          </td>
-                                          <td style={tdstyle}>
-                                            <input
-                                              className="checkbox"
-                                              id={i + 2}
-                                              type="checkbox"
-                                              name="Delete"
-                                              defaultChecked={role.Remove}
-                                              onChange={e =>
-                                                handleCheckBoxChange(role, e)
-                                              }
-                                            />
-                                          </td>
-                                          <td style={tdstyle}>
-                                            <input
-                                              className="checkbox"
-                                              id={i + 3}
-                                              type="checkbox"
-                                              name="Update"
-                                              defaultChecked={role.Edit}
-                                              onChange={e =>
-                                                handleCheckBoxChange(role, e)
-                                              }
-                                            />
-                                          </td>
-                                          <td style={tdstyle}>
-                                            <input
-                                              className="checkbox"
-                                              id={i + 3}
-                                              type="checkbox"
-                                              name="Export"
-                                              defaultChecked={role.Export}
-                                              onChange={e =>
-                                                handleCheckBoxChange(role, e)
-                                              }
-                                            />
-                                          </td>
-                                        </tr>
-                                      );
-                                    }
-                                  )}
-                                </div>
-                              ) : null}
-                                 {this.state.HrPoolCategory ? (
-                                <div>
-                                  <h3>Hr Pool</h3>
-                                  {this.state.HrPoolCategory.map(
-                                    function(role, i) {
-                                      return (
-                                        <tr id={i}>
-                                          <td style={tablestyle}>
-                                            {role.RoleName}
-                                          </td>
-                                          <td>
-                                            <input
-                                              className="checkbox"
-                                              id={i}
-                                              type="checkbox"
-                                              name="Create"
-                                              defaultChecked={role.AddNew}
-                                              onChange={e =>
-                                                handleCheckBoxChange(role, e)
-                                              }
-                                              // onChange={handleCheckBoxChange(e)}
-                                            />
-                                          </td>
-                                          <td style={tdstyle}>
-                                            <input
-                                              className="checkbox"
-                                              id={i + 1}
-                                              type="checkbox"
-                                              name="View"
-                                              defaultChecked={role.View}
-                                              //   value=""
-                                              onChange={e =>
-                                                handleCheckBoxChange(role, e)
-                                              }
-                                            />
-                                          </td>
-                                          <td style={tdstyle}>
-                                            <input
-                                              className="checkbox"
-                                              id={i + 2}
-                                              type="checkbox"
-                                              name="Delete"
-                                              defaultChecked={role.Remove}
-                                              onChange={e =>
-                                                handleCheckBoxChange(role, e)
-                                              }
-                                            />
-                                          </td>
-                                          <td style={tdstyle}>
-                                            <input
-                                              className="checkbox"
-                                              id={i + 3}
-                                              type="checkbox"
-                                              name="Update"
-                                              defaultChecked={role.Edit}
-                                              onChange={e =>
-                                                handleCheckBoxChange(role, e)
-                                              }
-                                            />
-                                          </td>
-                                          <td style={tdstyle}>
-                                            <input
-                                              className="checkbox"
-                                              id={i + 3}
-                                              type="checkbox"
-                                              name="Export"
-                                              defaultChecked={role.Export}
-                                              onChange={e =>
-                                                handleCheckBoxChange(role, e)
-                                              }
-                                            />
-                                          </td>
-                                        </tr>
-                                      );
-                                    }
-                                  )}
-                                </div>
-                              ) : null}
-                                {this.state.EmployementCategory ? (
-                                <div>
-                                  <h3>Employement Request</h3>
-                                  {this.state.EmployementCategory.map(
-                                    function(role, i) {
-                                      return (
-                                        <tr id={i}>
-                                          <td style={tablestyle}>
-                                            {role.RoleName}
-                                          </td>
-                                          <td>
-                                            <input
-                                              className="checkbox"
-                                              id={i}
-                                              type="checkbox"
-                                              name="Create"
-                                              defaultChecked={role.AddNew}
-                                              onChange={e =>
-                                                handleCheckBoxChange(role, e)
-                                              }
-                                              // onChange={handleCheckBoxChange(e)}
-                                            />
-                                          </td>
-                                          <td style={tdstyle}>
-                                            <input
-                                              className="checkbox"
-                                              id={i + 1}
-                                              type="checkbox"
-                                              name="View"
-                                              defaultChecked={role.View}
-                                              //   value=""
-                                              onChange={e =>
-                                                handleCheckBoxChange(role, e)
-                                              }
-                                            />
-                                          </td>
-                                          <td style={tdstyle}>
-                                            <input
-                                              className="checkbox"
-                                              id={i + 2}
-                                              type="checkbox"
-                                              name="Delete"
-                                              defaultChecked={role.Remove}
-                                              onChange={e =>
-                                                handleCheckBoxChange(role, e)
-                                              }
-                                            />
-                                          </td>
-                                          <td style={tdstyle}>
-                                            <input
-                                              className="checkbox"
-                                              id={i + 3}
-                                              type="checkbox"
-                                              name="Update"
-                                              defaultChecked={role.Edit}
-                                              onChange={e =>
-                                                handleCheckBoxChange(role, e)
-                                              }
-                                            />
-                                          </td>
-                                          <td style={tdstyle}>
-                                            <input
-                                              className="checkbox"
-                                              id={i + 3}
-                                              type="checkbox"
-                                              name="Export"
-                                              defaultChecked={role.Export}
-                                              onChange={e =>
-                                                handleCheckBoxChange(role, e)
-                                              }
-                                            />
-                                          </td>
-                                        </tr>
-                                      );
-                                    }
-                                  )}
-                                </div>
-                              ) : null}
-                                {this.state.TrainingCategory ? (
-                                <div>
-                                  <h3>Training</h3>
-                                  {this.state.TrainingCategory.map(
+                                  <h3>Case Management</h3>
+                                  {this.state.CaseManagementCategory.map(
                                     function(role, i) {
                                       return (
                                         <tr id={i}>
@@ -2137,36 +1700,18 @@ class Users extends Component {
                   </div>
                 </div>
               </Popup>
-              {this.validaterole("System Users", "Export") ? (
-                <ExcelFile
-                  element={
-                    <button
-                      type="button"
-                      style={{ marginTop: 40 }}
-                      className="btn btn-primary float-left fa fa-file-excel-o fa-2x"
-                    >
-                      &nbsp; Excel
-                    </button>
-                  }
-                >
-                  <ExcelSheet data={Rows} name="System Users">
-                    <ExcelColumn label="Name" value="Name" />
-                    <ExcelColumn label="Username" value="Username" />
-                    <ExcelColumn label="Email" value="Email" />
-                    <ExcelColumn label="Phone" value="Phone" />
-                    <ExcelColumn label="IsActive" value="IsActive" />
-                    <ExcelColumn label="UserGroup" value="UserGroup" />
-                  </ExcelSheet>
-                </ExcelFile>
-              ) : null}
-            </div>
-          </div>
-        </div>
-
-        <TableWrapper>
+           
+           
+                            <TableWrapper>
           <Table Rows={Rowdata1} columns={ColumnData} />
         </TableWrapper>
-      </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
     );
   }
 }

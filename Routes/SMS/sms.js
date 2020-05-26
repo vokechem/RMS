@@ -39,7 +39,7 @@ sms.post("/", function(req, res) {
         } else {
           let mobileno = req.body.MobileNumber;
           let msg = req.body.Message;
-          let SenderID = results[0][0].SenderID;
+          // let SenderID = results[0][0].SenderID;
           let Password = results[0][0].Key;
           let username = results[0][0].UserName;
           let SMSURL = results[0][0].URL;
@@ -48,26 +48,25 @@ sms.post("/", function(req, res) {
             SMSURL +
             "username=" +
             username +
-            "/password=" +
+            "&password=" +
             Password +
-            "/senderid=" +
-            SenderID +
-            "/recipient=" +
+            "&to=" +
             mobileno +
-            "/message=" +
+            "&text=" +
             msg;
           http
             .get(url, resp => {
               let data = "";
+              
               // A chunk of data has been recieved.
               resp.on("data", chunk => {
                 data += chunk;
               });
               resp.on("end", () => {
                 var obj = JSON.parse(data);
-
-                if (obj[0].status == "successful") {
-                  // LogMessage(mobileno, SenderID, msg);
+                console.log(url);
+                if (obj[0]== "successful") {
+                   LogMessage(mobileno, msg);
                   res.json({
                     success: true,
                     message: "successful"

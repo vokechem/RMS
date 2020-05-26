@@ -778,9 +778,12 @@ class SideBar extends Component {
       "font-size": 14
       // "font-family": `"Helvetica Neue", Helvetica, Arial, sans - serif`
     };
+    let bgpage={
+      background :"#f7ffe6"
+    }
     return (
-     <div class="horizontal-menu-wrapper" >
-        <div class="header-navbar navbar-expand-sm navbar navbar-horizontal fixed-top navbar-shadow menu-border" style={menucolor} role="navigation" data-menu="menu-wrapper">
+     <div class="horizontal-menu-wrapper">
+        <div class="header-navbar navbar-expand-sm navbar navbar-horizontal fixed-top navbar-shadow menu-border"  role="navigation" data-menu="menu-wrapper" style={bgpage}>
             <div class="navbar-header">
                 <ul class="nav navbar-nav flex-row">
                     <li class="nav-item mr-auto"><a class="navbar-brand" href="../../../html/ltr/horizontal-menu-template/index.html">
@@ -1122,12 +1125,23 @@ const SystemAdmin = props => {
                            </Link>
                              </li>
                                ) : null}
+                                         {props.validaterole("Approvers", "View") ? (
+                            <li data-menu="">
+                           <Link to="/Approvers">
+                             <div className="dropdown-item"
+                              data-i18n="Audit Trails">
+                          <i class="feather icon-command"></i>{" "}
+                             <span className="nav-label">Approval Hierarchy</span>
+                             </div>
+                           </Link>
+                             </li>
+                               ) : null}
                                  {props.validaterole("Audit Trails", "View") ? (
                             <li data-menu="">
                            <Link to="/Auditrails">
                              <div className="dropdown-item"
                               data-i18n="Audit Trails">
-                          <i class="fab fa-accessible-icon"></i>{" "}
+                          <i class="feather icon-activity"></i>{" "}
                              <span className="nav-label">Audit Trails</span>
                              </div>
                            </Link>

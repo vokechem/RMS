@@ -134,6 +134,31 @@ Uploads.post("/:ID", function(req, res) {
         //return res.status(200).send(req.file);
       });
     }
+    if (ID == "Document") {
+      var Timestamp = Date.now();
+      var storage = multer.diskStorage({
+        destination: function(req, file, cb) {
+          cb(null, "uploads/Document");
+        },
+        filename: function(req, file, cb) {
+          cb(null, Timestamp + "-" + file.originalname);
+        }
+      });
+      // var upload = multer({ storage: storage }).single("file");//for single file
+      var upload = multer({ storage: storage }).array("file"); //for multiple files
+
+      upload(req, res, function(err) {
+        var filename = Timestamp + "-" + req.files[0].originalname;
+
+        if (err instanceof multer.MulterError) {
+          return res.status(500).json(err);
+        } else if (err) {
+          return res.status(500).json(err);
+        }
+        return res.status(200).send(filename);
+        //return res.status(200).send(req.file);
+      });
+    }
     if (ID == "Registration") {
       var Timestamp = Date.now();
       var storage = multer.diskStorage({

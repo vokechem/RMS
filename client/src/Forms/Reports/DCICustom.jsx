@@ -136,7 +136,7 @@ class DCICustom extends Component {
     }
   }
   PrintFile = () => {
-    let filepath = process.env.REACT_APP_BASE_URL + "/Cases/" + this.state.File;
+    let filepath = process.env.REACT_APP_BASE_URL + "/Document/" + this.state.File;
     window.open(filepath);
   };
   formatNumber = num => {
@@ -167,8 +167,8 @@ class DCICustom extends Component {
     };
     let statusOptions = [
       {
-        value: "Prcoessing",
-        label: "Prcoessing"
+        value: "Processing",
+        label: "Processing"
       },
       {
         value: "Collected",
@@ -184,22 +184,25 @@ class DCICustom extends Component {
       }
     ];
     return (
-      <div>
-        <div>
-          <div className="row wrapper border-bottom white-bg page-heading">
-            <div className="col-lg-9">
-              <ol className="breadcrumb">
-                <li className="breadcrumb-item">
-                  <h2>DCI CLearance Report</h2>
-                </li>
-              </ol>
-            </div>
+      <div class="app-content content">
+      <div class="content-overlay"></div>
+      <div class="header-navbar-shadow"></div>
+      <div class="content-wrapper">
+          <div class="content-header row">
+              <div class="content-header-left col-md-9 col-12 mb-2">
+                  <div class="row breadcrumbs-top">
+                      <div class="col-12">
+                          <h2 class="content-header-title float-left mb-0" style={{ color: "#1c84c6" }}>DCI Clearance Report</h2>   
+                      </div>
+                  </div>
+              </div>
           </div>
-        </div>
-
-        <div>
-          <br />
-          <div className="row">
+          <div class="content-body">
+              <section id="description" class="card">
+                  <div class="card-content">
+                      <div class="card-body">
+                          <div class="card-text">
+                                     <div className="row">
             <div
               style={{ margin: "10px" }}
               className="col-lg-12 border border-success rounded bg-white"
@@ -207,11 +210,11 @@ class DCICustom extends Component {
               <div style={FormStyle}>
                 <div class="row">
                   <div class="col-sm-2 border border-success rounded">
-                    <h3 style={{ color: "blue" }}>Filter Criteria</h3>
+                    <h3 style={{ color: "#1c84c6" }}>Filter Criteria</h3>
                     <div className="row">
                       <div className="col-md-12">
                         <label for="ApplicantID" className="font-weight-bold ">
-                          DecisionDate Status
+                           DCI Status
                         </label>
                         <Select
                           name="Certificate_status"
@@ -269,53 +272,19 @@ class DCICustom extends Component {
                     <br />
                     <button
                       onClick={this.Downloadfile}
-                      className="btn btn-primary"
+                      className="btn btn-info"
                       type="button"
                     >
                       Submit
                     </button>{" "}
                     {this.state.Data.length > 0 ? (
-                      <ExcelFile
-                        element={
-                          <button
-                            type="button"
-                            className="btn btn-success  fa fa-file-excel-o fa-2x"
-                          >
-                            &nbsp; Excel
-                          </button>
-                        }
-                      >
-                          <ExcelSheet
-                            data={this.state.Data}
-                            name="DCI"
-                          >
-                            <ExcelColumn
-                              label="Fullname"
-                              value="Fullname"
-                            />
-
-                            <ExcelColumn label="Number" value="Number" />
-
-                            <ExcelColumn
-                              label="Commence date"
-                              value="COM"
-                            />
-
-                            <ExcelColumn
-                              label="Exam Date"
-                              value="EOM"
-                            />
-
-                            <ExcelColumn
-                              label="Transcript_status"
-                              value="Transcript_status"
-                            />
-                             <ExcelColumn
-                              label="Certificate_status"
-                              value="Certificate_status"
-                            />
-                          </ExcelSheet>
-                      </ExcelFile>
+                                  <button
+                                  onClick={() => window.print()}
+                                  className="btn btn-success"
+                                  type="button"
+                                >
+                                  Print
+                                </button>
                     ) : null}
                     <br />
                     <p></p>
@@ -399,9 +368,14 @@ class DCICustom extends Component {
               </div>
             </div>
           </div>
-        </div>
+                          </div>
+                      </div>
+                  </div>
+              </section>
+          </div>
       </div>
-    );
+  </div>
+   );
   }
 }
 

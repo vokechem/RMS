@@ -58,6 +58,21 @@ import requesthandled from "./Forms/Reports/requesthandled";
 import PassportCustom from "./Forms/Reports/PassportCustom";
 import TrainingCustom from "./Forms/Reports/TrainingCustom";
 import DCICustom from "./Forms/Reports/DCICustom";
+import NewApprovers from "./Forms/SystemAdmin/NewApprovers";
+import ApplicationsApprovals from "./Forms/Recruitment/ApplicationsApprovals";
+import MinormedicalApproval from "./Forms/Recruitment/MinormedicalApproval";
+import MajorApproval from "./Forms/Recruitment/MajorApproval";
+import DCIApproval from "./Forms/Recruitment/DCIApproval";
+import PassportApproval from "./Forms/Recruitment/PassportApproval";
+import MedicalForm from "./Forms/Reports/MedicalForm";
+import ContractApproval from "./Forms/Recruitment/ContractApproval";
+import NEAApproval from "./Forms/Recruitment/NEAApproval";
+import AttestationApproval from "./Forms/Recruitment/AttestationApproval";
+import VisaApproval from "./Forms/Recruitment/VisaApproval";
+import FinalApproval from "./Forms/Recruitment/FinalApproval";
+import TrainingApproval from "./Forms/Recruitment/TrainingApproval";
+import TicketingApproval from "./Forms/Recruitment/TicketingApproval";
+import TravelApproval from "./Forms/Recruitment/TravelApproval";
 function App() {
   let token = localStorage.getItem("token");
   let UserCategory = localStorage.getItem("UserCategory");
@@ -107,7 +122,21 @@ function App() {
                 <Route exact path="/PassportCustom" component={PassportCustom}/>
                 <Route exact path="/TrainingCustom" component={TrainingCustom}/>
                 <Route exact path="/DCICustom" component={DCICustom}/>
-                
+                <Route exact path="/Approvers" component={NewApprovers} />
+                <Route exact path="/ApplicationsApprovals" component={ApplicationsApprovals} /> 
+                <Route exact path ="/MinormedicalApproval" component={MinormedicalApproval}/>
+                <Route exact path ="/MajorApproval" component={MajorApproval}/>
+                <Route exact path ="/PassportApproval" component={PassportApproval}/>
+                <Route exact path ="/DCIApproval" component={DCIApproval}/>
+                <Route exact path ="/MedicalForm" component={MedicalForm}/>
+                <Route exact path ="/ContractApproval" component={ContractApproval}/>
+                <Route exact path ="/NEAApproval"component={NEAApproval}/>
+                <Route exact path ="/AttestationApproval" component={AttestationApproval} />
+                <Route exact path ="/VisaApproval" component={VisaApproval} />
+                <Route exact path ="/FinalApproval" component={FinalApproval} />
+                <Route exact path ="/TrainingApproval" component={TrainingApproval} />
+                <Route exact path ="/TicketingApproval" component={TicketingApproval} />
+                <Route exact path ="/TravelApproval" component={TravelApproval} />
                 <Route
                   exact
                   path="/requesthandled"

@@ -86,6 +86,7 @@ Registration.post("/", auth.validateRole("Registration"), function(req, res) {
      Classify:Joi.string().required(),
      Agent:Joi.string().allow(null).allow(""), 
      Job:Joi.string().required()  ,
+     Status:Joi.string().required(),
   });
   const result = Joi.validate(req.body, schema);
   if (!result.error) {
@@ -114,6 +115,7 @@ Registration.post("/", auth.validateRole("Registration"), function(req, res) {
       req.body.Classify,
       req.body.Agent,
       req.body.Job,
+      req.body.Status,
       res.locals.user
     ];
     con.getConnection(function(err, connection) {
@@ -124,7 +126,7 @@ Registration.post("/", auth.validateRole("Registration"), function(req, res) {
         });
       } // not connected!
       else {
-        let sp = "call SaveRegistration(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+        let sp = "call SaveRegistration(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
         connection.query(sp, data, function(error, results, fields) {
           if (error) {
             res.json({
@@ -195,7 +197,7 @@ Registration.put("/:ID", auth.validateRole("Registration"), function(
         });
       } // not connected!
       else {
-        let sp = "call UpdateRegistration(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+        let sp = "call UpdateRegistration(?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
         connection.query(sp, data, function(error, results, fields) {
           if (error) {
             res.json({

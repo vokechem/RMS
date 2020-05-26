@@ -11,6 +11,7 @@ import "./../../Styles/tablestyle.css";
 import CKEditor from "ckeditor4-react";
 import ReactHtmlParser from "react-html-parser";
 import Modal from "react-awesome-modal";
+import { Link } from "react-router-dom";
 var _ = require("lodash");
 let userdateils = localStorage.getItem("UserData");
 let data = JSON.parse(userdateils);
@@ -30,6 +31,7 @@ class Registration extends Component {
       NextOFKin: [],
       Educational: [],
       MySiblings:[],
+      ApplicationDocuments: [],
      IDNumber:"",
      Fullname:"",
      Gender:"",
@@ -53,6 +55,7 @@ class Registration extends Component {
      Skills:"",
      Classify:"",
      Job:"",
+     Status:"Pending Approval",
      selectedFile: null,
       Decription:"",
       Period:"",
@@ -60,6 +63,7 @@ class Registration extends Component {
       Institution:"",
       AddEducational:false,
       AddGuardians:false,
+      AddDocuments:false,
       AddNextOFKin:false,
       AddSiblings:false,
       EducationalInstitution:"",
@@ -95,6 +99,8 @@ class Registration extends Component {
       selectedFile: null,
       loaded: 0,
       loaded1: 0,
+      loaded2:0,
+      DocName:"",
       DocumentDescription: "",
       openView: false,
       DocumentsAvailable: false,
@@ -117,20 +123,6 @@ class Registration extends Component {
       this.setState({ [actionMeta.name]: Countries.label });
     }
   };
-  handleSelectChange = (UserGroup, actionMeta) => { 
-    let itemobject=this.state.Items.filter(
-      option =>
-        option.ItemID ===  UserGroup.value
-    )
-    if(itemobject[0].ItemCategory ===  "Agent" || itemobject[0].ItemCategory ===  "Refferal" ){
-      this.setState({showrx:true,msg:"", [actionMeta.name]: UserGroup.value });
-    }else{
-      this.setState({showrx:false,msg:"", [actionMeta.name]: UserGroup.value });
-     
-    }
- 
-    
-  };
   checkDocumentRoles = CreatedBy => {
     if (this.state.Board) {
       return true;
@@ -138,7 +130,6 @@ class Registration extends Component {
     if (localStorage.getItem("UserName") === CreatedBy) {
       return true;
     }
-
     return false;
   }; 
   fetchcounties = () => {
@@ -190,7 +181,9 @@ class Registration extends Component {
   closeAddGuardians = () => {
     this.setState({ AddGuardians: false });
   };
-  
+  closeAddDocuments = () => {
+    this.setState({ AddDocuments: false });
+  };
   closeAddNextOFKin = () => {
     this.setState({ AddNextOFKin: false });
   };
@@ -216,7 +209,7 @@ class Registration extends Component {
     this.setState({ openFileViewer: true });
   };
   ViewFile = (k, e) => {
-    let filepath = k.Path + "/" + k.FileName;
+    let filepath = k.Path + "/" + k.DocName;
     window.open(filepath);
     //this.setState({ openFileViewer: true });
   };
@@ -239,7 +232,7 @@ class Registration extends Component {
   };
   fetchMyApplications = IDNumber => {
     this.setState({ IDNumber: [] });
-    fetch("/api/Registration/" + IDNumber + "/Applicant", {
+    fetch("/api/Registration/" + IDNumber, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -431,7 +424,7 @@ class Registration extends Component {
       }
     });
   };
-  handleDeleteDocument = d => {
+  handleDeleteDocument= d => {
     swal({
       text: "Are you sure that you want to remove this record?",
       icon: "warning",
@@ -439,7 +432,7 @@ class Registration extends Component {
       buttons: true
     }).then(willDelete => {
       if (willDelete) {
-        return fetch("/api/applicationdocuments/" + d.FileName, {
+        return fetch("/api/applicationdocuments/" + d.ID, {
           method: "Delete",
           headers: {
             "Content-Type": "application/json",
@@ -449,23 +442,19 @@ class Registration extends Component {
           .then(response =>
             response.json().then(data => {
               if (data.success) {
-                var rows = [...this.state.ApplicationDocuments];
-                const filtereddata = rows.filter(
-                  item => item.FileName !== d.FileName
-                );
-                this.setState({ ApplicationDocuments: filtereddata });
+                toast.success("Removed successfully");
+                this.fetchApplicationDocuments(this.state.IDNumber);
               } else {
-                swal("", "Remove Failed", "error");
+                toast.error("Remove Failed");
               }
             })
           )
           .catch(err => {
-            swal("", "Remove Failed", "error");
+            toast.error("Remove Failed");
           });
       }
     });
   };
- 
   SaveRegistration = event => {
       event.preventDefault();
       const data = {
@@ -493,6 +482,7 @@ class Registration extends Component {
         Classify: this.state.Classify,
         Agent: this.state.Agent,
         Job: this.state.Job,
+        Status:"Pending Approval",
       };
         this.postData("/api/Registration", data);
     };
@@ -501,6 +491,7 @@ class Registration extends Component {
     this.SubmitApplication();
     this.sendApproverNotification();
   }
+
   maxSelectFile = event => {
     let files = event.target.files; // create file object
     if (files.length > 1) {
@@ -514,7 +505,12 @@ class Registration extends Component {
   checkMimeType = event => {
     let files = event.target.files;
     let err = []; // create empty array
-    const types = ["image/png", "image/jpeg", "image/gif"];
+    const types = ["image/png", "image/jpeg", "image/gif",
+    "application/pdf",
+      "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+  ];
     for (var x = 0; x < files.length; x++) {
       if (types.every(type => files[x].type !== type)) {
         err[x] = files[x].type + " is not a supported format\n";
@@ -665,61 +661,104 @@ class Registration extends Component {
       // });
     }
   };
-  
-  saveDocuments(FileName) {
-    if (this.state.ApplicationID) {
-      //save
-
-      let datatosave = {
-        ApplicationID: this.state.ApplicationID,
-        Description: this.state.DocumentDescription,
-        Path: process.env.REACT_APP_BASE_URL + "/Documents",
-        FileName: FileName,
-        Confidential: this.state.Confidential
-      };
-      fetch("/api/applicationdocuments", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-access-token": localStorage.getItem("token")
-        },
-        body: JSON.stringify(datatosave)
-      })
-        .then(response =>
-          response.json().then(data => {
-            if (data.success) {
-              toast.success("upload success");
-              var rows = this.state.ApplicationDocuments;
-              let datapush = {
-                FileName: FileName,
-                Description: this.state.DocumentDescription
-              };
-              rows.push(datapush);
-              this.setState({ ApplicationDocuments: rows });
-              this.setState({
-                DocumentsAvailable: true,
-                DocumentDescription: ""
-              });
-              this.setState({
-                loaded: 0
-              });
-            } else {
-              toast.error("Could not be saved please try again!");
-              // swal("Saved!", "Could not be saved please try again", "error");
-            } 
-          })
-        )
-        .catch(err => {
-          swal("", "Could not be saved please try again", "error");
-        });
-    } else {
-      toast.error(
-        "Please ensure You have filled tender details before filling grounds and requests."
-      );
-      // alert("Please ensure You have filled tender details before filling grounds and requests.")
-    }
-  }
+ 
 //kelvin was here
+handleDocumentSubmit = event => {
+  event.preventDefault();
+  if (this.state.IDNumber) {
+    let datatosave = {
+      IDNumber:this.state.IDNumber,
+      DocName:this.state.DocName,
+      Path: process.env.REACT_APP_BASE_URL + "/Document",
+      Description:this.state.DocumentDescription ,
+    };
+    fetch("/api/applicationdocuments", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-access-token": localStorage.getItem("token")
+      },
+      body: JSON.stringify(datatosave)
+    })
+      .then(response =>
+        response.json().then(data => {
+          if (data.success) {
+            // this.setState({ Grounds: datatosave });
+            var rows = this.state.applicationdocuments;
+            rows.push(datatosave);
+            this.setState({ applicationdocuments: rows });
+            toast.success("Added successfully");
+            let setstatedata = {
+              DocumentDescription:"",
+              DocName:"" ,
+             AddDocuments: false
+            };
+            this.setState(setstatedata);
+          } else {
+            toast.error(data.message);
+          }
+        })
+      )
+      .catch(err => {
+        toast.error("Could not be added please try again");
+      });
+  } else {
+    toast.error(
+      "Please ensure."
+    );
+  }
+};
+onClickHandler2 = () => {
+  if (this.state.selectedFile) {
+    const data = new FormData();
+    // var headers = {
+    //   "Content-Type": "multipart/form-data",
+    //   "x-access-token": localStorage.getItem("token")
+    // };
+
+    //for single files
+    //data.append("file", this.state.selectedFile);
+    //for multiple files
+    for (var x = 0; x < this.state.selectedFile.length; x++) {
+      data.append("file", this.state.selectedFile[x]);
+    }
+    axios
+    .post("/api/Uploads/Document", data, {
+        // receive two parameter endpoint url ,form data
+        onUploadProgress: ProgressEvent => {
+          this.setState({
+            loaded2: (ProgressEvent.loaded/ ProgressEvent.total) * 100
+          });
+        }
+      })
+      .then(res => {
+        this.setState({
+          DocName: res.data
+        });
+        localStorage.setItem("DocName", res.data);
+        toast.success("upload success");
+        const data = {
+          DocName: res.data
+        };
+        this.postData(data);
+      })
+      .catch(err => {
+        toast.error("upload fail");
+      });
+  } else {
+    toast.warn("Please select a photo to upload");
+  }
+};
+onChangeHandler2 = event => {
+  //for multiple files
+  var files = event.target.files;
+  if (this.maxSelectFile(event)) {
+    this.setState({
+      selectedFile: files,
+      loaded: 0
+    });
+  }
+};
 handleEducationalSubmit = event => {
   event.preventDefault();
   if (this.state.IDNumber) {
@@ -866,6 +905,9 @@ handleGuardianSubmit = event => {
     );
   }
  };
+
+  //kelvin was here 
+
 
 handleSiblingsSubmit = event => {
   event.preventDefault();
@@ -1073,12 +1115,15 @@ handleSiblingsSubmit = event => {
       BirthCer:"",
       Husband:"",
       HusbandMobile:"",
+      DocName:"",
+      DocumentDescription:"",
       HusbandID:"",
       Languages:"",
        Skills:"",
       Classify:"",
       Agent:"",
       Job:"",
+      Status:"",
       selectedFile: null,
        Decription:"",
        Period:"",
@@ -1088,6 +1133,7 @@ handleSiblingsSubmit = event => {
        AddGuardians:false,
        AddNextOFKin:false,
        AddSiblings:false,
+       AddDocuments:false,
        EducationalInstitution:"",
        EducationalPeriod:"" ,
        EducationalDecription:"",
@@ -1182,7 +1228,26 @@ handleSiblingsSubmit = event => {
         toast.error(err.message);
       });
   };
-  
+  fetchApplicationDocuments = IDNumber => {
+    fetch("/api/applicationdocuments/" + IDNumber, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "x-access-token": localStorage.getItem("token")
+      }
+    })
+      .then(res => res.json())
+      .then(ApplicationDocuments => {
+        if (ApplicationDocuments.length > 0) {
+          this.setState({ ApplicationDocuments: ApplicationDocuments });
+        } else {
+          swal("", ApplicationDocuments.message, "error");
+        }
+      })
+      .catch(err => {
+        swal("", err.message, "error");
+      });
+  };
   fetchEducational = IDNumber => {
     this.setState({ Educational: [] });
     fetch("/api/Educational/" + IDNumber, {
@@ -1251,6 +1316,7 @@ handleSiblingsSubmit = event => {
               this.fetchSiblings();
               this.fetchcounties();
               this.fetchcountries();
+              this.fetchApplicationDocuments();
             } else {
               localStorage.clear();
               return (window.location = "/#/Logout");
@@ -1281,6 +1347,7 @@ handleSiblingsSubmit = event => {
     this.fetchNextOFKin(k.IDNumber);
     this.fetchParent(k.IDNumber);
     this.fetchSiblings(k.IDNumber);
+    this.fetchApplicationDocuments(k.IDNumber)
     const data = {
       IDNumber:k.IDNumber,
       Fullname: k.Fullname,
@@ -1315,6 +1382,9 @@ handleSiblingsSubmit = event => {
       KinName:k.KinName,
       CurrentResident:k.CurrentResident,
       Contact:k.Contact,
+      Description:k.Description,
+      DocName:k.DocName,
+      Status:k.Status,
       summary: true,
       ApplicationCreated_By: k.Created_By,
       PaymentStatus: k.PaymentStatus,
@@ -1335,6 +1405,10 @@ handleSiblingsSubmit = event => {
     e.preventDefault();
     document.getElementById("nav-profile-tab").click();
   };
+  showhome = e => {
+    e.preventDefault();
+    document.getElementById("nav-home-tab").click();
+  };
   openFeesTab() {
     document.getElementById("nav-Fees-tab").click();
   }
@@ -1353,7 +1427,9 @@ handleSiblingsSubmit = event => {
   AddNewGuardians = () => {
     this.setState({ AddGuardians: true });
   };
-  
+  AddNewDocuments = () => {
+    this.setState({ AddDocuments: true });
+  };
   AddNewNextOFKin = () => {
     this.setState({ AddNextOFKin: true });
   };
@@ -1422,7 +1498,7 @@ handleSiblingsSubmit = event => {
       });
   }
   SubmitApplication=()=> {
-    fetch("/api/applications/" + this.state.ApplicationID, {
+    fetch("/api/applications/" + this.state.IDNumber, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -1699,7 +1775,9 @@ handleSiblingsSubmit = event => {
               </a>
             ),
             Email: (
-              <a onClick={e => this.handViewRegistration(k, e)}>
+              
+              <a  style={{ color: "#007bff" }}
+              onClick={e => this.handViewRegistration(k, e)}>
                 {k.Email}
               </a>
             ),
@@ -1773,7 +1851,6 @@ handleSiblingsSubmit = event => {
       "border-radius": "10px"
     };
     let ViewFile = this.ViewFile;
-
     if (this.state.profile) {
       if (this.state.summary) {
         return (
@@ -1785,116 +1862,253 @@ handleSiblingsSubmit = event => {
                   <div class="content-header-left col-md-9 col-12 mb-2">
                       <div class="row breadcrumbs-top">
                           <div class="col-12">
-                              <h2 class="content-header-title float-left mb-0">Floating Navbar</h2>
+                              <h4 class="content-header-title float-left mb-0">Profile:{this.state.Fullname}</h4>
                               <div class="breadcrumb-wrapper col-12">
-                                  <ol class="breadcrumb">
-                                      <li class="breadcrumb-item"><a href="sk-layout-2-columns.html">Home</a>
-                                      </li>
-                                      <li class="breadcrumb-item"><a href="#">Starter Kit</a>
-                                      </li>
-                                      <li class="breadcrumb-item active">Floating Navbar
-                                      </li>
-                                  </ol>
                               </div>
                           </div>
                       </div>
                   </div>
-                  <div class="content-header-right text-md-right col-md-3 col-12 d-md-block d-none">
-                      <div class="form-group breadcrum-right">
-                          <div class="dropdown">
-                              <button class="btn-icon btn btn-primary btn-round btn-sm dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="feather icon-settings"></i></button>
-                              <div class="dropdown-menu dropdown-menu-right"><a class="dropdown-item" href="#">Chat</a><a class="dropdown-item" href="#">Email</a><a class="dropdown-item" href="#">Calendar</a></div>
-                          </div>
-                      </div>
-                  </div>
+                  
+                    <h2 className="text-success">
+                      
+                          {" "}
+                        Status:{this.state.Status}
+                        </h2>
               </div>
               <div class="content-body">
                   <section id="description" class="card">
-                      <div class="card-header">
-                          <h4 class="card-title">Description</h4>
-                      </div>
                       <div class="card-content">
                           <div class="card-body">
                               <div class="card-text">
-                                  <p>The floating navigation layout has a fixed navigation and floating navbar menu and footer. Only navigation section and navbar menu is fixed to user. Navbar Wrapper has specing from all sides. In this page you can experience it.</p>
-                              </div>
-                          </div>
+                              <div className="border-bottom white-bg p-4">
+              <div className="row">
+                <div className="col-sm-6">
+                <h3 style={headingstyle}>Applicant Details</h3>
+                  <div className="col-lg-10 border border-success rounded">
+                    <table className="table table-borderless table-sm">
+                      <tr>
+                        <td className="font-weight-bold"> Fullname:</td>
+                        <td> {this.state.Fullname}</td>
+                      </tr>
+                      <tr>
+                        <td className="font-weight-bold"> EMAIL:</td>
+                        <td> {this.state.Email}</td>
+                      </tr>
+
+                      <tr>
+                        <td className="font-weight-bold"> Mobile:</td>
+
+                        <td> {this.state.phone}</td>
+                      </tr>
+                      <tr>
+                        <td className="font-weight-bold"> Gender:</td>
+
+                        <td> {this.state.Gender}</td>
+                      </tr>
+                      <tr>
+                        <td className="font-weight-bold"> Date of Birth:</td>
+
+                        <td> {this.state.DOB}</td>
+                      </tr>
+                      <tr>
+                        <td className="font-weight-bold"> Nationality:</td>
+                        <td> {this.state.Country}</td>
+                      </tr>
+                      <tr>
+                        <td className="font-weight-bold"> Religion:</td>
+                        <td> {this.state.Religion}</td>
+                      </tr>
+                      <tr>
+                        <td className="font-weight-bold"> Marital Status:</td>
+                        <td> {this.state.Marital}</td>
+                      </tr>
+                      <tr>
+                        <td className="font-weight-bold"> Languages:</td>
+                        <td> {this.state.Languages}</td>
+                      </tr>
+                      <tr>
+                        <td className="font-weight-bold"> Skills:</td>
+                        <td> {this.state.Skills}</td>
+                      </tr>
+                      <tr>
+                        <td className="font-weight-bold"> Classification:</td>
+                        <td> {this.state.Classify}</td>
+                      </tr>
+                      <tr>
+                        <td className="font-weight-bold"> Height:</td>
+                        <td> {this.state.Height}</td>
+                      </tr>
+                      <tr>
+                        <td className="font-weight-bold"> Weight:</td>
+                        <td> {this.state.Weight}</td>
+                      </tr>
+                    </table>
+                  </div>
+                </div>
+                <div className="col-lg-6">
+                <h3 style={headingstyle}> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</h3>
+                
+                  <div className="col-lg-10 border border-success rounded">
+                    <table className="table table-borderless table-sm">
+                      <tr>
+                        <td className="font-weight-bold"> Passport:</td>
+                        <td>  <img
+                alt="image"
+                className=""
+                src={process.env.REACT_APP_BASE_URL + "/Passport/" + photo}
+                style={photostyle}
+              /></td>
+              </tr>
+               <tr>
+                        <td className="font-weight-bold"> FullPhoto:</td>
+                 <td>  <img
+                alt="image"
+                className=""
+                src={process.env.REACT_APP_BASE_URL + "/Registration/" + FullPhoto}
+                style={photostyle}
+              /></td>
+                      </tr>
+                    </table>
+                  </div>
+                </div>
+              </div>
+              <br />
+              <div className="row">
+                <div className="col-lg-12 ">
+                  <h3 style={headingstyle}>Education Details</h3>
+                  <div className="col-lg-11 border border-success rounded">
+                    <table className="table table-sm">
+                      <thead className="thead-light">
+                        <th>Institution</th>
+                        <th>Course</th>
+                        <th>Period</th>
+                      </thead>
+                      {this.state.Educational.map((r, i) => (
+                        <tr>
+                          <td>{r.Institution}</td>
+                          <td> {r.Decription} </td>
+                          <td> {r.Period} </td>
+                        </tr>
+                      ))}
+                    </table>
+                  </div>
+                </div>
+              </div>
+              <br/>
+              <div className="row">
+                <div className="col-lg-12 ">
+                  <h3 style={headingstyle}>Guaridan Details</h3>
+                  <div className="col-lg-11 border border-success rounded">
+                    <table className="table table-sm">
+                      <thead className="thead-light">
+                        <th>Name</th>
+                        <th>ID number</th>
+                        <th>Relationship</th>
+                      </thead>
+                      {this.state.Parent.map((r, i) => (
+                        <tr>
+                          <td>{r.Name}</td>
+                          <td> {r.ParentID} </td>
+                          <td> {r.Relationship} </td>
+                        </tr>
+                      ))}
+                    </table>
+                  </div>
+                </div>
+              </div>
+              <br/>
+              <div className="row">
+                <div className="col-lg-12 ">
+                  <h3 style={headingstyle}>Next of kin Details</h3>
+                  <div className="col-lg-11 border border-success rounded">
+                    <table className="table table-sm">
+                      <thead className="thead-light">
+                        <th>Name</th>
+                        <th>Relationship</th>
+                        <th>Current Resident</th>
+                        <th>Contact</th>
+                      </thead>
+                      {this.state.NextOFKin.map((r, i) => (
+                        <tr>
+                          <td>{r.KinName}</td>
+                          <td> {r.KRelationship} </td>
+                          <td> {r.CurrentResident} </td>
+                          <td> {r.Contact} </td>
+                        </tr>
+                      ))}
+                    </table>
+                  </div>
+                </div>
+              </div>
+              <br/>
+              <div className="row">
+                <div className="col-lg-12 ">
+                  <h3 style={headingstyle}>Siblings Details</h3>
+                  <div className="col-lg-11 border border-success rounded">
+                    <table className="table table-sm">
+                      <thead className="thead-light">
+                        <th>Name</th>
+                        <th>Gender</th>
+                        <th>Age</th>
+                      </thead>
+                      {this.state.MySiblings.map((r, i) => (
+                        <tr>
+                          <td>{r.SiblingName}</td>
+                          <td> {r.Sex} </td>
+                          <td> {r.Age} </td>
+                        </tr>
+                      ))}
+                    </table>
+                  </div>
+                </div>
+              </div>
+              <br />
+              <div className="row">
+                <div className="col-lg-12 ">
+                  <h3 style={headingstyle}>Documents Attached</h3>
+                  <div className="col-lg-11 border border-success rounded">
+                    <table className="table table-sm">
+                      <thead className="thead-light">
+                        <th>#</th>
+                        <th>Document Description</th>
+                        <th>FileName</th>
+                        <th>Actions</th>
+                      </thead>
+                      {this.state.ApplicationDocuments.map((k, i) => (
+                          <tr>
+                            <td>{i + 1}</td>
+                            <td>{k.Description}</td>
+                            <td>{k.DocName}</td>
+                            <td>
+                              <a
+                                onClick={e => ViewFile(k, e)}
+                                className="text-success"
+                              >
+                                <i class="fa fa-eye" aria-hidden="true"></i>View
+                              </a>
+                            </td>
+                          </tr>
+                        
+                        ))}
+                    </table>
+                  </div>
+                </div>
+              </div>
+              <br/>
+              <div className="row">
+                      <div className="col-lg-9"></div>
+                      <div className="col-lg-3">
+                        &nbsp; &nbsp;
+                        <button
+                          type="button"
+                          onClick={this.GoBack}
+                          className="btn btn-danger"
+                        >
+                          Back
+                        </button>
                       </div>
-                  </section>
-                  <section id="css-classes" class="card">
-                      <div class="card-header">
-                          <h4 class="card-title">CSS Classes</h4>
-                      </div>
-                      <div class="card-content">
-                          <div class="card-body">
-                              <div class="card-text">
-                                  <p>This table contains all classes related to the floating navigation layout. This is a custom layout classes for fixed navigation layout page requirements.</p>
-                                  <p>All these options can be set via following classes:</p>
-                                  <div class="table-responsive">
-                                      <table class="table table-hover">
-                                          <thead>
-                                              <tr>
-                                                  <th>Classes</th>
-                                                  <th>Description</th>
-                                              </tr>
-                                          </thead>
-                                          <tbody>
-                                              <tr>
-                                                  <th scope="row"><code>.navbar-floating</code></th>
-                                                  <td>To set floating navbar you need to add <code>navbar-floating</code> class in <code>&lt;body&gt;</code> tag.</td>
-                                              </tr>
-                                              <tr>
-                                                  <th scope="row"><code>.floating-nav</code></th>
-                                                  <td>To set floating navbar you need to add <code>floating-nav</code> class in <code>&lt;nav&gt;</code> tag.</td>
-                                              </tr>
-                                          </tbody>
-                                      </table>
-                                  </div>
-                              </div>
-                          </div>
-                      </div>
-                  </section>
-                  <section id="html-markup" class="card">
-                      <div class="card-header">
-                          <h4 class="card-title">HTML Markup</h4>
-                      </div>
-                      <div class="card-content">
-                          <div class="card-body">
-                              <div class="card-text">
-                                  <p>This section contains HTML Markup to create floating navigation layout. This markup define where to add css classes to make navigation floating.</p>
-                                  <p>Vuexy has a ready to use starter kit, you can use this layout directly by using the starter kit pages from the <code>vuexy-html-bootstrap-admin-template/starter-kit</code> folder.</p>
-                                  <pre class="language-html">
-          <code class="language-html">
-              &lt;!DOCTYPE html&gt;
-                &lt;html lang="en"&gt;
-                  &lt;head&gt;&lt;/head&gt;
-                  &lt;body data-menu="vertical-menu-modern" class="vertical-layout vertical-menu-modern 2-column navbar-floating footer-static menu-expanded"&gt;
-  
-                    &lt;!-- fixed-top--&gt;
-                    &lt;nav class="header-navbar navbar-expand-lg navbar navbar-with-menu floating-nav navbar-light navbar-shadow"&gt;
-                    &lt;/nav&gt;
-  
-                    &lt;!-- BEGIN Navigation--&gt;
-                    &lt;div class="main-menu menu-fixed menu-light menu-accordion menu-shadow expanded"&gt;
-                    &lt;/div&gt;
-                    &lt;!-- END Navigation--&gt;
-  
-                    &lt;!-- BEGIN Content--&gt;
-                    &lt;div class="app-content content"&gt;
-                        &lt;div class="content-wrapper"&gt;
-                        &lt;/div&gt;
-                    &lt;/div&gt;
-                    &lt;!-- END Content--&gt;
-  
-                    &lt;!-- START FOOTER LIGHT--&gt;
-                    &lt;footer class="footer footer-static footer-light"&gt;
-                    &lt;/footer&gt;
-                    &lt;!-- END FOOTER LIGHT--&gt;
-  
-                  &lt;/body&gt;
-                &lt;/html&gt;
-          </code>
-          </pre>
+                    </div>
+            </div>
                               </div>
                           </div>
                       </div>
@@ -1909,15 +2123,23 @@ handleSiblingsSubmit = event => {
           <div class="content-overlay"></div>
           <div class="header-navbar-shadow"></div>
           <div class="content-wrapper">
-              <div class="content-header row">
-                  <div class="content-header-left col-md-9 col-12 mb-2">
-                      <div class="row breadcrumbs-top">
-                          <div class="col-12">
-                              <h4 class="content-header-title float-left mb-0">Floating Navbar</h4>
-                          </div>
-                      </div>
-                  </div>
-              </div>
+          <div class="content-header row">
+                <div class="content-header-left col-md-9 col-12 mb-2">
+                    <div class="row breadcrumbs-top">
+                        <div class="col-12">
+                            <h2 class="content-header-title float-left mb-0">Applicants</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="content-header-right text-md-right col-md-3 col-12 d-md-block d-none">
+                    <div class="form-group breadcrum-right">
+                  <Link to ="/MedicalForm"
+                  className="btn btn-success  fa fa-plus">
+                    Generate Medical Declaration Form 
+                  </Link>
+                    </div>
+                </div>
+            </div>
               <div class="content-body">
               <section id="description" class="card">
                     <div class="card-header">
@@ -1926,62 +2148,7 @@ handleSiblingsSubmit = event => {
                     <div class="card-content">
                         <div class="card-body">
                             <div class="card-text">
-                            <div style={divconatinerstyle1}>
-          <form
-            style={formstyle}
-            onSubmit={this.handleSubmit}
-            encType="multipart/form-data"
-          >
-            <div className=" row">
-              <div className="col-md-3"></div>
-              <div className="col-md-6">
-                <br />
-                <div className="form-group">
-                  <label htmlFor="OldPassword" className="font-weight-bold">
-                    Old Password
-                  </label>
-                  <input
-                    name="OldPassword"
-                    type="Password"
-                    required
-                    className="form-control"
-                    onChange={this.handleInputChange}
-                    value={this.state.OldPassword}
-                    required
-                  />
-                </div>
-              </div>
-            </div>
-            <div className=" row">
-              <div className="col-sm-3"></div>
-              <div className="col-sm-6">
-                <div className="form-group">
-                  <label htmlFor="NewPassword" className="font-weight-bold">
-                    New Password
-                  </label>
-                  <input
-                    name="NewPassword"
-                    type="Password"
-                    required
-                    className="form-control"
-                    onChange={this.handleInputChange}
-                    value={this.state.NewPassword}
-                    required
-                  />
-                </div>
-              </div>
-            </div>
-            <div className=" row">
-              <div className="col-sm-7"></div>
-              <div className="d-flex justify-content-between">
-                <button type="submit" className="btn btn-primary">
-                  Update Now
-                </button>
-                &nbsp;&nbsp;
-              </div>
-            </div>
-          </form>
-        </div>
+        
                             </div>
                         </div>
                     </div>
@@ -1993,7 +2160,7 @@ handleSiblingsSubmit = event => {
                     type="button"
                     onClick={this.handleswitchMenu}
                     className="btn btn-success"
-                  ><i class="feather user-plus">New Registration</i>
+                  ><i class="feather icon-plus">&nbsp;New Registration</i>
                   </button>
                 </div>
                 {/* <div classname="col-lg-1"></div> */}
@@ -2023,25 +2190,14 @@ handleSiblingsSubmit = event => {
                 <div class="content-header-left col-md-9 col-12 mb-2">
                     <div class="row breadcrumbs-top">
                         <div class="col-12">
-                            <h2 class="content-header-title float-left mb-0">Floating Navbar</h2>
-                            <div class="breadcrumb-wrapper col-12">
-                                <ol class="breadcrumb">
-                                    <li class="breadcrumb-item"><a href="sk-layout-2-columns.html">Home</a>
-                                    </li>
-                                    <li class="breadcrumb-item"><a href="#">Starter Kit</a>
-                                    </li>
-                                    <li class="breadcrumb-item active">Floating Navbar
-                                    </li>
-                                </ol>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="content-header-right text-md-right col-md-3 col-12 d-md-block d-none">
-                    <div class="form-group breadcrum-right">
-                        <div class="dropdown">
-                            <button class="btn-icon btn btn-primary btn-round btn-sm dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="feather icon-settings"></i></button>
-                            <div class="dropdown-menu dropdown-menu-right"><a class="dropdown-item" href="#">Chat</a><a class="dropdown-item" href="#">Email</a><a class="dropdown-item" href="#">Calendar</a></div>
+                            <h4 class="content-header-title float-left mb-0">
+                            {this.state.IsUpdate ? (
+                    <h2 className="font-weight-bold">
+                    </h2>
+                  ) : (
+                    <h2>New Registration</h2>
+                  )}
+                            </h4>
                         </div>
                     </div>
                 </div>
@@ -2049,94 +2205,1664 @@ handleSiblingsSubmit = event => {
             <div class="content-body">
                 <section id="description" class="card">
                     <div class="card-header">
-                        <h4 class="card-title">Description</h4>
+                     
                     </div>
                     <div class="card-content">
                         <div class="card-body">
                             <div class="card-text">
-                                <p>The floating navigation layout has a fixed navigation and floating navbar menu and footer. Only navigation section and navbar menu is fixed to user. Navbar Wrapper has specing from all sides. In this page you can experience it.</p>
-                            </div>
+                            <div style={divconatinerstyle}>
+            <div class="row">
+              <div class="col-sm-12">
+                <nav>
+                  <div class="nav nav-tabs " id="nav-tab" role="tablist">
+                    <a
+                      class="nav-item nav-link active font-weight-bold"
+                      id="nav-home-tab"
+                      data-toggle="tab"
+                      href="#nav-home"
+                      role="tab"
+                      aria-controls="nav-home"
+                      aria-selected="true"
+                    >
+                    {" "}
+                    </a>
+                    <a
+                      class="nav-item nav-link font-weight-bold"
+                      id="nav-profile-tab"
+                      data-toggle="tab"
+                      href="#nav-profile"
+                      role="tab"
+                      aria-controls="nav-profile"
+                      aria-selected="false"
+                    >
+                     
+                    </a>
+                  
+                    <a
+                      class="nav-item nav-link font-weight-bold"
+                      id="nav-InterestedParties-tab"
+                      data-toggle="tab"
+                      href="#nav-InterestedParties"
+                      role="tab"
+                      aria-controls="InterestedParties"
+                      aria-selected="false"
+                    >
+                      
+                    </a>
+                    <a
+                      class="nav-item nav-link font-weight-bold"
+                      id="nav-Fees-tab"
+                      data-toggle="tab"
+                      href="#nav-Fees"
+                      role="tab"
+                      aria-controls="nav-Fees"
+                      aria-selected="false"
+                    >
+                    
+                    </a>
+                    <a
+                      class="nav-item nav-link font-weight-bold"
+                      id="nav-Siblings-tab"
+                      data-toggle="tab"
+                      href="#nav-Siblings"
+                      role="tab"
+                      aria-controls="nav-Siblings"
+                      aria-selected="false"
+                    >
+                    
+                    </a>
+                    <a
+                      class="nav-item nav-link font-weight-bold"
+                      id="nav-Attachments-tab"
+                      data-toggle="tab"
+                      href="#nav-Attachments"
+                      role="tab"
+                      aria-controls="nav-Attachments"
+                      aria-selected="false"
+                    >
+                    
+                    </a>
+                  </div>
+                </nav>
+                <div class="tab-content " id="nav-tabContent">
+                  <div
+                    class="tab-pane fade show active"
+                    id="nav-home"
+                    role="tabpanel"
+                    aria-labelledby="nav-home-tab"
+                    style={childdiv}
+                  >
+                    {/* <form style={FormStyle} onSubmit={this.SaveTenders}> */}
+                    <div style={formcontainerStyle}>
+                      <form style={FormStyle} onSubmit={this.SaveRegistration}>
+                      <div className=" row">
+                      <div class="col-sm-2">
+                            <label for="Fullname" className="font-weight-bold">
+                              Full Name
+                            </label>
+                          </div>
+                          <div class="col-sm-4">
+                            <input
+                              type="text"
+                              class="form-control"
+                              name="Fullname"
+                              onChange={this.handleInputChange}
+                              value={this.state.Fullname}
+                              required
+                            />
+                          </div>
+                          <div class="col-sm-2">
+                            <label for="IDNumber" className="font-weight-bold">
+                              ID Number
+                            </label>
+                          </div>
+                          <div class="col-sm-4">
+                            <input
+                              type="number"
+                              class="form-control"
+                              name="IDNumber"
+                              onChange={this.handleInputChange}
+                              value={this.state.IDNumber}
+                              required
+                            />
+                          </div>
                         </div>
+                        <br/>
+                        <div className=" row">
+                      <div class="col-sm-2">
+                            <label for="Gender" className="font-weight-bold">
+                              Gender
+                            </label>
+                          </div>
+                          <div class="col-sm-4">
+                          <Select
+                                  name="Gender"
+                                  value={GenderCategories.filter(
+                                    option => option.label === this.state.Gender
+                                  )}
+                                  onChange={this.handleSelectChange}
+                                  options={GenderCategories}
+                                  required
+                                />
+                          </div>
+                          <div class="col-sm-2">
+                            <label for="Phone" className="font-weight-bold">
+                              Mobile number
+                            </label>
+                          </div>
+                          <div class="col-sm-4">
+                            <input
+                              type="number"
+                              class="form-control"
+                              name="phone"
+                              onChange={this.handleInputChange}
+                              value={this.state.phone}
+                              required
+                            />
+                          </div>
+                        </div>
+                        <br/>
+                        <div className=" row">
+                      <div class="col-sm-2">
+                            <label for="Email" className="font-weight-bold">
+                              Email Address
+                            </label>
+                          </div>
+                          <div class="col-sm-4">
+                            <input
+                              type="email"
+                              class="form-control"
+                              name="Email"
+                              onChange={this.handleInputChange}
+                              value={this.state.Email}
+                              required
+                            />
+                          </div>
+                          <div class="col-sm-2">
+                            <label for="DOB" className="font-weight-bold">
+                              Date Of birth
+                            </label>
+                          </div>
+                          <div class="col-sm-4">
+                            <input
+                              type="date"
+                              class="form-control"
+                              name="DOB"
+                              onChange={this.handleInputChange}
+                              value={this.state.DOB}
+                              required
+                            />
+                          </div>
+                        </div>
+                           <br/>
+                        <div className=" row">
+                        <div class="col-sm-2">
+                            <label for="Country" className="font-weight-bold">
+                              Country
+                            </label>
+                          </div>
+                          <div class="col-sm-4">
+                          <Select
+                                  name="Country"
+                                  value={CountryOption.filter(
+                                    option => option.label === this.state.Country
+                                  )}
+                                  onChange={this.handleSelectChange}
+                                  options={CountryOption}
+                                  required
+                                />
+                          </div>
+                          <div class="col-sm-2">
+                            <label for="County" className="font-weight-bold">
+                              County
+                            </label>
+                          </div>
+                          <div class="col-sm-4">
+                          <Select
+                                  name="County"
+                                  value={CountyOption.filter(
+                                    option => option.label === this.state.County
+                                  )}
+                                  onChange={this.handleSelectChange}
+                                  options={CountyOption}
+                                  required
+                                />
+                          </div>
+                        </div>
+                        <br/>
+                        <div className=" row">
+                        <div class="col-sm-2">
+                            <label for="Religion" className="font-weight-bold">
+                              Religion
+                            </label>
+                          </div>
+                          <div class="col-sm-4">
+                          <Select
+                                  name="Religion"
+                                  value={ReligionStatus.filter(
+                                    option => option.label === this.state.Religion
+                                  )}
+                                  onChange={this.handleSelectChange}
+                                  options={ReligionStatus}
+                                  required
+                                />
+                          </div>
+                          <div class="col-sm-2">
+                            <label for="Marital" className="font-weight-bold">
+                              Marital
+                            </label>
+                          </div>
+                          <div class="col-sm-4">
+                          <Select
+                                  name="Marital"
+                                  value={Marital.filter(
+                                    option => option.label === this.state.Marital
+                                  )}
+                                  onChange={this.handleSelectChange}
+                                  options={Marital}
+                                  required
+                                />
+                          </div>
+                        </div>
+                        <br/>
+                        { this.state.Marital === "Married" ?
+                        <div className=" row">
+                      <div class="col-sm-2">
+                            <label for="Height" className="font-weight-bold">
+                            Husband Name
+                            </label>
+                          </div>
+                          <div class="col-sm-4">
+                            <input
+                              type="text"
+                              class="form-control"
+                              name="Husband"
+                              onChange={this.handleInputChange}
+                              value={this.state.Husband}
+                            />
+                          </div>
+                          <div class="col-sm-1">
+                            <label for="Weight" className="font-weight-bold">
+                            Mobile
+                            </label>
+                          </div>
+                          <div class="col-sm-2">
+                            <input
+                              type="number"
+                              class="form-control"
+                              name="HusbandMobile"
+                              onChange={this.handleInputChange}
+                              value={this.state.HusbandMobile}
+              
+                            />
+                          </div>
+                          <div class="col-sm-1">
+                            <label for="Weight" className="font-weight-bold">
+                              IDNumber
+                            </label>
+                          </div>
+                          <div class="col-sm-2">
+                            <input
+                              type="number"
+                              class="form-control"
+                              name="HusbandID"
+                              onChange={this.handleInputChange}
+                              value={this.state.HusbandID}
+                            />
+                          </div>
+                        </div>
+                        : null
+                }
+                        <br/>
+                        <div className=" row">
+                      <div class="col-sm-2">
+                            <label for="Height" className="font-weight-bold">
+                            height
+                            </label>
+                          </div>
+                          <div class="col-sm-4">
+                            <input
+                              type="text"
+                              class="form-control"
+                              name="Height"
+                              onChange={this.handleInputChange}
+                              value={this.state.Height}
+                              required
+                              placeholder="Enter height in cm"
+                            />
+                          </div>
+                          <div class="col-sm-2">
+                            <label for="Weight" className="font-weight-bold">
+                              Weight
+                            </label>
+                          </div>
+                          <div class="col-sm-4">
+                            <input
+                              type="number"
+                              class="form-control"
+                              name="Weight"
+                              onChange={this.handleInputChange}
+                              value={this.state.Weight}
+                              placeholder="Enter weignt in kgs"
+                              required
+                            />
+                          </div>
+                        </div>
+                        <br/>
+                        <div className=" row">
+                        <div class="col-sm-2">
+                            <label for="Village" className="font-weight-bold">
+                            Village
+                            </label>
+                          </div>
+                          <div class="col-sm-4">
+                            <input
+                              type="text"
+                              class="form-control"
+                              name="Village"
+                              onChange={this.handleInputChange}
+                              value={this.state.Village}
+                              required
+                    
+                            />
+                          </div>
+                          <div class="col-sm-2">
+                            <label for="BirthCer" className="font-weight-bold">
+                              Birth Certificate
+                            </label>
+                          </div>
+                          <div class="col-sm-4">
+                            <input
+                              type="number"
+                              class="form-control"
+                              name="BirthCer"
+                              onChange={this.handleInputChange}
+                              value={this.state.BirthCer}
+                              required
+                            />
+                          </div>
+                        </div>
+                        <br/>
+                        <div className=" row">
+                        <div class="col-sm-2">
+                            <label for="Languages" className="font-weight-bold">
+                            Languages
+                            </label>
+                          </div>
+                          <div class="col-sm-4">
+                            <input
+                              type="text"
+                              class="form-control"
+                              name="Languages"
+                              onChange={this.handleInputChange}
+                              value={this.state.Languages}
+                              required
+                    
+                            />
+                          </div>
+                          <div class="col-sm-2">
+                            <label for="Skills" className="font-weight-bold">
+                              Skills
+                            </label>
+                          </div>
+                          <div class="col-sm-4">
+                            <input
+                              type="text"
+                              class="form-control"
+                              name="Skills"
+                              onChange={this.handleInputChange}
+                              value={this.state.Skills}
+                              required
+                            />
+                          </div>
+                        </div>
+                      <br />
+                      <div className=" row">
+                      <div class="col-sm-2">
+                            <label for="Classify" className="font-weight-bold">
+                              Classify
+                            </label>
+                          </div>
+                          <div class="col-sm-4">
+                          <Select
+                                  name="Classify"
+                                  value={ClassifyOption.filter(
+                                    option => option.label === this.state.Classify
+                                  )}
+                                  onChange={this.handleSelectChange}
+                                  options={ClassifyOption}
+                                  required
+                                />
+                          </div>
+                         
+                         <div class="col-sm-2">
+                         <label for="Job" className="font-weight-bold">
+                         Job
+                         </label>
+                       </div>
+                       <div class="col-sm-4">
+                         <input
+                           type="text"
+                           class="form-control"
+                           name="Job"
+                           onChange={this.handleInputChange}
+                           value={this.state.Job}
+                           required
+                 
+                         />
+                       </div>
+                         </div>
+                         <br/>
+                         { this.state.Classify === "Agent" | this.state.Classify==="Refferal" ?
+                         <div className=" row">
+                         <div class="col-sm-2">
+                            <label for="Agent" className="font-weight-bold">
+                            Agent
+                            </label>
+                          </div>
+                          <div class="col-sm-4">
+                            <input
+                              type="text"
+                              class="form-control"
+                              name="Agent"
+                              onChange={this.handleInputChange}
+                              value={this.state.Agent}
+                            />
+                          </div>
+                         </div>
+                            : null
+                          }
+                        <br />
+                        &nbsp;&nbsp;&nbsp;&nbsp;
+                        <div className=" row">
+                        <div class="col-sm-2">
+                            <label for="Village" className="font-weight-bold">
+                            Passport Photo
+                            </label>
+                          </div>
+                          <div class="col-sm-4">
+                          <input
+                          type="file"
+                          className="form-control"
+                          name="file"
+                          onChange={this.onChangeHandler}
+                          multiple
+                        />
+                          </div>
+                          <div class="col-sm-2">
+                            <label for="BirthCer" className="font-weight-bold">
+                              FullPhoto
+                            </label>
+                          </div>
+                          <div class="col-sm-4">
+                          <input
+                          type="file"
+                          className="form-control"
+                          name="file"
+                          onChange={this.onChangeHandler1}
+                          multiple
+                        />
+                       </div>
+                        </div>
+                          <br/>
+                          <div className=" row">
+                          <div class="col-sm-3">
+                          <div class="form-group">
+                        <Progress
+                          max="100"
+                          color="success"
+                          value={this.state.loaded}
+                        >
+                          {Math.round(this.state.loaded, 2)}%
+                        </Progress>
+                      </div>
+                      </div>
+                      <div class="col-sm-3">
+                      <button
+                      type="button"
+                      class="btn btn-success"
+                      onClick={this.onClickHandler}
+                    >
+                      Upload
+                    </button>
+                      </div>
+                      <div class="col-sm-3">
+                          <div class="form-group">
+                        <Progress
+                          max="100"
+                          color="success"
+                          value={this.state.loaded1}
+                        >
+                          {Math.round(this.state.loaded1, 2)}%
+                        </Progress>
+                      </div>
+                      </div>
+                      <div class="col-sm-3">
+                      <button
+                      type="button"
+                      class="btn btn-success"
+                      onClick={this.onClickHandler1}
+                    >
+                      Upload
+                    </button>
+                      </div>
+                          </div>
+                        <p></p>
+                        <div className=" row">
+                          <div className="col-sm-10" />
+                          <div className="col-sm-1">
+                            <button
+                              type="submit"
+                              className="btn btn-success float-right"
+                            >
+                              Save
+                            </button>
+                          </div>
+                          <div className="col-sm-1">
+                           
+                              <div>
+                              <button
+                                className="btn btn-info"
+                                onClick={this.showProfiletab}
+                              >
+                                Next 
+                              </button>
+                              </div>
+                          
+                          </div>
+                        </div>
+                      </form>
                     </div>
-                </section>
-                <section id="css-classes" class="card">
-                    <div class="card-header">
-                        <h4 class="card-title">CSS Classes</h4>
+                    {/* </form> */}
+                    <div>
+                      <br />
+
+                      <br />
+                      <i className="font-weight-bold">
+                        If false information is input in the system, the
+                        applicant risks job.
+                      </i>
                     </div>
-                    <div class="card-content">
-                        <div class="card-body">
-                            <div class="card-text">
-                                <p>This table contains all classes related to the floating navigation layout. This is a custom layout classes for fixed navigation layout page requirements.</p>
-                                <p>All these options can be set via following classes:</p>
-                                <div class="table-responsive">
-                                    <table class="table table-hover">
-                                        <thead>
-                                            <tr>
-                                                <th>Classes</th>
-                                                <th>Description</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <th scope="row"><code>.navbar-floating</code></th>
-                                                <td>To set floating navbar you need to add <code>navbar-floating</code> class in <code>&lt;body&gt;</code> tag.</td>
-                                            </tr>
-                                            <tr>
-                                                <th scope="row"><code>.floating-nav</code></th>
-                                                <td>To set floating navbar you need to add <code>floating-nav</code> class in <code>&lt;nav&gt;</code> tag.</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
+                  </div>
+
+                  {/* Educational details tab */}
+                  <div
+                    class="tab-pane fade"
+                    id="nav-profile"
+                    role="tabpanel"
+                    style={childdiv}
+                    aria-labelledby="nav-profile-tab"
+                  >
+                    <Modal
+                      visible={this.state.AddEducational}
+                      width="900"
+                      height="300"
+                      effect="fadeInUp"
+                    >
+                      <a
+                        style={{ float: "right", color: "red", margin: "10px" }}
+                        href="javascript:void(0);"
+                        onClick={() => this.closeAddEducational()}
+                      >
+                        <i class="fa fa-close"></i>
+                      </a>
+                      <div>
+                        <h4
+                          style={{ "text-align": "center", color: "#1c84c6" }}
+                        >
+                          Educational details
+                        </h4>
+                        <div className="container-fluid">
+                          <div className="col-sm-12">
+                            <div className="ibox-content">
+                              <form onSubmit={this.handleEducationalSubmit}>
+                                <div className=" row">
+                                  <div className="col-md-6">
+                                    <div className="row">
+                                      <div className="col-md-4">
+                                        <label
+                                          htmlFor="exampleInputPassword1"
+                                          className="font-weight-bold"
+                                        >
+                                          Institution name
+                                        </label>
+                                      </div>
+                                      <div className="col-md-8">
+                                        <input
+                                          onChange={this.handleInputChange}
+                                          value={this.state.EducationalInstitution}
+                                          type="text"
+                                          required
+                                          name="EducationalInstitution"
+                                          className="form-control"
+                                        />
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div className="col-md-6">
+                                    <div className="row">
+                                      <div className="col-md-4">
+                                        <label
+                                          htmlFor="exampleInputPassword1"
+                                          className="font-weight-bold"
+                                        >
+                                          Course
+                                        </label>
+                                      </div>
+                                      <div className="col-md-8">
+                                        <input
+                                          onChange={this.handleInputChange}
+                                          value={
+                                            this.state
+                                              .EducationalDecription
+                                          }
+                                          type="text"
+                                          required
+                                          name="EducationalDecription"
+                                          className="form-control"
+                                        />
+                                      </div>
+                                    </div>
+                                  </div>
                                 </div>
+                                <br />
+                                <div className=" row">
+                                  <div className="col-md-6">
+                                    <div className="row">
+                                      <div className="col-md-4">
+                                        <label
+                                          htmlFor="exampleInputPassword1"
+                                          className="font-weight-bold"
+                                        >
+                                          Period
+                                        </label>
+                                      </div>
+                                      <div className="col-md-8">
+                                        <input
+                                          onChange={this.handleInputChange}
+                                          value={
+                                            this.state
+                                              .EducationalPeriod
+                                          }
+                                          type="text"
+                                          required
+                                          name="EducationalPeriod"
+                                          className="form-control"
+                                        />
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                                <br />
+                                <div className="col-sm-12 ">
+                                  <div className=" row">
+                                    <div className="col-sm-8" />
+                                    <div className="col-sm-2">
+                                      <button
+                                        type="submit"
+                                        className="btn btn-success"
+                                      >
+                                        Save
+                                      </button>
+                                      </div>
+                                      <div className="col-sm-2">
+                                      <button
+                                        type="button"
+                                        className="btn btn-danger"
+                                        onClick={this.closeAddEducational}
+                                      >
+                                        Close
+                                      </button>
+                                    </div>
+                                  </div>
+                                </div>
+                              </form>
                             </div>
+                          </div>
+                        </div>
+                      </div>
+                    </Modal>
+
+                    <div style={formcontainerStyle}>
+                      <div style={FormStyle}>
+                        <h3 style={headingstyle}>Educational Details</h3>
+
+                        <div className="row">
+                          <div class="col-sm-11">
+                            <table className="table table-sm">
+                              <thead className="thead-light">
+                                <th>Institution</th>
+                                <th>Course</th>
+                                <th>period</th>
+                                <th>Actions</th>
+                              </thead>
+                              {this.state.Educational.map((r, i) => (
+                                <tr>
+                                  <td>{r.Institution}</td>
+                                  <td> {r.Decription} </td>
+                                  <td> {r.Period} </td>
+                                  <td>
+                                    {" "}
+                                    <span>
+                                      <a
+                                        style={{ color: "#f44542" }}
+                                        onClick={e =>
+                                          this.handleDeleteEducational(r, e)
+                                        }
+                                      >
+                                        &nbsp; Remove
+                                      </a>
+                                      {/* {this.state.alert} */}
+                                    </span>
+                                  </td>
+                                </tr>
+                              ))}
+                            </table>
+                          </div>
+                        </div>
+                        <div className=" row">
+                        <div className="col-sm-1">
+                            <button
+                              className="btn btn-info"
+                              onClick={this.showhome}
+                            >
+                              Previous
+                            </button>
+                            </div>
+                          <div className="col-sm-9" />
+                          <div className="col-sm-1">
+                            <button
+                              className="btn btn-success"
+                              onClick={this.AddNewEducational}
+                            >
+                              ADD
+                            </button>
+                            </div>
+                            <div className="col-sm-1">
+                            <button
+                              type="button"
+                              onClick={this.openInterestedPartiesTab}
+                              className="btn btn-info"
+                            >
+                              {" "}
+                              Next
+                            </button>
+                          </div>
+                        </div>
+                        <br />
+                      </div>
+                    </div>
+                  </div>
+               
+{/* Parent /guardian tab */}
+                  <div
+                    class="tab-pane fade"
+                    id="nav-InterestedParties"
+                    role="tabpanel"
+                    style={childdiv}
+                    aria-labelledby="nav-InterestedParties-tab"
+                  >
+                      <Modal
+                      visible={this.state.AddGuardians}
+                      width="900"
+                      height="300"
+                      effect="fadeInUp"
+                    >
+                      <a
+                        style={{ float: "right", color: "red", margin: "10px" }}
+                        href="javascript:void(0);"
+                        onClick={() => this.closeAddGuardians()}
+                      >
+                        <i class="fa fa-close"></i>
+                      </a>
+                      <div>
+                        <h4
+                          style={{ "text-align": "center", color: "#1c84c6" }}
+                        >
+                          Guardian Details
+                        </h4>
+                        <div className="container-fluid">
+                          <div className="col-sm-12">
+                            <div className="ibox-content">
+                              <form onSubmit={this.handleGuardianSubmit}>
+                                <div className=" row">
+                                  <div className="col-md-6">
+                                    <div className="row">
+                                      <div className="col-md-4">
+                                        <label
+                                          htmlFor="exampleInputPassword1"
+                                          className="font-weight-bold"
+                                        >
+                                          Guardian Name
+                                        </label>
+                                      </div>
+                                      <div className="col-md-8">
+                                        <input
+                                          onChange={this.handleInputChange}
+                                          value={this.state.GuardianName}
+                                          type="text"
+                                          required
+                                          name="GuardianName"
+                                          className="form-control"
+                                        />
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div className="col-md-6">
+                                    <div className="row">
+                                      <div className="col-md-5">
+                                        <label
+                                          htmlFor="exampleInputPassword1"
+                                          className="font-weight-bold"
+                                        >
+                                          Guardian ID Number
+                                        </label>
+                                      </div>
+                                      <div className="col-md-7">
+                                        <input
+                                          onChange={this.handleInputChange}
+                                          value={
+                                            this.state
+                                              .GuardianIDNO
+                                          }
+                                          type="text"
+                                          required
+                                          name="GuardianIDNO"
+                                          className="form-control"
+                                        />
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                                <br />
+                                <div className=" row">
+                                  <div className="col-md-6">
+                                    <div className="row">
+                                      <div className="col-md-4">
+                                        <label
+                                          htmlFor="exampleInputPassword1"
+                                          className="font-weight-bold"
+                                        >
+                                          Relationship
+                                        </label>
+                                      </div>
+                                      <div className="col-md-8">
+                                      <Select
+                                  name="GuardianRelationship"
+                                  value={Relationship.filter(
+                                    option => option.label === this.state.GuardianRelationship
+                                  )}
+                                  onChange={this.handleSelectChange}
+                                  options={Relationship}
+                                  required
+                                />
+                                      </div>
+                                      
+                                    </div>
+                                    
+                                  </div>
+                                </div>
+                                <br />
+                                <div className="col-sm-12 ">
+                                  <div className=" row">
+                                    <div className="col-sm-8" />
+                                    <div className="col-sm-2">
+                                      <button
+                                        type="submit"
+                                        className="btn btn-success"
+                                      >
+                                        Save
+                                      </button>
+                                      </div>
+                                      <div className="col-sm-2">
+                                      <button
+                                        type="button"
+                                        className="btn btn-danger"
+                                        onClick={this.closeAddGuardians}
+                                      >
+                                        Close
+                                      </button>
+                                    </div>
+                                  </div>
+                                </div>
+                              </form>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </Modal>
+                    <div style={formcontainerStyle}>
+                      <div style={FormStyle}>
+                        <h3 style={headingstyle}>Guardian Details</h3>
+
+                        <div className="row">
+                          <div class="col-sm-11">
+                            <table className="table table-sm">
+                              <thead className="thead-light">
+                                <th>Guardian Name</th>
+                                <th>Guardian IDNO</th>
+                                <th>Relationship</th>
+                                <th>Actions</th>
+                              </thead>
+                              {this.state.Parent.map((r, i) => (
+                                <tr>
+                                  <td>{r.Name}</td>
+                                  <td> {r.ParentID} </td>
+                                  <td> {r.Relationship} </td>
+                                  <td>
+                                    {" "}
+                                    <span>
+                                      <a
+                                        style={{ color: "#f44542" }}
+                                        onClick={e =>
+                                          this.handleDeleteGuardian(r, e)
+                                        }
+                                      >
+                                        &nbsp; Remove
+                                      </a>
+                                      {/* {this.state.alert} */}
+                                    </span>
+                                  </td>
+                                </tr>
+                              ))}
+                            </table>
+                          </div>
+                        </div>
+                        <div className=" row">
+                        <div className="col-sm-1">
+                            <button
+                              className="btn btn-info"
+                              onClick={this.showProfiletab}
+                            >
+                              Previous
+                            </button>
+                            </div>
+                          <div className="col-sm-9" />
+                          <div className="col-sm-1">
+                            <button
+                              className="btn btn-success"
+                              onClick={this.AddNewGuardians}
+                            >
+                              ADD
+                            </button>
+                            </div>
+                            <div className="col-sm-1">
+                            <button
+                              type="button"
+                              onClick={this.openFeesTab}
+                              className="btn btn-info"
+                            >
+                              {" "}
+                              Next
+                            </button>
+                          </div>
+                        </div>
+                        <br />
+                      </div>
+                    </div>
+                  </div> 
+{/* next of kin tab */}
+<div
+                    class="tab-pane fade"
+                    id="nav-Fees"
+                    role="tabpanel"
+                    style={childdiv}
+                    aria-labelledby="nav-Fees-tab"
+                  >
+                     <div
+                    class="tab-pane fade"
+                    id="nav-Fees"
+                    role="tabpanel"
+                    style={childdiv}
+                    aria-labelledby="nav-Fees-tab"
+                  ></div>
+                     <div
+                    class="tab-pane fade"
+                    id="nav-Fees"
+                    role="tabpanel"
+                    style={childdiv}
+                    aria-labelledby="nav-Fees-tab"
+                  ></div>
+                      <Modal
+                      visible={this.state.AddNextOFKin}
+                      width="800"
+                      height="300"
+                      effect="fadeInUp"
+                    >
+                      <a
+                        style={{ float: "right", color: "red", margin: "10px" }}
+                        href="javascript:void(0);"
+                        onClick={() => this.closeAddNextOFKin()}
+                      >
+                        <i class="fa fa-close"></i>
+                      </a>
+                      <div>
+                        <h4
+                          style={{ "text-align": "center", color: "#1c84c6" }}
+                        >
+                          Next of kin details
+                        </h4>
+                        <div className="container-fluid">
+                          <div className="col-sm-12">
+                            <div className="ibox-content">
+                              <form onSubmit={this.handleNextOFKINSubmit}>
+                                <div className=" row">
+                                  <div className="col-md-6">
+                                    <div className="row">
+                                      <div className="col-md-4">
+                                        <label
+                                          htmlFor="exampleInputPassword1"
+                                          className="font-weight-bold"
+                                        >
+                                           Name
+                                        </label>
+                                      </div>
+                                      <div className="col-md-8">
+                                        <input
+                                          onChange={this.handleInputChange}
+                                          value={this.state.NextOFKinName}
+                                          type="text"
+                                          required
+                                          name="NextOFKinName"
+                                          className="form-control"
+                                        />
+                                      </div>
+                                    </div>
+                                  </div>
+                               <div className="col-md-6">
+                                    <div className="row">
+                                      <div className="col-md-4">
+                                        <label
+                                          htmlFor="exampleInputPassword1"
+                                          className="font-weight-bold"
+                                        >
+                                          Relationship
+                                        </label>
+                                      </div>
+                                      <div className="col-md-8">
+                                      <Select
+                                  name="NextOfRelationship"
+                                  value={Relationship.filter(
+                                    option => option.label === this.state.NextOfRelationship
+                                  )}
+                                  onChange={this.handleSelectChange}
+                                  options={Relationship}
+                                  required
+                                />
+                                      </div>
+                                      
+                                    </div>
+                                    
+                                  </div>
+                                </div>
+                                <br />
+                                <div className=" row">
+                                  <div className="col-md-6">
+                                    <div className="row">
+                                      <div className="col-md-4">
+                                        <label
+                                          htmlFor="exampleInputPassword1"
+                                          className="font-weight-bold"
+                                        >
+                                          Current Residence
+                                        </label>
+                                      </div>
+                                      <div className="col-md-8">
+                                        <input
+                                          onChange={this.handleInputChange}
+                                          value={
+                                            this.state
+                                              .NextOfCurrentResident
+                                          }
+                                          type="text"
+                                          required
+                                          name="NextOfCurrentResident"
+                                          className="form-control"
+                                        />
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div className="col-md-6">
+                                    <div className="row">
+                                      <div className="col-md-4">
+                                        <label
+                                          htmlFor="exampleInputPassword1"
+                                          className="font-weight-bold"
+                                        >
+                                          Contact
+                                        </label>
+                                      </div>
+                                      <div className="col-md-8">
+                                        <input
+                                          onChange={this.handleInputChange}
+                                          value={
+                                            this.state
+                                              .NextOfContact
+                                          }
+                                          type="text"
+                                          required
+                                          name="NextOfContact"
+                                          className="form-control"
+                                        />
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                                <br />
+                                <div className="col-sm-12 ">
+                                  <div className=" row">
+                                    <div className="col-sm-8" />
+                                    <div className="col-sm-2">
+                                      <button
+                                        type="submit"
+                                        className="btn btn-success"
+                                      >
+                                        Save
+                                      </button>
+                                      </div>
+                                      <div className="col-sm-2">
+                                      <button
+                                        type="button"
+                                        className="btn btn-danger"
+                                        onClick={this.closeAddNextOfKin}
+                                      >
+                                        Close
+                                      </button>
+                                    </div>
+                                  </div>
+                                </div>
+                              </form>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </Modal>
+
+                    <div style={formcontainerStyle}>
+                      <div style={FormStyle}>
+                        <h3 style={headingstyle}>Next OF Details</h3>
+
+                        <div className="row">
+                          <div class="col-sm-11">
+                            <table className="table table-sm">
+                              <thead className="thead-light">
+                                <th>Name</th>
+                                <th>Relationship</th>
+                                <th>CurrentResident</th>
+                                <th>Contact</th>
+                                <th>Actions</th>
+                              </thead>
+                              {this.state.NextOFKin.map((r, i) => (
+                                <tr>
+                                  <td>{r.KinName}</td>
+                                  <td> {r.KRelationship} </td>
+                                  <td> {r.CurrentResident} </td>
+                                  <td> {r.Contact} </td>
+                                  <td>
+                                    {" "}
+                                    <span>
+                                      <a
+                                        style={{ color: "#f44542" }}
+                                        onClick={e =>
+                                          this.handleDeleteNextOFKin(r, e)
+                                        }
+                                      >
+                                        &nbsp; Remove
+                                      </a>
+                                      {/* {this.state.alert} */}
+                                    </span>
+                                  </td>
+                                </tr>
+                              ))}
+                            </table>
+                          </div>
+                        </div>
+                        <div className=" row">
+                        <div className="col-sm-1">
+                            <button
+                              className="btn btn-info"
+                              onClick={this.openFeesTab}
+                            >
+                              Previous
+                            </button>
+                            </div>
+                        <div className="col-sm-9" />
+                          <div className="col-sm-1">
+                            <button
+                              className="btn btn-success"
+                              onClick={this.AddNewNextOFKin}
+                            >
+                              ADD
+                            </button>
+                            </div>
+                            <div className="col-sm-1">
+                            <button
+                              type="button"
+                              onClick={this.showSiblingstab}
+                              className="btn btn-info"
+                            >
+                              {" "}
+                              Next
+                            </button>
+                          </div>
+                        </div>
+                        <br />
+                      </div>
+                    </div>
+                  </div> 
+ {/* Siblings tab */}
+                <div
+                    class="tab-pane fade"
+                    id="nav-Siblings"
+                    role="tabpanel"
+                    style={childdiv}
+                    aria-labelledby="nav-Siblings-tab"
+                  >
+                      <Modal
+                      visible={this.state.AddSiblings}
+                      width="800"
+                      height="300"
+                      effect="fadeInUp"
+                    >
+                      <a
+                        style={{ float: "right", color: "red", margin: "10px" }}
+                        href="javascript:void(0);"
+                        onClick={() => this.closeAddSiblings()}
+                      >
+                        <i class="fa fa-close"></i>
+                      </a>
+                      <div>
+                        <h4
+                          style={{ "text-align": "center", color: "#1c84c6" }}
+                        >
+                          Siblings details
+                        </h4>
+                        <div className="container-fluid">
+                          <div className="col-sm-12">
+                            <div className="ibox-content">
+                              <form onSubmit={this.handleSiblingsSubmit}>
+                                <div className=" row">
+                                  <div className="col-md-6">
+                                    <div className="row">
+                                      <div className="col-md-4">
+                                        <label
+                                          htmlFor="exampleInputPassword1"
+                                          className="font-weight-bold"
+                                        >
+                                           name
+                                        </label>
+                                      </div>
+                                      <div className="col-md-8">
+                                        <input
+                                          onChange={this.handleInputChange}
+                                          value={this.state.SiblingName}
+                                          type="text"
+                                          required
+                                          name="SiblingName"
+                                          className="form-control"
+                                        />
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div className="col-md-6">
+                                    <div className="row">
+                                      <div className="col-md-4">
+                                        <label
+                                          htmlFor="exampleInputPassword1"
+                                          className="font-weight-bold"
+                                        >
+                                          Gender
+                                        </label>
+                                      </div>
+                                      <div className="col-md-8">
+                                        <input
+                                          onChange={this.handleInputChange}
+                                          value={
+                                            this.state
+                                              .SiblingsSex
+                                          }
+                                          type="text"
+                                          required
+                                          name="SiblingsSex"
+                                          className="form-control"
+                                        />
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                                <br />
+                                <div className=" row">
+                                  <div className="col-md-6">
+                                    <div className="row">
+                                      <div className="col-md-4">
+                                        <label
+                                          htmlFor="exampleInputPassword1"
+                                          className="font-weight-bold"
+                                        >
+                                          Age
+                                        </label>
+                                      </div>
+                                      <div className="col-md-8">
+                                        <input
+                                          onChange={this.handleInputChange}
+                                          value={
+                                            this.state
+                                              .SiblingsAge
+                                          }
+                                          type="text"
+                                          required
+                                          name="SiblingsAge"
+                                          className="form-control"
+                                        />
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                                <br />
+                                <div className="col-sm-12 ">
+                                  <div className=" row">
+                                    <div className="col-sm-8" />
+                                    <div className="col-sm-2">
+                                      <button
+                                        type="submit"
+                                        className="btn btn-success"
+                                      >
+                                        Save
+                                      </button>
+                                      </div>
+                                      <div className="col-sm-2">
+                                      <button
+                                        type="button"
+                                        className="btn btn-danger"
+                                        onClick={this.closeAddSiblings}
+                                      >
+                                        Close
+                                      </button>
+                                    </div>
+                                  </div>
+                                </div>
+                              </form>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </Modal>
+
+                    <div style={formcontainerStyle}>
+                      <div style={FormStyle}>
+                        <h3 style={headingstyle}>Siblings Details</h3>
+
+                        <div className="row">
+                          <div class="col-sm-11">
+                          <table className="table table-sm">
+                              <thead className="thead-light">
+                                <th>Name</th>
+                                <th>Gender</th>
+                                <th>Age</th>
+                                <th>Actions</th>
+                              </thead>
+                              {this.state.MySiblings.map((r, i) => (
+                                <tr>
+                                  <td>{r.SiblingName}</td>
+                                  <td> {r.Sex} </td>
+                                  <td> {r.Age} </td>
+                                  <td>
+                                    {" "}
+                                    <span>
+                                      <a
+                                        style={{ color: "#f44542" }}
+                                        onClick={e =>
+                                          this.handleDeleteNextOFKin(r, e)
+                                        }
+                                      >
+                                        &nbsp; Remove
+                                      </a>
+                                      {/* {this.state.alert} */}
+                                    </span>
+                                  </td>
+                                </tr>
+                              ))}
+                            </table>
+                          </div>
+                        </div>
+                        <div className=" row">
+                        <div className="col-sm-1">
+                            <button
+                              className="btn btn-info"
+                              onClick={this.showSiblingstab}
+                            >
+                              Previous
+                            </button>
+                            </div>
+                        <div className="col-sm-9" />
+                          <div className="col-sm-1">
+                            <button
+                              className="btn btn-success"
+                              onClick={this.AddNewSiblings}
+                            >
+                              ADD
+                            </button>
+                            </div>
+                            <div className="col-sm-1">
+                            <button
+                              type="button"
+                              onClick={this.showAttacmentstab}
+                              className="btn btn-info"
+                            >
+                              {" "}
+                              Next
+                            </button>
+                          </div>
+                        </div>
+                        <br />
+                      </div>
+                    </div>
+                  </div>
+        {/* Attachemnt tab */}
+                    <div
+                    class="tab-pane fade"
+                    id="nav-Attachments"
+                    role="tabpanel"
+                    style={childdiv}
+                    aria-labelledby="nav-Attachments-tab"
+                  >
+                  <Modal
+                      visible={this.state.AddDocuments}
+                      width="800"
+                      height="300"
+                      effect="fadeInUp"
+                    >
+                      <a
+                        style={{ float: "right", color: "red", margin: "10px" }}
+                        href="javascript:void(0);"
+                        onClick={() => this.closeAddDocuments()}
+                      >
+                        <i class="fa fa-close"></i>
+                      </a>
+                      <div>
+                        <h4
+                          style={{ "text-align": "center", color: "#1c84c6" }}
+                        >
+                          Document Attachement
+                        </h4>
+                        <div className="container-fluid">
+                          <div className="col-sm-12">
+                            <div className="ibox-content">
+                              <form onSubmit={this.handleDocumentSubmit}>
+                                <div className=" row">
+                                  <div className="col-md-12">
+                                    <div className="row">
+                                      <div className="col-md-6">
+                                        <label
+                                          htmlFor="exampleInputPassword1"
+                                          className="font-weight-bold"
+                                        >
+                                           Description
+                                        </label>
+                                      </div>
+                                      <div className="col-md-6">
+                                        <input
+                                          onChange={this.handleInputChange}
+                                          value={this.state.DocumentDescription}
+                                          type="text"
+                                          required
+                                          name="DocumentDescription"
+                                          className="form-control"
+                                        />
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <br/>
+                                    </div>
+                                    <div className="col-md-12">
+                                    <div className="row">
+                                    <div class="col-sm-6">
+                            <label for="BirthCer" className="font-weight-bold">
+                              Document
+                            </label>
+                          </div>
+                          <div class="col-sm-6">
+                          <input
+                          type="file"
+                          className="form-control"
+                          name="file"
+                          onChange={this.onChangeHandler2}
+                          multiple
+                        />
+                       </div>
+                        </div>
+                          <br/>
+                          <div className=" row">
+                          <div class="col-sm-6">
+                          <div class="form-group">
+                        <Progress
+                          max="100"
+                          color="success"
+                          value={this.state.loaded2}
+                        >
+                          {Math.round(this.state.loaded2, 2)}%
+                        </Progress>
+                      </div>
+                      </div>
+                      <div class="col-sm-4">
+                      <button
+                      type="button"
+                      class="btn btn-success"
+                      onClick={this.onClickHandler2}
+                    >
+                      Upload
+                    </button>
+                      </div>
+                      </div>
+                       </div>      
+                                <br />
+                                <div className="col-sm-12 ">
+                                  <div className=" row">
+                                    <div className="col-sm-8" />
+                                    <div className="col-sm-2">
+                                      <button
+                                        type="submit"
+                                        className="btn btn-success"
+                                      >
+                                        Save
+                                      </button>
+                                      </div>
+                                      <div className="col-sm-2">
+                                      <button
+                                        type="button"
+                                        className="btn btn-danger"
+                                        onClick={this.closeAddDocuments}
+                                      >
+                                        Close
+                                      </button>
+                                    </div>
+                                  </div>
+                                </div>
+                              </form>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </Modal>
+                    <div style={formcontainerStyle}>
+                      <div style={FormStyle}>
+                        <h3 style={headingstyle}>Documents Attachement </h3>
+                        <div clasName="row">
+                          <div className="col-sm-11">
+                          <table className="table table-sm">
+                              <thead className="thead-light">
+                                  <th scope="col">#</th>
+                                  <th scope="col">File Description</th>
+                                  <th scope="col">Action</th>
+                              </thead>
+                              <tbody>
+                                  {this.state.ApplicationDocuments.map(
+                                    (r, i) => (
+                                      <tr>
+                                        <td>{i + 1}</td>
+                                        <td>{r.Description}</td>
+                                        <td>{r.FileName}</td>
+                                        <td>
+                                          <span>
+                                            <a
+                                              style={{ color: "#f44542" }}
+                                              onClick={e =>
+                                                this.handleDeleteDocument(r, e)
+                                              }
+                                            >
+                                              &nbsp; Remove
+                                            </a>
+                                          </span>
+                                        </td>
+                                      </tr>
+                                    )
+                                  )}
+                                </tbody>
+                            </table>
+                          </div>
+                        </div>
+                        <div className=" row">
+                        <div className="col-sm-1">
+                            <button
+                              className="btn btn-info"
+                              onClick={this.showSiblingstab}
+                            >
+                              Previous
+                            </button>
+                            </div>
+                        <div className="col-sm-9" />
+                          <div className="col-sm-1">
+                            <button
+                              className="btn btn-success"
+                              onClick={this.AddNewDocuments}
+                            >
+                              ADD
+                            </button>
+                            </div>
+                            <div className="col-sm-1">
+                            <button
+                              type="button"
+                              onClick={this.showAttacmentstab}
+                              className="btn btn-info"
+                            >
+                              {" "}
+                              submit
+                            </button>
+                          </div>
+                        </div>
+                        <br />
+                      </div>
+                    </div>
+                  </div>
+
+                  </div>
+                </div>
+              </div>
+            </div>
+                  </div>
                         </div>
                     </div>
-                </section>
-                <section id="html-markup" class="card">
-                    <div class="card-header">
-                        <h4 class="card-title">HTML Markup</h4>
-                    </div>
-                    <div class="card-content">
-                        <div class="card-body">
-                            <div class="card-text">
-                                <p>This section contains HTML Markup to create floating navigation layout. This markup define where to add css classes to make navigation floating.</p>
-                                <p>Vuexy has a ready to use starter kit, you can use this layout directly by using the starter kit pages from the <code>vuexy-html-bootstrap-admin-template/starter-kit</code> folder.</p>
-                                <pre class="language-html">
-        <code class="language-html">
-            &lt;!DOCTYPE html&gt;
-              &lt;html lang="en"&gt;
-                &lt;head&gt;&lt;/head&gt;
-                &lt;body data-menu="vertical-menu-modern" class="vertical-layout vertical-menu-modern 2-column navbar-floating footer-static menu-expanded"&gt;
-
-                  &lt;!-- fixed-top--&gt;
-                  &lt;nav class="header-navbar navbar-expand-lg navbar navbar-with-menu floating-nav navbar-light navbar-shadow"&gt;
-                  &lt;/nav&gt;
-
-                  &lt;!-- BEGIN Navigation--&gt;
-                  &lt;div class="main-menu menu-fixed menu-light menu-accordion menu-shadow expanded"&gt;
-                  &lt;/div&gt;
-                  &lt;!-- END Navigation--&gt;
-
-                  &lt;!-- BEGIN Content--&gt;
-                  &lt;div class="app-content content"&gt;
-                      &lt;div class="content-wrapper"&gt;
-                      &lt;/div&gt;
-                  &lt;/div&gt;
-                  &lt;!-- END Content--&gt;
-
-                  &lt;!-- START FOOTER LIGHT--&gt;
-                  &lt;footer class="footer footer-static footer-light"&gt;
-                  &lt;/footer&gt;
-                  &lt;!-- END FOOTER LIGHT--&gt;
-
-                &lt;/body&gt;
-              &lt;/html&gt;
-        </code>
-        </pre>
-                            </div>
-                        </div>
-                    </div>
-                </section>
+                </section>       
             </div>
         </div>
     </div>

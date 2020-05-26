@@ -4,6 +4,7 @@ var Users = require("./Routes/SystemAdmin/Users");
 var usergroups = require("./Routes/SystemAdmin/UserGroups");
 var Signup = require("./Routes/SystemAdmin/Signup");
 var Mailer = require("./Routes/SystemAdmin/Mailer");
+
 var auth = require("./auth");
 var ValidateTokenExpiry = require("./Routes/SystemAdmin/ValidateTokenExpiry");
 var GroupAccess = require("./Routes/SystemAdmin/GroupAccess");
@@ -72,6 +73,25 @@ var RegistrationCustom=require("./Routes/CustomReports/RegistrationCustom");
 var TrainingCustom =require("./Routes/CustomReports/TrainingCustom");
 var DCICustom =require("./Routes/CustomReports/DCICustom");
 var PassportCustom =require("./Routes/CustomReports/PassportCustom");
+var Approvers = require("./Routes/SystemAdmin/Approvers");
+var Approvalmodules = require("./Routes/SystemAdmin/Approvalmodules");
+var applicationdocuments = require("./Routes/Applications/applicationdocuments");
+var ApplicationsApprovals = require("./Routes/Applications/ApplicationsApprovals");
+var MinorApproval=require("./Routes/Applications/MinorApproval");
+var NotifyApprover=require("./Routes/Applications/NotifyApprover");
+var PassportApproval=require("./Routes/Applications/PassportApproval");
+var MajorApproval =require("./Routes/Applications/MajorApproval");
+var DCIApproval =require("./Routes/Applications/DCIApproval");
+var MedicalForm = require("./Routes/generatePdf/GenerateMedicalForm");
+var ContractApproval =require("./Routes/Applications/ContractApproval")
+var NEAApproval= require ("./Routes/Applications/NeaaApproval");
+var AttestationApproval=require("./Routes/Applications/AttestationApproval");
+var VisaApproval= require("./Routes/Applications/VIsaApproval");
+var FinalMedicalApproval= require("./Routes/Applications/FinalMedicalApproval");
+var TrainingApproval =require("./Routes/Applications/TrainingApproval");
+var TicketingApproval=require("./Routes/Applications/TicketingApproval");
+var TravellingApproval=require("./Routes/Applications/TravellingApproval");
+var TotalApplicant=require("./Routes/Reports/TotalApplicant");
 app.use(
   bodyParser.urlencoded({
     extended: false
@@ -167,6 +187,25 @@ app.use("/api/RegistrationCustom",RegistrationCustom);
 app.use("/api/TrainingCustom",TrainingCustom);
 app.use("/api/DCICustom",DCICustom);
 app.use("/api/PassportCustom",PassportCustom);
+app.use("/api/Approvers",Approvers);
+app.use("/api/Approvalmodules",Approvalmodules);
+app.use("/api/applicationdocuments", applicationdocuments);
+app.use("/api/ApplicationsApprovals", ApplicationsApprovals);
+app.use("/api/MinorApproval",MinorApproval);
+app.use("/api/NotifyApprover", NotifyApprover);
+app.use("/api/PassportApproval",PassportApproval);
+app.use("/api/MajorApproval",MajorApproval);
+app.use("/api/DCIApproval",DCIApproval);
+app.use("/api/MedicalForm",MedicalForm);
+app.use("/api/ContractApproval",ContractApproval);
+app.use("/api/NEAApproval",NEAApproval);
+app.use("/api/AttestationApproval",AttestationApproval);
+app.use("/api/VisaApproval",VisaApproval);
+app.use("/api/FinalMedicalApproval",FinalMedicalApproval);
+app.use("/api/TrainingApproval",TrainingApproval);
+app.use("/api/TicketingApproval",TicketingApproval);
+app.use("/api/TravellingApproval",TravellingApproval);
+app.use("/api/TotalApplicant",TotalApplicant);
 app.use((req, res, next) => {
   const error = new Error("resource not found");
   error.status = 404;

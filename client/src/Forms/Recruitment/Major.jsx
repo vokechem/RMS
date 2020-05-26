@@ -3,9 +3,7 @@ import swal from "sweetalert";
 import Table from "./../../Table";
 import TableWrapper from "./../../TableWrapper";
 import Select from "react-select";
-import { Progress } from "reactstrap";
-import axios from "axios";
-import { ToastContainer, toast } from "react-toastify";
+import Modal from "react-awesome-modal";
 import "react-toastify/dist/ReactToastify.css";
 import ReactExport from "react-data-export";
 var dateFormat = require("dateformat");
@@ -20,7 +18,7 @@ class Major extends Component {
       Registration:[],
       privilages: [],
       profile: true,
-      MedicalFacilty:"",
+       MedicalFacilty:"",
       IDNumber: "",
       FullName:"",
       Number:"",
@@ -39,23 +37,21 @@ class Major extends Component {
       isUpdate: false,
       selectedFile: null
     };
-
     this.Resetsate = this.Resetsate.bind(this);
     this.handleSelectChange = this.handleSelectChange.bind(this);
     this.handleInputChange = this.handleInputChange.bind(this);
+    this.openModal = this.openModal.bind(this);
+    this.closeModal = this.closeModal.bind(this);
   }
   showDiv() {
     document.getElementById("nav-profile-tab").click();
   }
-  handleswitchMenu = e => {
-    e.preventDefault();
-    if (this.state.profile === false) {
-      this.setState({ profile: true });
-    } else {
-      this.setState({ profile: false });
-    }
-
-    //this.setnewstate();
+  openModal() {
+    this.setState({ open: true });
+    this.Resetsate();
+  }
+  closeModal = () => {
+    this.setState({ open: false });
   };
   handleSelectChange = (Facility, actionMeta) => {
     if (actionMeta.name == "MedicalFacility") {
@@ -135,7 +131,9 @@ class Major extends Component {
         ID:"",
         MedID:"",
       isUpdate: false,
-    
+      PIN: "",
+      Companyregistrationdate: "",
+      RegistrationNo: ""
     };
     this.setState(data);
   }
@@ -163,7 +161,6 @@ class Major extends Component {
   componentDidMount() {
     let token = localStorage.getItem("token");
     if (token == null) {
-     
       localStorage.clear();
       return (window.location = "/#/Logout");
     } else {
@@ -236,13 +233,8 @@ class Major extends Component {
       Other:Major.Other,
       ID:Major.ID
     };
-
     this.setState(data);
-    if (this.state.profile === false) {
-      this.setState({ profile: true });
-    } else {
-      this.setState({ profile: false });
-    }
+    this.setState({ open: true });
     this.setState({ isUpdate: true });
   };
   exportpdf = () => {
@@ -266,6 +258,23 @@ class Major extends Component {
     });
     doc.save("RMS Major medical.pdf");
   };
+  ProtectRoute() {
+    fetch("/api/UserAccess", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "x-access-token": localStorage.getItem("token")
+      }
+    })
+      .then(res => res.json())
+      .then(data => {
+        this.setState({ privilages: data });
+      })
+      .catch(err => {
+        //this.setState({ loading: false, redirect: true });
+      });
+    //end
+  }
   ProtectRoute() {
     fetch("/api/UserAccess", {
       method: "GET",
@@ -325,8 +334,7 @@ class Major extends Component {
     }
   };
   handleDelete = k => {
-    swal({
-      
+    swal({   
       text: "Are you sure that you want to delete this record?",
       icon: "warning",
       dangerMode: true,
@@ -366,18 +374,14 @@ class Major extends Component {
       },
       body: JSON.stringify(data)
     })
-      .then(response =>
-        response.json().then(data => {
+  .then(response =>
+        response.json()
+        .then(data => {
           this.fetchMajor();
-
           if (data.success) {
             swal("", "Record has been Updated!", "success");
+            this.setState({ open: false });
             this.Resetsate();
-            if (this.state.profile === false) {
-              this.setState({ profile: true });
-            } else {
-              this.setState({ profile: false });
-            }
           } else {
             swal("", data.message, "error");
           }
@@ -399,15 +403,9 @@ class Major extends Component {
       .then(response =>
         response.json().then(data => {
           this.fetchMajor();
-
           if (data.success) {
             swal("", "Record has been saved!", "success");
             this.setState({ open: false });
-            if (this.state.profile === false) {
-              this.setState({ profile: true });
-            } else {
-              this.setState({ profile: false });
-            }
             this.Resetsate();
           } else {
             swal("", data.message, "error");
@@ -529,23 +527,29 @@ class Major extends Component {
           Cost: k.Cost,
           action: (
             <span>
-              <a
-                className="fa fa-edit"
-                style={{ color: "#007bff" }}
-                onClick={e => this.handleEdit(k, e)}
-              >
-                {" "}
-                Edit
-              </a>
-              |{" "}
-              <a
-                className="fa fa-trash"
-                style={{ color: "#f44542" }}
-                onClick={e => this.handleDelete(k.ID, e)}
-              >
-                {" "}
-                Delete
-              </a>
+              {this.validaterole("Major Medical", "Edit") ? (
+                <a
+                  className="fa fa-edit"
+                  style={{ color: "#007bff" }}
+                  onClick={e => this.handleEdit(k, e)}
+                >
+                  Update |
+                </a>
+              ) : (
+                <i>-</i>
+              )}
+              &nbsp;
+              {this.validaterole("Major Medical", "Remove") ? (
+                <a
+                  className="fa fa-trash"
+                  style={{ color: "#f44542" }}
+                  onClick={e => this.handleDelete(k.ID, e)}
+                >
+                  Delete
+                </a>
+              ) : (
+                <i>-</i>
+              )}
             </span>
           )
         };
@@ -556,115 +560,110 @@ class Major extends Component {
       height: 100,
       width: 150
     };
-    let divconatinerstyle = {
-      width: "95%",
-      margin: "0 auto",
-      backgroundColor: "white"
-    };
-    let formcontainerStyle = {
-      border: "1px solid grey",
-      "border-radius": "10px"
-    };
-    let FormStyle = {
-      margin: "20px"
-    };
-    if (this.state.profile) {
       return (
-        <div>
-          <div>
-            <div className="row wrapper border-bottom white-bg page-heading">
-              <div className="col-lg-9">
-                <ol className="breadcrumb">
-                  <li className="breadcrumb-item">
-                    <h2>Major Medical</h2>
-                  </li>
-                </ol>
-              </div>
-              <div className="col-lg-3">
-                <div className="row wrapper ">
+        <div class="app-content content">
+        <div class="content-overlay"></div>
+        <div class="header-navbar-shadow"></div>
+        <div class="content-wrapper">
+            <div class="content-header row">
+                <div class="content-header-left col-md-9 col-12 mb-2">
+                    <div class="row breadcrumbs-top">
+                        <div class="col-12">
+                            <h2 class="content-header-title float-left mb-0">Major Medical</h2>
+                            <div class="breadcrumb-wrapper col-12">
+                                <ol class="breadcrumb">
+                                  
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="content-header-right text-md-right col-md-3 col-12 d-md-block d-none">
+                    <div class="form-group breadcrum-right">
                   {this.validaterole("Major Medical", "AddNew") ? (
+                <button
+                  type="button"
+                  onClick={this.openModal}
+                  className="btn btn-success  fa fa-plus"
+                >
+                 New
+                </button>
+              ) : null}
+              &nbsp;&nbsp;&nbsp;
+              {this.validaterole("Major Medical", "Export") ? (
+                <button
+                  type="button"
+                  onClick={this.exportpdf}
+                  className="btn btn-success fa fa-file-pdf-o"
+                >
+                  &nbsp;Export
+                </button>
+              ) : null}
+           &nbsp;&nbsp;&nbsp;
+              {this.validaterole("Major Medical", "Export") ? (
+                <ExcelFile
+                  element={
                     <button
                       type="button"
-                      style={{ marginTop: 40 }}
-                      onClick={this.handleswitchMenu}
-                      className="btn btn-primary float-right fa fa-plus"
+                      className="btn btn-success  fa fa-file-excel-o "
                     >
-                      &nbsp; New
+                      &nbsp; Excel
                     </button>
-                  ) : null}
-                  &nbsp;
-                  {this.validaterole("Major Medical", "Export") ? (
-                    <button
-                      onClick={this.exportpdf}
-                      type="button"
-                      style={{ marginTop: 40 }}
-                      className="btn btn-primary float-left fa fa-file-pdf-o fa-2x"
-                    >
-                      &nbsp;PDF
-                    </button>
-                  ) : null}
-                  &nbsp;
-                  {this.validaterole("Major Medical", "Export") ? (
-                    <ExcelFile
-                      element={
-                        <button
-                          type="button"
-                          style={{ marginTop: 40 }}
-                          className="btn btn-primary float-left fa fa-file-excel-o fa-2x"
-                        >
-                          &nbsp; Excel
-                        </button>
-                      }
-                    >
-                      <ExcelSheet data={rows} name="Major Medical">
+                  }
+                >
+                   <ExcelSheet data={rows} name="Major Medical">
                         <ExcelColumn label="Fullname" value="Fullname" />
                         <ExcelColumn label="IDNumber" value="IDNumber" />
                         <ExcelColumn label="MedicalFacility" value="MedicalFacility" />
                         <ExcelColumn label="Cost" value="Cost" />
                       </ExcelSheet>
                     </ExcelFile>
-                  ) : null}
+              ) : null}
+                    </div>
                 </div>
-              </div>
             </div>
-          </div>
-
-          <TableWrapper>
+            <div class="content-body">
+              
+                <section id="description" class="card">
+                    <div class="card-content">
+                        <div class="card-body">
+                            <div class="card-text">
+                             Search
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <section id="css-classes" class="card">
+                    <div class="card-content">
+                        <div class="card-body">
+                            <div class="card-text">
+                            <TableWrapper>
             <Table Rows={Rowdata1} columns={ColumnData} />
           </TableWrapper>
-        </div>
-      );
-    } else {
-      return (
-        <div>
-          <div className="row wrapper border-bottom white-bg page-heading">
-            <div className="col-lg-10">
-              <ol className="breadcrumb">
-                <li className="breadcrumb-item">
-                  <h2>Major medical</h2>
-                </li>
-              </ol>
-            </div>
-            <div className="col-lg-2">
-              <div className="row wrapper ">
-                <button
-                  type="button"
-                  style={{ marginTop: 40 }}
-                  onClick={this.handleswitchMenu}
-                  className="btn btn-primary"
+                            </div>
+                            <Modal
+                  visible={this.state.open}
+                  width="1200"
+                  height="300"
+                  effect="fadeInUp"
                 >
-                  &nbsp; Back
-                </button>
-              </div>
-            </div>
-          </div>
-          <br />
-          <div style={divconatinerstyle}>
-            <ToastContainer />
-            <div style={formcontainerStyle}>
-              <div class="col-sm-12">
-                <form style={FormStyle} onSubmit={this.handleSubmit}>
-                  <div class="row">
+                  <a
+                    style={{ float: "right", color: "red", margin: "10px" }}
+                    href="javascript:void(0);"
+                    onClick={() => this.closeModal()}
+                  >
+                    <i class="fa fa-close"></i>
+                  </a>
+                  <div>
+                    <h4 style={{ "text-align": "center", color: "#1c84c6" }}>
+                      {" "}
+                      Major medical
+                    </h4>
+                    <div className="container-fluid">
+                      <div className="col-sm-12">
+                        <div className="ibox-content">
+                          <form onSubmit={this.handleSubmit}>
+                          <div class="row">
                     <div class="col-sm-2">
                       <label for="Number" className="font-weight-bold">
                        ID Number
@@ -796,30 +795,45 @@ class Major extends Component {
                         name="Other"
                         onChange={this.handleInputChange}
                         value={this.state.Other}
-                    
                       />
                     </div>
                       </div>
                     <br/>
-                  <div className=" row">
-                    <div className="col-sm-2" />
-                    <div className="col-sm-8" />
-                    <div className="col-sm-2">
-                      <button
-                        className="btn btn-primary float-right"
-                        type="submit"
-                      >
-                        Save
-                      </button>
+                  <div className="col-sm-12 ">
+                              <div className=" row">
+                                <div className="col-sm-2">
+                                  <button
+                                    className="btn btn-danger float-left"
+                                    onClick={this.closeModal}
+                                  >
+                                    Cancel
+                                  </button>
+                                </div>
+                                <div className="col-sm-8" />
+                                <div className="col-sm-2">
+                                  <button
+                                    type="submit"
+                                    className="btn btn-primary float-left"
+                                  >
+                                    Save
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          </form>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                </form>
-              </div>
+                </Modal>
+                        </div>
+                    </div>
+                </section>
             </div>
-          </div>
         </div>
+    </div>
       );
-    }
+
   }
 }
 

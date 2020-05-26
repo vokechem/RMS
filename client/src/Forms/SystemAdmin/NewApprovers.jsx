@@ -135,11 +135,13 @@ class NewApprovers extends Component {
       .then(Modules => {
         if (Modules.length > 0) {
           this.setState({ Modules: Modules });
-          let Application = [];
-          let Fees = [];
-          let Case = [];
+          let HrPool = [];
+          let Extenal = [];
+          let Employment = [];
+          let Medical = [];
+          let Others = [];
           Modules.forEach(k => {
-            if (k.Category === "Application") {
+            if (k.Category === "Hr Pool") {
               let data = {
                 title: (
                   <div className="label-area">
@@ -156,9 +158,9 @@ class NewApprovers extends Component {
                 )
               };
 
-              Application.push(data);
+              HrPool.push(data);
             }
-            if (k.Category === "Fees") {
+            if (k.Category === "Extenal Services") {
               let data = {
                 title: (
                   <div className="label-area">
@@ -175,9 +177,9 @@ class NewApprovers extends Component {
                 )
               };
 
-              Fees.push(data);
+              Extenal.push(data);
             }
-            if (k.Category === "Case Management") {
+            if (k.Category === "Employment Request") {
               let data = {
                 title: (
                   <div className="label-area">
@@ -194,13 +196,54 @@ class NewApprovers extends Component {
                 )
               };
 
-              Case.push(data);
+              Employment.push(data);
+            }
+            if (k.Category === "Medical") {
+              let data = {
+                title: (
+                  <div className="label-area">
+                    <b
+                      onClick={() => {
+                        this.setState({ ModuleName: k.Name });
+                        this.setState({ Module: k.ModuleCode });
+                      }}
+                    >
+                      {" "}
+                      {k.Name}
+                    </b>
+                  </div>
+                )
+              };
+
+              Medical.push(data);
+            }
+            if (k.Category === "Others") {
+              let data = {
+                title: (
+                  <div className="label-area">
+                    <b
+                      onClick={() => {
+                        this.setState({ ModuleName: k.Name });
+                        this.setState({ Module: k.ModuleCode });
+                      }}
+                    >
+                      {" "}
+                      {k.Name}
+                    </b>
+                  </div>
+                )
+              };
+
+              Others.push(data);
             }
           });
           let treeData = [
-            { title: "Application", children: Application },
-            { title: "Fees", children: Fees },
-            { title: "Case Management", children: Case }
+            { title: "Hr Pool", children: HrPool },
+            { title: "Extenal Services", children: Extenal },
+            { title: "Employment Request", children: Employment },
+            { title: "Medical", children: Medical },
+            { title: "Others", children: Others }
+
           ];
 
           this.setState({ treeData: treeData });
@@ -392,38 +435,43 @@ class NewApprovers extends Component {
   render() {
     let handleCheckBoxChange = this.handleCheckBoxChange;
     return (
-      <div>
-        <ToastContainer />
-        <div className="row wrapper border-bottom white-bg page-heading">
-          <div className="col-lg-11">
-            <ol className="breadcrumb">
-              <li className="breadcrumb-item">
-                <h2>APPROVAL HIERACHY</h2>
-              </li>
-            </ol>
-          </div>
-          <div className="col-lg-1">
-            <ol className="breadcrumb">
-              <li className="breadcrumb-item">
-                <Link to="/">
+      <div class="app-content content">
+        <div class="content-overlay"></div>
+        <div class="header-navbar-shadow"></div>
+        <div class="content-wrapper">
+        <div class="content-header row">
+                <div class="content-header-left col-md-9 col-12 mb-2">
+                    <div class="row breadcrumbs-top">
+                        <div class="col-12">
+                            <h2 class="content-header-title float-left mb-0">Approval Hierarchy </h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="content-header-right text-md-right col-md-3 col-12 d-md-block d-none">
+                    <div class="form-group breadcrum-right">
+                    <Link to="/">
                   <button
                     type="button"
-                    style={{ marginTop: 40 }}
-                    className="btn btn-primary float-left"
+                    className="btn btn-danger"
                   >
-                    &nbsp; Close
+                    Close
                   </button>
                 </Link>
-              </li>
-            </ol>
-          </div>
-        </div>
-        <br />
-        <div className="border-bottom white-bg p-4">
+                    </div>
+                </div>
+            </div>
+
+      <div class="content-body">
+          <section id="description" class="card">
           <div className="row">
             <div className="col-md-5 ">
-              <h2 className="text-success">Modules</h2>
-              <div className="col-md-11 border border-success rounded">
+                    <div class="card-header">
+                        <h4 className="text-success">Modules</h4>
+                    </div>
+                    <div class="card-content">
+                        <div class="card-body">
+                            <div class="card-text">
+                            <div className="col-md-11 border border-success rounded">
                 <div style={{ height: 500 }}>
                   <SortableTree
                     treeData={this.state.treeData}
@@ -431,11 +479,13 @@ class NewApprovers extends Component {
                   />
                 </div>
               </div>
-            </div>
-
-            <div className="col-md-7 ">
-              <div className="row">
-                <div className="col-md-8">
+                 </div>
+                   </div>
+                    </div>
+                    </div>
+                    <div className="col-md-7 ">
+                    <div className="row">
+                <div className="col-md-7">
                   <h2 className="text-success">
                     Approvers -{this.state.ModuleName}
                   </h2>
@@ -461,7 +511,10 @@ class NewApprovers extends Component {
                   </button>
                 </div>
               </div>
-              <div
+                    <div class="card-content">
+                    <div class="card-body">
+                    <div class="card-text">
+                    <div
                 style={{ height: 500 }}
                 className="row border border-success rounded "
               >
@@ -485,161 +538,166 @@ class NewApprovers extends Component {
                   </table>
                 </div>
               </div>
-            </div>
-          </div>
-        </div>
+                 </div>
+                   </div>
+                    </div>
+                    </div>
+                    </div>
+                </section>
 
-        <Modal
-          visible={this.state.open}
-          width="900"
-          height="450"
-          effect="fadeInUp"
-         
+  </div>
+      <Modal
+        visible={this.state.open}
+        width="900"
+        height="450"
+        effect="fadeInUp"
+       
+      >
+        <a
+          style={{ float: "right", color: "red", margin: "10px" }}
+          href="javascript:void(0);"
+          onClick={() => this.closeModal()}
         >
-          <a
-            style={{ float: "right", color: "red", margin: "10px" }}
-            href="javascript:void(0);"
-            onClick={() => this.closeModal()}
-          >
-            <i class="fa fa-close"></i>
-          </a>
-          <div>
-            <ToastContainer/>
-            <h4 style={{ "text-align": "center", color: "#1c84c6" }}>
-              Approvers
-            </h4>
-            <div className="container-fluid">
-              <div className="col-sm-12">
-                <div style={{ "overflow-y": "scroll", height: "400px" }}>
-                  <form onSubmit={this.handleSubmit}>
-                    <div className=" row">
-                      <div className="col-sm">
-                        <div className="form-group">
-                          <label
-                            htmlFor="exampleInputPassword1"
-                            className="font-weight-bold"
-                          >
-                            Mandatory
-                          </label>
-                          <table className="table  table-sm">
-                            <thead style={{ background: "#7fb3d5" }}>
-                              <th>Select</th>
-                              <th>Names</th>
-                            </thead>
+          <i class="fa fa-close"></i>
+        </a>
+        <div>
+          <ToastContainer/>
+          <h4 style={{ "text-align": "center", color: "#1c84c6" }}>
+            Approvers
+          </h4>
+          <div className="container-fluid">
+            <div className="col-sm-12">
+              <div style={{ "overflow-y": "scroll", height: "400px" }}>
+                <form onSubmit={this.handleSubmit}>
+                  <div className=" row">
+                    <div className="col-sm">
+                      <div className="form-group">
+                        <label
+                          htmlFor="exampleInputPassword1"
+                          className="font-weight-bold"
+                        >
+                          Mandatory
+                        </label>
+                        <table className="table  table-sm">
+                          <thead style={{ background: "#7fb3d5" }}>
+                            <th>Select</th>
+                            <th>Names</th>
+                          </thead>
 
-                            {this.state.Users.map((k, i) => {
-                              return (
-                                <tr style={{ background: "#eaecee" }}>
-                                  <td>
-                                    {" "}
-                                    <input
-                                      className="checkbox"
-                                      id={i}
-                                      type="checkbox"
-                                      name="UserName"
-                                      checked={this.checkifALreadyAdded(
-                                        k.Username,
-                                        "Mandatory"
-                                      )}
-                                      onChange={e =>
-                                        handleCheckBoxChange(k, "Mandatory", e)
-                                      }
-                                    />
-                                  </td>
-                                  <td>{k.Name}</td>
-                                </tr>
-                              );
-                            })}
-                          </table>
-                        </div>
+                          {this.state.Users.map((k, i) => {
+                            return (
+                              <tr style={{ background: "#eaecee" }}>
+                                <td>
+                                  {" "}
+                                  <input
+                                    className="checkbox"
+                                    id={i}
+                                    type="checkbox"
+                                    name="UserName"
+                                    checked={this.checkifALreadyAdded(
+                                      k.Username,
+                                      "Mandatory"
+                                    )}
+                                    onChange={e =>
+                                      handleCheckBoxChange(k, "Mandatory", e)
+                                    }
+                                  />
+                                </td>
+                                <td>{k.Name}</td>
+                              </tr>
+                            );
+                          })}
+                        </table>
                       </div>
-                      <div className="col-sm">
-                        <div className="form-group">
-                          <label
-                            htmlFor="exampleInputPassword1"
-                            className="font-weight-bold"
-                          >
-                            Optional
-                          </label>
-                          <table className="table  table-sm">
-                            <thead style={{ background: "#7fb3d5" }}>
-                              <th>Select</th>
-                              <th>Names</th>
-                            </thead>
+                    </div>
+                    <div className="col-sm">
+                      <div className="form-group">
+                        <label
+                          htmlFor="exampleInputPassword1"
+                          className="font-weight-bold"
+                        >
+                          Optional
+                        </label>
+                        <table className="table  table-sm">
+                          <thead style={{ background: "#7fb3d5" }}>
+                            <th>Select</th>
+                            <th>Names</th>
+                          </thead>
 
-                            {this.state.Users.map((k, i) => {
-                              return (
-                                <tr style={{ background: "#eaecee" }}>
-                                  <td>
-                                    {" "}
-                                    <input
-                                      className="checkbox"
-                                      id={i}
-                                      type="checkbox"
-                                      name="UserName"
-                                      checked={this.checkifALreadyAdded(
-                                        k.Username,
-                                        "Optional"
-                                      )}
-                                      onChange={e =>
-                                        handleCheckBoxChange(k, "Optional", e)
-                                      }
-                                    />
-                                  </td>
-                                  <td>{k.Name}</td>
-                                </tr>
-                              );
-                            })}
-                          </table>
-                          <br />
-                          <div className=" row">
-                            <div className="col-sm-4" />
+                          {this.state.Users.map((k, i) => {
+                            return (
+                              <tr style={{ background: "#eaecee" }}>
+                                <td>
+                                  {" "}
+                                  <input
+                                    className="checkbox"
+                                    id={i}
+                                    type="checkbox"
+                                    name="UserName"
+                                    checked={this.checkifALreadyAdded(
+                                      k.Username,
+                                      "Optional"
+                                    )}
+                                    onChange={e =>
+                                      handleCheckBoxChange(k, "Optional", e)
+                                    }
+                                  />
+                                </td>
+                                <td>{k.Name}</td>
+                              </tr>
+                            );
+                          })}
+                        </table>
+                        <br />
+                        <div className=" row">
+                          <div className="col-sm-4" />
 
-                            <div className="col-sm-8">
-                              <label
-                                htmlFor="exampleInputPassword1"
-                                className="font-weight-bold"
-                              >
-                                Approvals Required
-                              </label>
-                              &nbsp;&nbsp;&nbsp;
-                              <input
-                                style={{ width: "70px" }}
-                                type="number"
-                                value={this.state.MaximumApprovers}
-                                name="MaximumApprovers"
-                                onChange={this.handleInputChange}
-                                required
-                              />
-                            </div>
+                          <div className="col-sm-8">
+                            <label
+                              htmlFor="exampleInputPassword1"
+                              className="font-weight-bold"
+                            >
+                              Approvals Required
+                            </label>
+                            &nbsp;&nbsp;&nbsp;
+                            <input
+                              style={{ width: "70px" }}
+                              type="number"
+                              value={this.state.MaximumApprovers}
+                              name="MaximumApprovers"
+                              onChange={this.handleInputChange}
+                              required
+                            />
                           </div>
                         </div>
                       </div>
                     </div>
-                    <div className="col-sm-12 ">
-                      <div className=" row">
-                        <div className="col-sm-9" />
+                  </div>
+                  <div className="col-sm-12 ">
+                    <div className=" row">
+                      <div className="col-sm-9" />
 
-                        <div className="col-sm-3">
-                          <button type="submit" className="btn btn-primary">
-                            Save
+                      <div className="col-sm-3">
+                        <button type="submit" className="btn btn-primary">
+                          Save
+                        </button>
+                        &nbsp; &nbsp;
+                        <Link to="/">
+                          <button type="button" className="btn btn-danger">
+                            Close
                           </button>
-                          &nbsp; &nbsp;
-                          <Link to="/">
-                            <button type="button" className="btn btn-danger">
-                              Close
-                            </button>
-                          </Link>
-                        </div>
+                        </Link>
                       </div>
                     </div>
-                  </form>
-                </div>
+                  </div>
+                </form>
               </div>
             </div>
           </div>
-        </Modal>
+        </div>
+      </Modal>
       </div>
+    </div>
     );
   }
 }

@@ -3,12 +3,11 @@ import swal from "sweetalert";
 import Table from "./../../Table";
 import TableWrapper from "./../../TableWrapper";
 import Select from "react-select";
-import { Progress } from "reactstrap";
-import axios from "axios";
-import { ToastContainer, toast } from "react-toastify";
+import Modal from "react-awesome-modal";
 import "react-toastify/dist/ReactToastify.css";
 import ReactExport from "react-data-export";
 var dateFormat = require("dateformat");
+var jsPDF = require("jspdf")
 var jsPDF = require("jspdf");
 require("jspdf-autotable");
 class DCI extends Component {
@@ -34,29 +33,24 @@ class DCI extends Component {
       ID: "",
       MedID:"",
       msg:"",
-      open: false,   
-      showrx:false,
       isUpdate: false,
       selectedFile: null
     };
-
     this.Resetsate = this.Resetsate.bind(this);
     this.handleSelectChange = this.handleSelectChange.bind(this);
     this.handleInputChange = this.handleInputChange.bind(this);
-    //this.CheckValue=this.CheckValue.bind(this)
+    this.openModal = this.openModal.bind(this);
+    this.closeModal = this.closeModal.bind(this);
   }
   showDiv() {
     document.getElementById("nav-profile-tab").click();
   }
-  handleswitchMenu = e => {
-    e.preventDefault();
-    if (this.state.profile === false) {
-      this.setState({ profile: true });
-    } else {
-      this.setState({ profile: false });
-    }
-
-    //this.setnewstate();
+  openModal() {
+    this.setState({ open: true });
+    this.Resetsate();
+  }
+  closeModal = () => {
+    this.setState({ open: false });
   };
   handleSelectChange = (Facility, actionMeta) => {
     if (actionMeta.name == "MedicalFacility") {
@@ -66,11 +60,6 @@ class DCI extends Component {
       this.setState({ IDNumber: Facility.value });
       this.setState({ [actionMeta.name]: Facility.label });
     }
-    let itemobject=this.state.Facility.filter(
-      option =>
-        option.Processing ===  Facility.value
-    )
-  
   };
   fetchRegistration = () => {
     fetch("/api/Registration", {
@@ -142,7 +131,6 @@ class DCI extends Component {
       PIN: "",
       Companyregistrationdate: "",
       RegistrationNo: ""
-    
     };
     this.setState(data);
   }
@@ -170,7 +158,6 @@ class DCI extends Component {
   componentDidMount() {
     let token = localStorage.getItem("token");
     if (token == null) {
-     
       localStorage.clear();
       return (window.location = "/#/Logout");
     } else {
@@ -208,12 +195,10 @@ class DCI extends Component {
       DOT: this.state.DOT,
       Certificate_status: this.state.Certificate_status,
       DOC:this.state.DOC,
-      Cost: this.state.Cost,
-      CostIncurred:this.state.CostIncurred,
-      Processing:this.state.Processing,
-     
+      Cost: '1050',
+      CostIncurred:'34',
+      Processing:this.state.Processing, 
     };
-
     if (this.state.isUpdate) {
       this.UpdateData("/api/DCI/" + this.state.ID, data);
     } else {
@@ -228,8 +213,8 @@ class DCI extends Component {
         "isoDate"
       ),
       Certificate_status: DCI.Certificate_status,
-      Cost: DCI.Cost,
-      CostIncurred:DCI.CostIncurred,
+      Cost:'1050',
+      CostIncurred:'34',
       Processing:DCI.Processing,
       DOC: dateFormat(
         new Date(DCI.DOC).toLocaleDateString(),
@@ -237,13 +222,8 @@ class DCI extends Component {
       ),
       ID:DCI.ID
     };
-
     this.setState(data);
-    if (this.state.profile === false) {
-      this.setState({ profile: true });
-    } else {
-      this.setState({ profile: false });
-    }
+    this.setState({ open: true });
     this.setState({ isUpdate: true });
   };
   exportpdf = () => {
@@ -251,23 +231,21 @@ class DCI extends Component {
       { title: "Fullname", dataKey: "Fullname" },
       { title: "IDNumber", dataKey: "IDNumber" },
       { title: "Cost", dataKey: "Cost" },
-      { title: "DOT", dataKey: "DOT" },
-      { title: "DOC", dataKey: "DOC" },
-      { title: "Certificate_status", dataKey: "Certificate_status" },
+      { title: "Processing", dataKey: "Processing" },
     
     ];
 
-    const rows = [...this.state.DCI];
+    const rows = [...this.state.Minor];
 
     var doc = new jsPDF("p", "pt", "a2", "portrait");
 
     doc.autoTable(columns, rows, {
       margin: { top: 60 },
       beforePageContent: function(data) {
-        doc.text("RMS DCI Clearance", 40, 50);
+        doc.text("RMS Minor Medical", 40, 50);
       }
     });
-    doc.save("RMS DCI Clearance.pdf");
+    doc.save("RMS Minor medical.pdf");
   };
   ProtectRoute() {
     fetch("/api/UserAccess", {
@@ -328,8 +306,7 @@ class DCI extends Component {
     }
   };
   handleDelete = k => {
-    swal({
-      
+    swal({   
       text: "Are you sure that you want to delete this record?",
       icon: "warning",
       dangerMode: true,
@@ -375,12 +352,8 @@ class DCI extends Component {
 
           if (data.success) {
             swal("", "Record has been Updated!", "success");
+            this.setState({ open: false });
             this.Resetsate();
-            if (this.state.profile === false) {
-              this.setState({ profile: true });
-            } else {
-              this.setState({ profile: false });
-            }
           } else {
             swal("", data.message, "error");
           }
@@ -390,6 +363,7 @@ class DCI extends Component {
         swal("", err.message, "error");
       });
   }
+  
   postData(url = ``, data = {}) {
     fetch(url, {
       method: "POST",
@@ -402,15 +376,9 @@ class DCI extends Component {
       .then(response =>
         response.json().then(data => {
           this.fetchDCI();
-
           if (data.success) {
             swal("", "Record has been saved!", "success");
             this.setState({ open: false });
-            if (this.state.profile === false) {
-              this.setState({ profile: true });
-            } else {
-              this.setState({ profile: false });
-            }
             this.Resetsate();
           } else {
             swal("", data.message, "error");
@@ -489,11 +457,6 @@ class DCI extends Component {
         sort: "asc"
       },
       {
-        label: "Cost",
-        field: "Cost",
-        sort: "asc"
-      },
-      {
         label: "Processed by",
         field: "Processing",
         sort: "asc"
@@ -559,103 +522,112 @@ class DCI extends Component {
     let FormStyle = {
       margin: "20px"
     };
-    if (this.state.profile) {
       return (
-        <div>
-          <div>
-            <div className="row wrapper border-bottom white-bg page-heading">
-              <div className="col-lg-9">
-                <ol className="breadcrumb">
-                  <li className="breadcrumb-item">
-                    <h2>DCI Clearance</h2>
-                  </li>
-                </ol>
-              </div>
-              <div className="col-lg-3">
-                <div className="row wrapper ">
-                  {this.validaterole("DCI Clearance", "AddNew") ? (
-                    <button
-                      type="button"
-                      style={{ marginTop: 40 }}
-                      onClick={this.handleswitchMenu}
-                      className="btn btn-primary float-right fa fa-plus"
-                    >
-                      &nbsp; New
-                    </button>
-                  ) : null}
-                  &nbsp;
-                  {this.validaterole("DCI Clearance", "Export") ? (
-                    <button
-                      onClick={this.exportpdf}
-                      type="button"
-                      style={{ marginTop: 40 }}
-                      className="btn btn-primary float-left fa fa-file-pdf-o fa-2x"
-                    >
-                      &nbsp;PDF
-                    </button>
-                  ) : null}
-                  &nbsp;
-                  {this.validaterole("DCI Clearance", "Export") ? (
-                    <ExcelFile
-                      element={
-                        <button
-                          type="button"
-                          style={{ marginTop: 40 }}
-                          className="btn btn-primary float-left fa fa-file-excel-o fa-2x"
-                        >
-                          &nbsp; Excel
-                        </button>
-                      }
-                    >
-                      <ExcelSheet data={rows} name="DCI Clearance">
-                        <ExcelColumn label="Fullname" value="Fullname" />
-                        <ExcelColumn label="IDNumber" value="IDNumber" />
-                        <ExcelColumn label="DOT" value="DOT" />
-                        <ExcelColumn label="Cost" value="Cost" />
-                      </ExcelSheet>
-                    </ExcelFile>
-                  ) : null}
+        <div class="app-content content">
+        <div class="content-overlay"></div>
+        <div class="header-navbar-shadow"></div>
+        <div class="content-wrapper">
+            <div class="content-header row">
+                <div class="content-header-left col-md-9 col-12 mb-2">
+                    <div class="row breadcrumbs-top">
+                        <div class="col-12">
+                            <h2 class="content-header-title float-left mb-0">DCI Processing</h2>
+                            <div class="breadcrumb-wrapper col-12">
+                                <ol class="breadcrumb">
+                                  
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-              </div>
-            </div>
-          </div>
-
-          <TableWrapper>
-            <Table Rows={Rowdata1} columns={ColumnData} />
-          </TableWrapper>
-        </div>
-      );
-    } else {
-      return (
-        <div>
-          <div className="row wrapper border-bottom white-bg page-heading">
-            <div className="col-lg-10">
-              <ol className="breadcrumb">
-                <li className="breadcrumb-item">
-                  <h2>DCI Clearance</h2>
-                </li>
-              </ol>
-            </div>
-            <div className="col-lg-2">
-              <div className="row wrapper ">
+                <div class="content-header-right text-md-right col-md-3 col-12 d-md-block d-none">
+                    <div class="form-group breadcrum-right">
+                  {this.validaterole("Minor Medical", "AddNew") ? (
                 <button
                   type="button"
-                  style={{ marginTop: 40 }}
-                  onClick={this.handleswitchMenu}
-                  className="btn btn-primary"
+                  onClick={this.openModal}
+                  className="btn btn-success  fa fa-plus"
                 >
-                  &nbsp; Back
+                 New
                 </button>
-              </div>
+              ) : null}
+              &nbsp;&nbsp;&nbsp;
+              {this.validaterole("Minor Medical", "Export") ? (
+                <button
+                  type="button"
+                  onClick={this.exportpdf}
+                  className="btn btn-success fa fa-file-pdf-o"
+                >
+                  &nbsp;Export
+                </button>
+              ) : null}
+           &nbsp;&nbsp;&nbsp;
+              {this.validaterole("DCI Clearance", "Export") ? (
+                <ExcelFile
+                  element={
+                    <button
+                      type="button"
+                      className="btn btn-success  fa fa-file-excel-o "
+                    >
+                      &nbsp; Excel
+                    </button>
+                  }
+                >
+                  <ExcelSheet data={rows} name="DCI Clearance">
+                    <ExcelColumn label="Name" value="Name" />
+                    <ExcelColumn label="Username" value="Username" />
+                    <ExcelColumn label="Email" value="Email" />
+                    <ExcelColumn label="Phone" value="Phone" />
+                    <ExcelColumn label="IsActive" value="IsActive" />
+                    <ExcelColumn label="UserGroup" value="UserGroup" />
+                  </ExcelSheet>
+                </ExcelFile>
+              ) : null}
+                    </div>
+                </div>
             </div>
-          </div>
-          <br />
-          <div style={divconatinerstyle}>
-            <ToastContainer />
-            <div style={formcontainerStyle}>
-              <div class="col-sm-12">
-                <form style={FormStyle} onSubmit={this.handleSubmit}>
-                  <div class="row">
+            <div class="content-body">
+              
+                <section id="description" class="card">
+                    <div class="card-content">
+                        <div class="card-body">
+                            <div class="card-text">
+                             Search
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <section id="css-classes" class="card">
+                    <div class="card-content">
+                        <div class="card-body">
+                            <div class="card-text">
+                            <TableWrapper>
+            <Table Rows={Rowdata1} columns={ColumnData} />
+          </TableWrapper>
+                            </div>
+                            <Modal
+                  visible={this.state.open}
+                  width="1200"
+                  height="300"
+                  effect="fadeInUp"
+                >
+                  <a
+                    style={{ float: "right", color: "red", margin: "10px" }}
+                    href="javascript:void(0);"
+                    onClick={() => this.closeModal()}
+                  >
+                    <i class="fa fa-close"></i>
+                  </a>
+                  <div>
+                    <h4 style={{ "text-align": "center", color: "#1c84c6" }}>
+                      {" "}
+                      DCI Clearance
+                    </h4>
+                    <div className="container-fluid">
+                      <div className="col-sm-12">
+                        <div className="ibox-content">
+                          <form onSubmit={this.handleSubmit}>
+                          <div class="row">
                     <div class="col-sm-1">
                       <label for="Number" className="font-weight-bold">
                        ID Number
@@ -742,25 +714,42 @@ class DCI extends Component {
                     </div>
     
                   </div>
-                  <div className=" row">
-                    <div className="col-sm-2" />
-                    <div className="col-sm-8" />
-                    <div className="col-sm-2">
-                      <button
-                        className="btn btn-primary float-right"
-                        type="submit"
-                      >
-                        Save
-                      </button>
+                  <br />
+                  <div className="col-sm-12 ">
+                              <div className=" row">
+                                <div className="col-sm-2">
+                                  <button
+                                    className="btn btn-danger float-left"
+                                    onClick={this.closeModal}
+                                  >
+                                    Cancel
+                                  </button>
+                                </div>
+                                <div className="col-sm-8" />
+                                <div className="col-sm-2">
+                                  <button
+                                    type="submit"
+                                    className="btn btn-primary float-left"
+                                  >
+                                    Save
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          </form>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                </form>
-              </div>
+                </Modal>
+                        </div>
+                    </div>
+                </section>
             </div>
-          </div>
         </div>
+    </div>
       );
-    }
+
   }
 }
 

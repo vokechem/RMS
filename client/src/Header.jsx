@@ -179,7 +179,9 @@ class Header extends Component {
               </div>
           </div>
       </nav>
+
         {this.props.children}
+        
       </div>
     );
   }

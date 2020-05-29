@@ -23,7 +23,7 @@ MedicalForm.post("/", function(req, res) {
             process.cwd(),
             "Routes",
             "Reporttemplates",
-            "MedicalForm.hbs"
+            "MedicalForm.html"
           ),
           "utf8"
         );

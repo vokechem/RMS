@@ -763,7 +763,7 @@ TravelledApplicant = () => {
                         ) : null}
                           {r.Category === "Travelling Approval" ? (
                           <a href="/#" className="small-box-footer ">
-                            <Link to="/Travelpproval" className="text-info">
+                            <Link to="/TravelApproval" className="text-info">
                               More info <i className="fa fa-arrow-circle-right" />
                             </Link>
                           </a>
@@ -771,6 +771,13 @@ TravelledApplicant = () => {
                         {r.Category === "Visa Approval" ? (
                           <a href="/#" className="small-box-footer ">
                             <Link to="/VisaApproval" className="text-info">
+                              More info <i className="fa fa-arrow-circle-right" />
+                            </Link>
+                          </a>
+                        ) : null}
+                           {r.Category === "NEA Approval" ? (
+                          <a href="/#" className="small-box-footer ">
+                            <Link to="/NEAApproval" className="text-info">
                               More info <i className="fa fa-arrow-circle-right" />
                             </Link>
                           </a>
@@ -871,7 +878,7 @@ TravelledApplicant = () => {
                         ) : null}
                           {r.Category === "Travelling Approval" ? (
                           <a href="/#" className="small-box-footer ">
-                            <Link to="/Travelpproval" className="text-info">
+                            <Link to="/TravelApproval" className="text-info">
                               More info <i className="fa fa-arrow-circle-right" />
                             </Link>
                           </a>

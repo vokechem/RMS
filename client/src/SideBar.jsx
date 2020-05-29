@@ -1100,7 +1100,7 @@ const SystemAdmin = props => {
       <li class="dropdown nav-item" data-menu="dropdown">
                         <a class="dropdown-toggle nav-link" href="#" data-toggle="dropdown">
                             <i class="feather icon-settings"></i>
-                            <span data-i18n="Starter kit">System Administration</span></a>
+                            <span data-i18n="Starter kit">System Admin</span></a>
                             {props.showmenuvalue ? (
                         <ul class="dropdown-menu">
                                 {props.validaterole("System Users", "View") ? (
@@ -1214,15 +1214,52 @@ const Medical = props => {
     return <div />;
   }
 };
+// const DashBoards = props => {
+//   if (props.validaterole("Dashboard", "View")) {
+//     return (
+//       <li className="">
+//         <Link to="/Home">
+//         <i class="feather icon-home"i/>{" "}
+//           <span className="nav-label">Dashboard</span>
+//         </Link>
+//       </li>
+//     );
+//   } else {
+//     return <div />;
+//   }
+// };
 const DashBoards = props => {
   if (props.validaterole("Dashboard", "View")) {
     return (
-      <li className="">
-        <Link to="/Home">
-        <i class="feather icon-home"i/>{" "}
-          <span className="nav-label">Dashboard</span>
-        </Link>
-      </li>
+      <li class="dropdown dropdown-submenu" data-menu="dropdown-submenu">
+        <a class="dropdown-item dropdown-toggle"
+         href="#" data-toggle="dropdown" data-i18n="Dashboard">
+           <i class="feather  icon-home"></i>Dashboard</a>
+                <ul class="dropdown-menu">
+                {props.validaterole("Dashboard", "View") ? (
+                                    <li data-menu="">
+                                     <Link to="/Home">
+                             <div className="dropdown-item" 
+                              data-i18n="Dashboard">
+                           <i class="feather icon-home"i/>{" "}
+                             <span className="nav-label">Dashboard</span>
+                             </div>
+                           </Link>
+                                    </li>
+                                     ) : null}
+                                      {props.validaterole("Monthly", "View") ? (
+                                    <li data-menu="">
+                                     <Link to="/MonthlyRegistration">
+                             <div className="dropdown-item" 
+                              data-i18n="medical">
+                           <i class="feather icon-eye"i/>{" "}
+                             <span className="nav-label">Analytics</span>
+                             </div>
+                           </Link>
+                                    </li>
+                                     ) : null}
+                                </ul>
+                            </li>
     );
   } else {
     return <div />;

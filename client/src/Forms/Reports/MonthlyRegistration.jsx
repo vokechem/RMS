@@ -8,6 +8,7 @@ class MonthlyRegistration extends Component {
     this.state = {
       Applications: [],
       // AsAt: "",
+      TotalApplicants:[],
       Minor:[],
       DCI:[],
       Data: [],
@@ -187,6 +188,29 @@ class MonthlyRegistration extends Component {
     //   swal("", "Select Date to Continue", "error");
     // }
   };
+  TotalApplicants = () => {
+    fetch(
+   "/api/TotalApplicant/" ,
+   {
+     method: "GET",
+     headers: {
+       "Content-Type": "application/json",
+       "x-access-token": localStorage.getItem("token")
+     }
+   }
+ )
+   .then(res => res.json())
+   .then(TotalApplicants=> {
+     if (TotalApplicants.length > 0) {
+       this.setState({ TotalApplicants: TotalApplicants});
+     } else {
+       //swal("", PendingApplication.message, "error");
+     }
+   })
+   .catch(err => {
+     // swal("", err.message, "error");
+   });
+};
   componentDidMount() {
     let token = localStorage.getItem("token");
     if (token == null) {
@@ -204,6 +228,7 @@ class MonthlyRegistration extends Component {
           response.json().then(data => {
             if (data.success) {
               this.fetchData();
+              this.TotalApplicants();
               this.fetchApplications();
               this.fetchTravelling();
               this.fetchTravelldReport();
@@ -260,14 +285,60 @@ class MonthlyRegistration extends Component {
       data4.push(d);
     });
     return (
-      <div>
-       <div class="wrapper wrapper-content animated fadeInRight">
-            <div class="row">
-                <div class="col-lg-6">
-                    <div class="ibox ">
-                        <div class="ibox-title">
-                            <h5>Monthly Registration </h5>
+      <div class="app-content content">
+      <div class="content-overlay"></div>
+      <div class="header-navbar-shadow"></div>
+      <div class="content-wrapper">
+      <div class="content-header row">
+                <div class="content-header-left col-md-9 col-12 mb-2">
+                    <div class="row breadcrumbs-top">
+                        <div class="col-12">
+                            <h2 class="content-header-title float-left mb-0">Analytics</h2>
                         </div>
+                    </div>
+                </div>
+            </div>
+          <div class="content-body">
+              <section id="dashboard-analytics">
+              <div class="row">
+              <div class="col-lg-2 col-md-12 col-sm-12">
+                            <div class="card bg-analytics text-white">
+                                <div class="card-content">
+                                <div class="ibox ">
+                        <div class="ibox-content">
+                        {this.state.TotalApplicants.map((r, i) =>
+                        <div class="card">
+                            <div class="card-header d-flex flex-column align-items-start pb-0">
+                                <div class="avatar bg-rgba-primary p-50 m-0">
+                                    <div class="avatar-content">
+                                    <i class="feather icon-users text-success font-medium-5"></i>
+                                    </div>
+                                </div>
+                                <h3>{r.totalApplicants} Total Applicant</h3>
+                            </div>        
+                        </div>
+                          )}
+                           {this.state.TotalApplicants.map((r, i) =>
+                        <div class="card">
+                            <div class="card-header d-flex flex-column align-items-start pb-0">
+                                <div class="avatar bg-rgba-primary p-50 m-0">
+                                    <div class="avatar-content">
+                                    <i class="feather icon-institution text-success font-medium-5"></i>
+                                    </div>
+                                </div>
+                                <h3>{r.totalApplicants} Total Applicant</h3>
+                            </div>        
+                        </div>
+                          )}
+                        </div>
+                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-5 col-md-12 col-sm-12">
+                            <div class="card bg-analytics text-white">
+                                <div class="card-content">
+                                <div class="ibox ">
                         <div class="ibox-content">
                             <div>
                             {this.state.Data.length > 0 ? (
@@ -282,7 +353,7 @@ class MonthlyRegistration extends Component {
                         colors: [ '#80ABA3'],
                         // Material design options
                         chart: {
-                         // title: "Monthly Registration"
+                         title: "Monthly Registration"
                         }
                       }}
                     />
@@ -291,42 +362,14 @@ class MonthlyRegistration extends Component {
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-lg-6">
-                    <div class="ibox ">
-                        <div class="ibox-title">
-                            <h5>Monthly Travelled Applicants</h5>
+                                </div>
+                            </div>
                         </div>
-                        <div class="ibox-content">
-                        {this.state.Data.length > 0 ? (
-                  <div className="App">
-                    <Chart
-                      chartType="Bar"
-                      width={'100%'}
-                      height={'300px'}
-                      data={data1}
-                      loader={<div>Loading Chart</div>}
-                      options={{
-                        colors: [ '#F7DC6F'],
-                        sliceVisibilityThreshold: 0.2,
-                        // Material design options
-                        chart: {
-                         // title: "Monthly Registration"
-                        }
-                      }}
-                    />
-                  </div>
-                ) : null}
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-lg-6">
-                    <div class="ibox ">
-                        <div class="ibox-title">
+                        <div class="col-lg-5 col-md-6 col-12">
+                            <div class="card">
+                            {/* <div class="ibox-title">
                             <h5>Montly Minor medical Cost</h5>
-                        </div>
+                        </div> */}
                         <div class="ibox-content">
                             <div class="text-center">
                             {this.state.Data.length > 0 ? (
@@ -342,7 +385,38 @@ class MonthlyRegistration extends Component {
                         sliceVisibilityThreshold: 0.2,
                         // Material design options
                         chart: {
-                         // title: "Monthly Registration"
+                          title: "Montly Minor medical Cost"
+                        }
+                      }}
+                    />
+                  </div>
+                ) : null}
+                            </div>
+                        </div>
+                   
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6 col-md-12 col-sm-12">
+                            <div class="card bg-analytics text-white">
+                                <div class="card-content">
+                                <div class="ibox ">
+                        <div class="ibox-content">
+                            <div>
+                            {this.state.Data.length > 0 ? (
+                  <div className="App">
+                    <Chart
+                      chartType="Bar"
+                      width={'100%'}
+                      height={'300px'}
+                      data={data}
+                      loader={<div>Loading Chart</div>}
+                      options={{
+                        colors: [ '#80ABA3'],
+                        // Material design options
+                        chart: {
+                         title: "Monthly Registration"
                         }
                       }}
                     />
@@ -351,12 +425,14 @@ class MonthlyRegistration extends Component {
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-lg-6">
-                    <div class="ibox ">
-                        <div class="ibox-title">
-                            <h5>Montly DCI Cost</h5>
+                                </div>
+                            </div>
                         </div>
+                        <div class="col-lg-6 col-md-6 col-12">
+                            <div class="card">
+                            {/* <div class="ibox-title">
+                            <h5>Montly Minor medical Cost</h5>
+                        </div> */}
                         <div class="ibox-content">
                             <div class="text-center">
                             {this.state.Data.length > 0 ? (
@@ -365,14 +441,14 @@ class MonthlyRegistration extends Component {
                       chartType="Bar"
                       width={'100%'}
                       height={'300px'}
-                      data={data3}
+                      data={data2}
                       loader={<div>Loading Chart</div>}
                       options={{
-                        colors: [ '#2ECC71'],
+                        colors: [ '#CD6155'],
                         sliceVisibilityThreshold: 0.2,
                         // Material design options
                         chart: {
-                         // title: "Monthly Registration"
+                          title: "Montly Minor medical Cost"
                         }
                       }}
                     />
@@ -380,163 +456,14 @@ class MonthlyRegistration extends Component {
                 ) : null}
                             </div>
                         </div>
-                    </div>
-                </div>
-        
-            </div>
-            <div class="row">
-            <div class="col-lg-6">
-                    <div class="ibox ">
-                        <div class="ibox-title">
-                            <h5>Monthly passport Cost</h5>
-                        </div>
-                        <div class="ibox-content">
-                            <div class="text-center">
-                            {this.state.Data.length > 0 ? (
-                  <div className="App">
-                    <Chart
-                      chartType="Bar"
-                      width={'100%'}
-                      height={'300px'}
-                      data={data4}
-                      loader={<div>Loading Chart</div>}
-                      options={{
-                        // Material chart options
-                        chart: {
-                          // title: 'Population of Largest U.S. Cities',
-                          // subtitle: 'Based on most recent and previous census data',
-                        },
-                        hAxis: {
-                          title: 'Total Population',
-                          minValue: 0,
-                        },
-                        vAxis: {
-                          title: 'Monthly',
-                        },
-                        bars: 'verical',
-                        axes: {
-                          y: {
-                            0: { side: 'right' },
-                          },
-                        },
-                      }}
-                    />
-                  </div>
-                ) : null}
+                   
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-lg-6">
-                    <div class="ibox ">
-                        <div class="ibox-title">
-                            <h5>Pie </h5>
-
-                        </div>
-                        <div class="ibox-content">
-                        {this.state.Data.length > 0 ? (
-                  <div className="App">
-                    <Chart
-                      chartType="PieChart"
-                      width={'100%'}
-                      height={'300px'}
-                      data={data2}
-                      loader={<div>Loading Chart</div>}
-                      options={{
-                        legend: 'none',
-                        pieSliceText: 'label',
-                        slices: {
-                          0: { color: 'yellow' },
-                          1: { color: 'blue' },
-                          1: { color: 'brown' },
-                          1: { color: 'green' },
-                          1: { color: '#80ABA3' },
-                        },
-                      }}
-                
-                    />
-                  </div>
-                ) : null}
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-lg-6">
-                    <div class="ibox ">
-                        <div class="ibox-title">
-                            <h5>Montly DCI Cost</h5>
-
-                        </div>
-                        <div class="ibox-content">
-                            <div class="text-center">
-                            {this.state.Data.length > 0 ? (
-                  <div className="App">
-                    <Chart
-                      chartType="PieChart"
-                      width={'100%'}
-                      height={'300px'}
-                      data={data3}
-                      loader={<div>Loading Chart</div>}
-                      options={{
-                        pieSliceText: 'none',
-                        pieStartAngle: 135,
-                        slices: {
-                          0: { color: '#F7DC6F' },
-                          1: { color: '#85C1E9' },
-                          2: { color: '#F5CBA7' },
-                        },
-                        pieHole: 0.2,
-                        sliceVisibilityThreshold: 0.2,
-                        // Material design options
-                        chart: {
-                         // title: "Monthly Registration"
-                        }
-                      }}
-                    />
-                  </div>
-                ) : null}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-6">
-                    <div class="ibox ">
-                        <div class="ibox-title">
-                            <h5>Pie </h5>
-
-                        </div>
-                        <div class="ibox-content">
-                        {this.state.Data.length > 0 ? (
-                  <div className="App">
-                    <Chart
-                      chartType="PieChart"
-                      width={'100%'}
-                      height={'300px'}
-                      data={data2}
-                      loader={<div>Loading Chart</div>}
-                      options={{
-                        legend: 'none',
-                        pieSliceText: 'label',
-                        slices: {
-                          0: { color: 'yellow' },
-                          1: { color: 'blue' },
-                          1: { color: 'brown' },
-                          1: { color: 'green' },
-                          1: { color: '#80ABA3' },
-                        },
-                      }}
-                
-                    />
-                  </div>
-                ) : null}
-                        </div>
-                    </div>
-                </div>
+              </section>
             </div>
         </div>
-      </div>
+    </div>
     );
   }
 }

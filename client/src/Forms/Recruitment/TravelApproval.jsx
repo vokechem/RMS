@@ -120,142 +120,142 @@ class TravelApproval extends Component {
         this.setState({ summary: false });
     };
     SendSMS(MobileNumber, Msg) {
-        let data = {
-            MobileNumber: MobileNumber,
-            Message: Msg
-        };
-        return fetch("/api/sendsms", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(data)
-        })
-            .then(response =>
-                response.json().then(data => {
-                    if (data.success) {
-                    } else {
-                      //  swal("", data.message, "error");
-                    }
-                })
-            )
-            .catch(err => {
-               // swal("", err.message, "error");
-            });
-    }
-    SendMail = (Name, email, ID, subject, IDNumber) => {
-        const emaildata = {
-            to: email,
-            subject: subject,
-            ID: ID,
-            Name: Name,
-            IDNumber: IDNumber,
-        };
-
-        fetch("/api/NotifyApprover", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "x-access-token": localStorage.getItem("token")
-            },
-            body: JSON.stringify(emaildata)
-        })
-            .then(response => response.json().then(data => { }))
-            .catch(err => {
-                //swal("Oops!", err.message, "error");
-            });
-    };
-    notifyPanelmembers = (Mobile, Name, Email, IDNumber) => {
-      let smstext = "Dear " + Name + ". A request to adjourn application " + IDNumber + " has been Accepted. You will be notified on the new date."
-      this.SendSMS(Mobile,smstext)
-      this.SendMail(
-          IDNumber,
-          Email,
-          "CaseAdjournmentAccepted",
-          "CASE ADJOURNMENT",
-          Name
-
-      )
+      let data = {
+          MobileNumber: MobileNumber,
+          Message: Msg
+      };
+      return fetch("/api/sendsms", {
+          method: "POST",
+          headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json'
+          },
+          body: JSON.stringify(data)
+      })
+          .then(response =>
+              response.json().then(data => {
+                  if (data.success) {
+                  } else {
+                  }
+              })
+          )
+          .catch(err => {
+            
+          });
   }
-    Approve(url = ``, data = {}) {
-        fetch(url, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "x-access-token": localStorage.getItem("token")
-            },
-            body: JSON.stringify(data)
-        })
-            .then(response =>
-                response.json().then(data => {                   
-
-                    if (data.success) {                   
-                        if (data.results.length > 0) {
-                            let NewList = [data.results]
-                            NewList[0].map((item, key) =>                                
-                                this.notifyPanelmembers(item.Mobile, item.Name, item.Email, item.IDNumber, item.Msg)
-                            )
-                        }                                         
-                        swal("", "Application Approved", "success");
-                        this.fetchMyApplications();  
-                         
-                    } else {
-                        swal("", data.message, "error");
-                    }
-                })
-            )
-            .catch(err => {
-                swal("", err.message, "error");
-            });
-    }
-    sendDeclineNotification = (Mobile, Name, Email, IDNumber)=>{
+  SendMail = (Name, email, ID, subject, IDNumber) => {
+    const emaildata = {
+        to: email,
+        subject: subject,
+        ID: ID,
+        Name: Name,
+        IDNumber: IDNumber, 
+    };
+    fetch("/api/NotifyApprover", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "x-access-token": localStorage.getItem("token")
+        },
+        body: JSON.stringify(emaildata)
+    })
+        .then(response => response.json().then(data => { }))
+        .catch(err => {
+          
+        });
+};
+  notifyPanelmembers = (AproverMobile, Name, AproverEmail, IDNumber, Msg) => {        
+    if (Msg == "Applicant") {         
         this.SendSMS(
-            Mobile,
-            "Application " + IDNumber + " that you had submited to ACRB has been declined."
+            AproverMobile,
+            "Dear " +Name + " Travel  that you had submited to Job majuu has been Approved."
         );
         this.SendMail(
             Name,
-            Email,
-            "Application Declined",
-            "APPLICATION DECLINED",
+            AproverEmail,
+            "Travel Approval",
+            "Travel approved",
             IDNumber,
-            this.state.Remarks
+           
         );
     }
-    Decline(url = ``, data = {}) {
-        fetch(url, {
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json",
-                "x-access-token": localStorage.getItem("token")
-            },
-            body: JSON.stringify(data)
-        })
-            .then(response =>
-                response.json().then(data => {
+}
+Approve(url = ``, data = {}) {
+  fetch(url, {
+      method: "POST",
+      headers: {
+          "Content-Type": "application/json",
+          "x-access-token": localStorage.getItem("token")
+      },
+      body: JSON.stringify(data)
+  })
+      .then(response =>
+          response.json().then(data => {                   
 
-                    if (data.success) {                      
-                        if (data.results.length > 0) {
-                            let NewList = [data.results]
-                            NewList[0].map((item, key) =>
-                                this.sendDeclineNotification(item.Mobile, item.Name, item.Email, item.IDNumber)
-                            )
-                            
-                        }  
-                        swal("", "Application Declined", "success"); 
-                        this.fetchMyApplications();        
-                        
-                    } else {
-                        swal("", data.message, "error");
-                    }
-                })
-            )
-            .catch(err => {
-                swal("", err.message, "error");
-            });
-    }
-  
- 
+              if (data.success) {                   
+                  if (data.results.length > 0) {
+                      let NewList = [data.results]
+                      NewList[0].map((item, key) =>                                
+                          this.notifyPanelmembers(item.Mobile, item.Name, item.Email, item.IDNumber, item.Msg)
+                      ) 
+                  }                                         
+                  swal("", "Travel  Approved", "success");
+                  this.fetchMyApplications();  
+                   
+              } else {
+                  swal("", data.message, "error");
+              }
+          })
+      )
+      .catch(err => {
+          swal("", err.message, "error");
+      });
+}
+  sendDeclineNotification = (Mobile, Name, Email, IDNumber)=>{
+      this.SendSMS(
+          Mobile,
+          "Dear " +Name + " Travel  that you had submited to Job majuu  has been declined."
+      );
+      this.SendMail(
+          Name,
+          Email,
+          "Travel Declined",
+          "Travel Declined",
+          IDNumber,
+          this.state.Remarks
+      );
+  }
+  Decline(url = ``, data = {}) {
+      fetch(url, {
+          method: "PUT",
+          headers: {
+              "Content-Type": "application/json",
+              "x-access-token": localStorage.getItem("token")
+          },
+          body: JSON.stringify(data)
+      })
+          .then(response =>
+              response.json().then(data => {
+
+                  if (data.success) {                      
+                      if (data.results.length > 0) {
+                          let NewList = [data.results]
+                          NewList[0].map((item, key) =>
+                              this.sendDeclineNotification(item.Mobile, item.Name, item.Email, item.IDNumber)
+                          )    
+                      }  
+                      swal("", "Travel  Declined", "success"); 
+                      this.fetchMyApplications();        
+                      
+                  } else {
+                      swal("", data.message, "error");
+                  }
+              })
+          )
+          .catch(err => {
+              swal("", err.message, "error");
+          });
+  }
     GoBack = e => {
         e.preventDefault();
         this.setState({ summary: false });
@@ -711,17 +711,17 @@ class TravelApproval extends Component {
                                                         </div>
                                                     </div>
                                                     <div className="col-sm-12 ">
-                                                        <div className=" row">
-                                                            
+                                                        <div className=" row">     
                                                             <div className="col-sm-8" />
-                                                            <div className="col-sm-4">
+                                                            <div className="col-sm-2">
                                                                 <button
                                                                     type="submit"
                                                                     className="btn btn-primary "
                                                                 >
                                                                     Confirm
                                                                 </button>
-                                                                  &nbsp;&nbsp;
+                                                              </div>
+                                                              <div className="col-sm-2">
                                                                 <button
                                                                     className="btn btn-danger "
                                                                     onClick={this.closeModal}
@@ -731,6 +731,7 @@ class TravelApproval extends Component {
                                                             </div>
                                                         </div>
                                                     </div>
+                                              
                                                 </form>
                                             </div>
                                         </div>

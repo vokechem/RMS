@@ -131,29 +131,29 @@ class Header extends Component {
     background: "#ECF0F5"
   }
     return (
-      <div class="horizontal-layout horizontal-menu 2-columns  navbar-sticky fixed-footer " data-open="hover" data-menu="horizontal-menu" data-col="2-columns"style={body}>
-      <div class="content-overlay"></div>
-      <nav class="header-navbar navbar-expand-lg navbar navbar-with-menu navbar-fixed navbar-brand-center"style={bgpage}>
-          <div class="navbar-header d-xl-block d-none">
-              <ul class="nav navbar-nav flex-row">
-                  <li class="nav-item">
+      <div className="horizontal-layout horizontal-menu 2-columns  navbar-sticky fixed-footer " data-open="hover" data-menu="horizontal-menu" data-col="2-columns"style={body}>
+      <div className="content-overlay"></div>
+      <nav className="header-navbar navbar-expand-lg navbar navbar-with-menu navbar-fixed navbar-brand-center"style={bgpage}>
+          <div className="navbar-header d-xl-block d-none">
+              <ul className="nav navbar-nav flex-row">
+                  <li className="nav-item">
                   <b style={pStyle1}>RMS</b>
                   </li>
               </ul>
           </div>
-          <div class="navbar-wrapper">
-              <div class="navbar-container content">
-                  <div class="navbar-collapse" id="navbar-mobile">
-                      <div class="mr-auto float-left bookmark-wrapper d-flex align-items-center">
-                          <ul class="nav navbar-nav bookmark-icons">
+          <div className="navbar-wrapper">
+              <div className="navbar-container content">
+                  <div className="navbar-collapse" id="navbar-mobile">
+                      <div className="mr-auto float-left bookmark-wrapper d-flex align-items-center">
+                          <ul className="nav navbar-nav bookmark-icons">
                               <img src={ require("./profilepics/download.png") } style={photostyle1} /> 
                           </ul>
                       </div>
-                      <ul class="nav navbar-nav float-right">
-                          <li class="dropdown dropdown-user nav-item">
-                            <a class="dropdown-toggle nav-link dropdown-user-link" href="#" data-toggle="dropdown">
-                                  <div class="user-nav d-sm-flex d-none">
-                                    <span class="user-name text-bold-600"style={page}> {localStorage.getItem("UserName")}</span>
+                      <ul className="nav navbar-nav float-right">
+                          <li className="dropdown dropdown-user nav-item">
+                            <a className="dropdown-toggle nav-link dropdown-user-link" href="#" data-toggle="dropdown">
+                                  <div className="user-nav d-sm-flex d-none">
+                                    <span className="user-name text-bold-600"style={page}> {localStorage.getItem("UserName")}</span>
                                     </div>
                                     <span>
                                     <img
@@ -164,14 +164,14 @@ class Header extends Component {
                   />
                  </span>
                               </a>
-                              <div class="dropdown-menu dropdown-menu-right">
+                              <div className="dropdown-menu dropdown-menu-right">
                               <Link to="/Profile">
                         <b className="btn btn-default btn-flat">Profile</b>
                       </Link>
                                 
-                                  <div class="dropdown-divider"></div><a class="dropdown-item"                         
+                                  <div className="dropdown-divider"></div><a className="dropdown-item"                         
                                   onClick={this.logout}
-                        href="/"><i class="feather icon-power"></i> Logout</a>
+                        href="/"><i className="feather icon-power"></i> Logout</a>
                               </div>
                           </li>
                       </ul>

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 26, 2020 at 06:27 PM
+-- Generation Time: Aug 13, 2020 at 02:42 PM
 -- Server version: 10.4.11-MariaDB
 -- PHP Version: 7.3.14
 
@@ -21,8 +21,6 @@ SET time_zone = "+00:00";
 --
 -- Database: `majuu`
 --
-CREATE DATABASE IF NOT EXISTS `majuu` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE `majuu`;
 
 DELIMITER $$
 --
@@ -2526,6 +2524,32 @@ AND visa.Status = 'Issued'
 AND visa.Deleted = 0;
 END$$
 
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getAttestationPendingApprovals` (IN `_Approver` VARCHAR(50))  NO SQL
+BEGIN
+SELECT
+    registration.IDNumber,
+  registration.Fullname,
+  registration.Gender,
+  registration.phone,
+  registration.photo,
+  registration.FullPhoto,
+  registration.Classify,
+  registration.DOB,
+  registration.Email,
+  registration.Country,
+  registration.Religion                        ,
+  registration.Marital,
+  registration.Height,
+  registration.Status,
+  attestation.Number,
+  attestation.DOS,
+  registration.Weight,
+  registration.Languages,
+  registration.Skills  from registration inner join attestation on attestation.Number=registration.IDNumber
+WHERE attestation.Status='Pending Approval'
+AND attestation.Deleted=0;
+END$$
+
 CREATE DEFINER=`root`@`localhost` PROCEDURE `getAuditrails` ()  NO SQL
 SELECT
   `AuditID`,
@@ -4783,14 +4807,15 @@ DECLARE lSaleDesc varchar(200);
 set lSaleDesc= CONCAT('Added new   VISA Processing with  IDnumber:',_Number);
 INSERT INTO attestation (Number, DOS, Clearance_status, Clearance_Date, Cost,Status, Created_at, CreatedBy, Updated_at, UpdatedBy, Deleted)
   VALUES (_Number, _DOS, _Status, _Clearance, _Cost,'Pending Approval', NOW(), _userID, 0, 0, 0);
-INSERT INTO notifications (Username, Category, Description, Created_At, DueDate, Status)
+INSERT INTO notifications (Username, Category, Description, Created_At, DueDate, Status,IDNumber)
   SELECT
     Username,
     'Attestation Approval',
     'Attestation pending approval',
     NOW(),
     DATE_ADD(NOW(), INTERVAL 5 DAY),
-    'Not Resolved'
+    'Not Resolved',
+    _Number
   FROM approvers
   WHERE ModuleCode = 'ATN'
   AND Active = 1
@@ -6243,8 +6268,8 @@ CREATE TABLE `applicationapprovalcontacts` (
 --
 
 INSERT INTO `applicationapprovalcontacts` (`Name`, `Email`, `Mobile`, `Msg`, `IDNumber`) VALUES
-('kelvin chemey', 'kelvinchemey@gmail.com', '+254700392599', 'Applicant', '30487656'),
-('Kelvin Chemey', 'kserem20@gmail.com', '254700392599', 'Applicant', '30487656');
+('kelvin chemey', 'kelvinchemey@gmail.com', '+254700392599', 'Applicant', '30486756'),
+('Kelvin Chemey', 'kelvinchemey@gmail.c', '25700392599', 'Applicant', '30486756');
 
 -- --------------------------------------------------------
 
@@ -6300,7 +6325,10 @@ INSERT INTO `applicationsequence` (`ID`, `IDNumber`, `Date`, `Action`, `Status`,
 (31, '30487656', '2020-05-22 22:05:32', 'Travelling Approval', 'Done', 'Awaiting NEA', 'Admin'),
 (32, '34567858', '2020-05-25 08:43:33', 'Registration Approved', 'Done', 'Awaiting Minor Medical', 'Admin'),
 (33, '33487656', '2020-05-25 09:31:46', 'Registration Approved', 'Done', 'Awaiting Minor Medical', 'Admin'),
-(34, '3546786', '2020-05-26 12:38:23', 'Registration Approved', 'Done', 'Awaiting Minor Medical', 'Admin');
+(34, '3546786', '2020-05-26 12:38:23', 'Registration Approved', 'Done', 'Awaiting Minor Medical', 'Admin'),
+(35, '30487656', '2020-05-27 09:11:47', 'NEA Approval', 'Done', 'Awaiting NEA', 'Admin'),
+(36, '30487656', '2020-05-27 10:20:07', 'Attestation Approval', 'Done', 'Awaiting NEA', 'Admin'),
+(37, '30486756', '2020-06-08 15:44:17', 'Registration Approved', 'Done', 'Awaiting Minor Medical', 'Admin');
 
 -- --------------------------------------------------------
 
@@ -6325,7 +6353,8 @@ CREATE TABLE `applications_approval_workflow` (
 --
 
 INSERT INTO `applications_approval_workflow` (`ID`, `IDNumber`, `Fullname`, `Status`, `Approver`, `Remarks`, `Created_By`, `Approved_At`, `Created_At`) VALUES
-(1, 30487656, 0, 'Approved', 'Admin', 'nnn', 'Admin', '2020-05-26 14:03:29', '2020-05-26 14:03:29');
+(1, 30487656, 0, 'Approved', 'Admin', 'nnn', 'Admin', '2020-05-26 14:03:29', '2020-05-26 14:03:29'),
+(2, 30486756, 0, 'Approved', 'Admin', 'welcome', 'Admin', '2020-06-08 15:44:16', '2020-06-08 15:44:16');
 
 -- --------------------------------------------------------
 
@@ -6433,10 +6462,28 @@ CREATE TABLE `attestation` (
 --
 
 INSERT INTO `attestation` (`ID`, `Number`, `DOS`, `Clearance_status`, `Clearance_Date`, `Cost`, `Status`, `Created_at`, `CreatedBy`, `Updated_at`, `UpdatedBy`, `Deleted`, `Approve_at`) VALUES
-(1, 33487656, '2020-03-18 00:00:00', 'Cleared', '2020-03-24 00:00:00', '27008', 'ô', '2991-00-01 02:52:48', 'ô', '2991-00-02 05:12:48', 'Ä\0\0\0\0\0?Ä\0\0\0\0\0\0\0\0Ä\0\0\0\0\0\0ïEçPô¶\0\0Clearedô•˛\0\00ô•˘50Ä\0\0\0\00Ä\0\0\0\0 \0@Ä\0\0\0\0\0\0\0\0Ä\0\0\0\0\0\0ïEçPô¶\0%˛\0\00ôedô', 37, '9924-12-00 03:02:25'),
-(2, 356879696, '2020-04-01 00:00:00', 'Cleared', '2020-03-31 00:00:00', '0', 'ô', '2991-01-26 17:52:48', 'Ä', '0082-05-31 31:63:16', 'Ä\0\0\0\0 \0@Ä\0\0\0\0\0\0\0\0Ä\0\0\0\0\0\0ïEçPô¶\0\0Clearedô•˛\0\00ô•˘50Ä\0\0\0\00Å\0\0\0(ˇ+Ä\0\0\0\0\0\0\0\0Ä\0\0\0\0\0\0Å˛˚(ô¶tˆalô¶tredô¶v\0\00Pending Appro', -10, '2408-05-19 05:38:12'),
-(3, 356879696, '2020-04-01 00:00:00', 'Cleared', '2020-03-31 00:00:00', '0', 'ô', '2991-01-26 17:52:48', 'Ä', '0082-05-31 31:63:16', 'Å\0\0\0(ˇ+Ä\0\0\0\0\0\0\0\0Ä\0\0\0\0\0\0Å˛˚(ô¶t\0\0Clearedô¶v\0\00Pending Approvalô¶tº∑0Ä\0\0\0\00Ä\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0Ä\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0', -128, '7214-90-00 00:00:00'),
-(4, 33487656, '2020-05-26 00:00:00', 'Cleared', '2020-05-27 00:00:00', '0', 'Pending Approval', '2020-05-26 11:50:55', '0', '0000-00-00 00:00:00', '0', 0, NULL);
+(2, 30487656, '2020-05-27 00:00:00', 'Cleared', '2020-05-27 00:00:00', '0', 'Approved', '2020-05-27 10:06:45', '0', '0000-00-00 00:00:00', '0', 0, '2020-05-27 10:20:07');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `attestationapprovalcontacts`
+--
+
+CREATE TABLE `attestationapprovalcontacts` (
+  `Name` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `Email` varchar(150) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `Mobile` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `Msg` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `IDNumber` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `attestationapprovalcontacts`
+--
+
+INSERT INTO `attestationapprovalcontacts` (`Name`, `Email`, `Mobile`, `Msg`, `IDNumber`) VALUES
+('Kelvin Chemey', 'kserem20@gmail.com', '+254753710324', 'Applicant', '30487656');
 
 -- --------------------------------------------------------
 
@@ -6455,6 +6502,13 @@ CREATE TABLE `attestation_approval_workflow` (
   `Approved_At` datetime DEFAULT NULL,
   `Created_At` datetime DEFAULT NULL
 ) ENGINE=InnoDB AVG_ROW_LENGTH=2340 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `attestation_approval_workflow`
+--
+
+INSERT INTO `attestation_approval_workflow` (`ID`, `Number`, `Fullname`, `Status`, `Approver`, `Remarks`, `Created_By`, `Approved_At`, `Created_At`) VALUES
+(1, 30487656, 0, 'Approved', 'Admin', 'kelvin', 'Admin', '2020-05-27 10:20:07', '2020-05-27 10:20:07');
 
 -- --------------------------------------------------------
 
@@ -6885,7 +6939,50 @@ INSERT INTO `audittrails` (`AuditID`, `Date`, `Username`, `Description`, `Catego
 (407, '2020-05-26 18:07:50', 'Admin', 'Approved DCI: 30487656', 'Approval', 0),
 (408, '2020-05-26 18:21:50', 'Admin', 'Added new   contract with  IDnumber:30487656', 'Add', 0),
 (409, '2020-05-26 18:22:09', 'Admin', 'Approved Contract Processing: 30487656', 'Approval', 0),
-(410, '2020-05-26 18:22:48', 'Admin', 'Approved Contract Processing: 30487656', 'Approval', 0);
+(410, '2020-05-26 18:22:48', 'Admin', 'Approved Contract Processing: 30487656', 'Approval', 0),
+(411, '2020-05-26 21:09:14', 'Admin', 'Deleted DCI Clearance  with ID: 1', 'Delete', 0),
+(412, '2020-05-26 21:10:28', 'Admin', 'Added new DCI Clearance:30487656', 'Add', 0),
+(413, '2020-05-26 21:10:52', 'Admin', 'Approved DCI: 30487656', 'Approval', 0),
+(414, '2020-05-27 08:56:13', 'Admin', 'Added new Minor medical:30487656', 'Add', 0),
+(415, '2020-05-27 08:56:39', 'Admin', 'Approved DCI: 30487656', 'Approval', 0),
+(416, '2020-05-27 09:09:51', 'Admin', 'Added new training  with name:30487656', 'Add', 0),
+(417, '2020-05-27 09:11:47', 'Admin', 'Approved nea: 30487656', 'Approval', 0),
+(418, '2020-05-27 09:14:12', 'Admin', 'Added new   contract with  IDnumber:30487656', 'Add', 0),
+(419, '2020-05-27 09:14:28', 'Admin', 'Approved Contract Processing: 30487656', 'Approval', 0),
+(420, '2020-05-27 09:32:38', 'Admin', 'Deleted Passport Processing   with iD: 1', 'Delete', 0),
+(421, '2020-05-27 09:34:55', 'Admin', 'Added passport processing:30487656', 'Add', 0),
+(422, '2020-05-27 09:35:13', 'Admin', 'Approved Passport: 30487656', 'Approval', 0),
+(423, '2020-05-27 09:39:31', 'Admin', 'Added new VISA Processing with  IDnumber:30487656', 'Add', 0),
+(424, '2020-05-27 09:40:03', 'Admin', 'Approved Visa: 30487656', 'Approval', 0),
+(425, '2020-05-27 09:40:35', 'Admin', 'Approved Visa: 30487656', 'Approval', 0),
+(426, '2020-05-27 09:40:50', 'Admin', 'Approved Visa: 30487656', 'Approval', 0),
+(427, '2020-05-27 09:48:46', '0', 'Added new   VISA Processing with  IDnumber:30487656', 'Add', 0),
+(428, '2020-05-27 10:06:45', '0', 'Added new   VISA Processing with  IDnumber:30487656', 'Add', 0),
+(429, '2020-05-27 10:20:07', 'Admin', 'Approved Attestation: 30487656', 'Approval', 0),
+(430, '2020-05-27 10:27:36', 'Admin', 'Deleted Ticketing  with ID: 1', 'Delete', 0),
+(431, '2020-05-27 10:28:22', '0', 'Added Ticketing:30487656', 'Add', 0),
+(432, '2020-05-27 10:28:35', 'Admin', 'Approved Visa: 30487656', 'Approval', 0),
+(433, '2020-05-27 10:30:10', 'Admin', 'Approved Visa: 30487656', 'Approval', 0),
+(434, '2020-05-27 10:30:40', 'Admin', 'Approved Visa: 30487656', 'Approval', 0),
+(435, '2020-05-27 10:39:23', '0', 'Added new   Final medical with  IDnumber:30487656', 'Add', 0),
+(436, '2020-05-27 10:40:20', 'Admin', 'Approved Final Medical: 30487656', 'Approval', 0),
+(437, '2020-05-27 10:41:58', 'Admin', 'Added new Travelling  with name:30487656', 'Add', 0),
+(438, '2020-05-27 10:43:20', 'Admin', 'Approved Travel: 30487656', 'Approval', 0),
+(439, '2020-05-27 10:44:05', 'Admin', 'Approved Travel: 30487656', 'Approval', 0),
+(440, '2020-06-02 14:50:20', 'Admin', 'Updated  User with username: Admin', 'Update', 0),
+(441, '2020-06-02 14:50:34', 'Admin', 'Changed User Photo for user: Admin', 'Update', 0),
+(442, '2020-06-02 21:39:18', 'Admin', 'Updated  User with username: Admin', 'Update', 0),
+(443, '2020-06-08 09:39:51', 'Admin', 'Changed User Photo for user: Admin', 'Update', 0),
+(444, '2020-06-08 09:39:55', 'Admin', 'Updated  User with username: Admin', 'Update', 0),
+(445, '2020-06-08 14:36:07', 'Admin', 'Changed User Photo for user: Admin', 'Update', 0),
+(446, '2020-06-08 14:36:10', 'Admin', 'Updated  User with username: Admin', 'Update', 0),
+(447, '2020-06-08 15:16:49', 'Admin', 'Added new Applicant:30486756', 'Add', 0),
+(448, '2020-06-08 15:38:49', 'Admin', 'Added new Minor medical:30486756', 'Add', 0),
+(449, '2020-06-08 15:44:17', 'Admin', 'Approved Registration: 30486756', 'Approval', 0),
+(450, '2020-06-08 20:01:34', 'Admin', 'Added new DCI Clearance:30486756', 'Add', 0),
+(451, '2020-06-08 20:03:28', 'Admin', 'Added passport processing:30486756', 'Add', 0),
+(452, '2020-06-08 20:03:58', 'Admin', 'Added new   contract with  IDnumber:30487656', 'Add', 0),
+(453, '2020-06-10 15:07:59', 'Admin', 'Added new User with username:vokechem', 'Add', 0);
 
 -- --------------------------------------------------------
 
@@ -6959,6 +7056,14 @@ CREATE TABLE `contract` (
   `Approve_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB AVG_ROW_LENGTH=8192 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+--
+-- Dumping data for table `contract`
+--
+
+INSERT INTO `contract` (`ID`, `Number`, `Contract_status`, `Cost`, `EmployerName`, `EmployerID`, `EmployerContact`, `EmployerAddress`, `VisaNumber`, `ContractNumber`, `Status`, `Created_at`, `CreatedBy`, `Updated_at`, `UpdateBy`, `Deleted`, `Approve_at`) VALUES
+(1, 30487656, 'Issued', '0', 'mm', 'nn', 'mm', 'mm', 'mm', 'mm', 'Approved', '2020-05-27 09:14:12', 'Admin', '0000-00-00 00:00:00', '0', 0, '2020-05-27 09:14:28'),
+(2, 30487656, 'Issued', '0', 'mm', 'nn', 'mm', 'mm', 'mm', 'mm', 'Pending Approval', '2020-06-08 20:03:57', 'Admin', '0000-00-00 00:00:00', '0', 0, NULL);
+
 -- --------------------------------------------------------
 
 --
@@ -6979,7 +7084,7 @@ CREATE TABLE `contractapprovalcontacts` (
 
 INSERT INTO `contractapprovalcontacts` (`Name`, `Email`, `Mobile`, `Msg`, `IDNumber`) VALUES
 ('kelvin chemey', 'kelvinchemey@gmail.com', '+254700392599', 'Applicant', '30487656'),
-('Kelvin Chemey', 'kserem20@gmail.com', '254700392599', 'Applicant', '30487656');
+('Kelvin Chemey', 'kserem20@gmail.com', '+254753710324', 'Applicant', '30487656');
 
 -- --------------------------------------------------------
 
@@ -6998,6 +7103,13 @@ CREATE TABLE `contract_approval_workflow` (
   `Approved_At` datetime DEFAULT NULL,
   `Created_At` datetime DEFAULT NULL
 ) ENGINE=InnoDB AVG_ROW_LENGTH=2340 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `contract_approval_workflow`
+--
+
+INSERT INTO `contract_approval_workflow` (`ID`, `Number`, `Fullname`, `Status`, `Approver`, `Remarks`, `Created_By`, `Approved_At`, `Created_At`) VALUES
+(1, 30487656, 0, 'Approved', 'Admin', 'yuu', 'Admin', '2020-05-27 09:14:28', '2020-05-27 09:14:28');
 
 -- --------------------------------------------------------
 
@@ -7124,7 +7236,8 @@ CREATE TABLE `dci` (
 --
 
 INSERT INTO `dci` (`ID`, `Number`, `DOT`, `Certificate_status`, `DOC`, `Cost`, `CostIncurred`, `Processing`, `Status`, `Created_at`, `CreatedBy`, `Updated_at`, `UpdatedBy`, `Deleted`, `Approve_at`) VALUES
-(1, 30487656, '2020-05-26 00:00:00', 'Collected', '2020-05-12 00:00:00', '1050', '34', 'job Majuu', 'Approved', '2020-05-26 18:06:32', 'Admin', '0000-00-00 00:00:00', '0', 0, '2020-05-26 18:07:50');
+(1, 30487656, '2020-05-12 00:00:00', 'Collected', '2020-05-26 00:00:00', '1050', '34', 'job Majuu', 'Approved', '2020-05-26 21:10:28', 'Admin', '0000-00-00 00:00:00', '0', 0, '2020-05-26 21:10:52'),
+(2, 30486756, '2020-06-16 00:00:00', 'Collected', '2020-06-16 00:00:00', '1050', '34', 'job Majuu', 'Pending Approval', '2020-06-08 20:01:33', 'Admin', '0000-00-00 00:00:00', '0', 0, NULL);
 
 -- --------------------------------------------------------
 
@@ -7146,7 +7259,7 @@ CREATE TABLE `dciapprovalcontacts` (
 
 INSERT INTO `dciapprovalcontacts` (`Name`, `Email`, `Mobile`, `Msg`, `IDNumber`) VALUES
 ('kelvin chemey', 'kelvinchemey@gmail.com', '+254700392599', 'Applicant', '30487656'),
-('Kelvin Chemey', 'kserem20@gmail.com', '254700392599', 'Applicant', '30487656');
+('Kelvin Chemey', 'kserem20@gmail.com', '+254753710324', 'Applicant', '30487656');
 
 -- --------------------------------------------------------
 
@@ -7197,8 +7310,7 @@ CREATE TABLE `dci_approval_workflow` (
 --
 
 INSERT INTO `dci_approval_workflow` (`ID`, `Number`, `Fullname`, `Status`, `Approver`, `Remarks`, `Created_By`, `Approved_At`, `Created_At`) VALUES
-(1, 30487656, 0, 'Approved', 'Admin', 'mmmm', 'Admin', '2020-05-26 18:06:47', '2020-05-26 18:06:47'),
-(2, 30487656, 0, 'Approved', 'Admin', 'mmmm', 'Admin', '2020-05-26 18:07:50', '2020-05-26 18:07:50');
+(1, 30487656, 0, 'Approved', 'Admin', 'kelvin', 'Admin', '2020-05-26 21:10:52', '2020-05-26 21:10:52');
 
 -- --------------------------------------------------------
 
@@ -7245,7 +7357,7 @@ CREATE TABLE `finalapprovalcontacts` (
 --
 
 INSERT INTO `finalapprovalcontacts` (`Name`, `Email`, `Mobile`, `Msg`, `IDNumber`) VALUES
-('Kelvin Chemey', 'kserem20@gmail.com', '700392599', 'Applicant', '30487656');
+('Kelvin Chemey', 'kserem20@gmail.com', '+254753710324', 'Applicant', '30487656');
 
 -- --------------------------------------------------------
 
@@ -7277,8 +7389,7 @@ CREATE TABLE `finalmedical` (
 --
 
 INSERT INTO `finalmedical` (`ID`, `Number`, `MedicalFacility`, `DOM`, `MedicalResult`, `Cost`, `Type`, `RepeatCost`, `Other`, `Status`, `Created_at`, `CreatedBy`, `Updated_at`, `UpdatedBy`, `Deleted`, `Approve_at`) VALUES
-(1, 30487656, 'Chaudhry', '2020-05-04 00:00:00', 'Pass', '4000', 'New', '', '78', 'Approved', '2020-05-22 14:11:53', '0', '0000-00-00 00:00:00', '0', 0, '2020-05-22 14:12:29'),
-(2, 33487656, 'Dr. Martina', '2020-05-07 00:00:00', 'Pass', '4000', 'New', '', '56', 'Pending Approval', '2020-05-26 11:55:36', '0', '0000-00-00 00:00:00', '0', 0, NULL);
+(1, 30487656, 'Chaudhry', '2020-05-27 00:00:00', 'Pass', '4000', 'New', '', '67', 'Approved', '2020-05-27 10:39:23', '0', '0000-00-00 00:00:00', '0', 0, '2020-05-27 10:40:20');
 
 -- --------------------------------------------------------
 
@@ -7303,7 +7414,7 @@ CREATE TABLE `final_approval_workflow` (
 --
 
 INSERT INTO `final_approval_workflow` (`ID`, `Number`, `Fullname`, `Status`, `Approver`, `Remarks`, `Created_By`, `Approved_At`, `Created_At`) VALUES
-(1, 30487656, 0, 'Approved', 'Admin', 'nnn', 'Admin', '2020-05-22 14:12:29', '2020-05-22 14:12:29');
+(1, 30487656, 0, 'Approved', 'Admin', '788', 'Admin', '2020-05-27 10:40:20', '2020-05-27 10:40:20');
 
 -- --------------------------------------------------------
 
@@ -7457,8 +7568,9 @@ CREATE TABLE `major` (
 --
 
 INSERT INTO `major` (`ID`, `Number`, `MedicalFacility`, `MedicalResults`, `DOM`, `MCertificate`, `DOC`, `Cost`, `Type`, `RepeatCost`, `Others`, `Status`, `Created_at`, `CreatedBy`, `Updated_at`, `UpdatedBy`, `Deleted`, `Approve_at`) VALUES
-(1, 30487656, 'Crescent Medical', 'Pass', '2020-05-12 00:00:00', 'Issued', '2020-05-20 00:00:00', '4000', 'New', '', '', 'Approved', '2020-05-22 11:56:47', 'Admin', '0000-00-00 00:00:00', '0', 1, '2020-05-22 11:57:29'),
-(2, 33487656, 'Dr. Martina', 'Pass', '2020-05-20 00:00:00', 'Issued', '2020-05-13 00:00:00', '4000', 'New', '', '', 'Pending Approval', '2020-05-26 11:12:38', 'Admin', '2020-05-26 11:13:29', 'Admin', 0, NULL);
+(1, 30487656, 'Crescent Medical', 'Pass', '2020-05-12 00:00:00', 'Issued', '2020-05-20 00:00:00', '4000', 'New', '', '', 'Approved', '2020-05-22 11:56:47', 'Admin', '0000-00-00 00:00:00', '0', 1, '2020-05-27 08:56:39'),
+(2, 33487656, 'Dr. Martina', 'Pass', '2020-05-20 00:00:00', 'Issued', '2020-05-13 00:00:00', '4000', 'New', '', '', 'Pending Approval', '2020-05-26 11:12:38', 'Admin', '2020-05-26 11:13:29', 'Admin', 0, NULL),
+(3, 30487656, 'Chaudhry', 'Pass', '2020-05-12 00:00:00', 'Issued', '2020-05-19 00:00:00', '4000', 'New', '', '', 'Approved', '2020-05-27 08:56:12', 'Admin', '0000-00-00 00:00:00', '0', 0, '2020-05-27 08:56:39');
 
 -- --------------------------------------------------------
 
@@ -7479,8 +7591,8 @@ CREATE TABLE `majorapprovalcontacts` (
 --
 
 INSERT INTO `majorapprovalcontacts` (`Name`, `Email`, `Mobile`, `Msg`, `IDNumber`) VALUES
-('kelvin chemey', 'kelvinchemey20@gmail.com', '0700392598', 'Applicant', '30487656'),
-('Kelvin Chemey', 'kserem20@gmail.com', '700392599', 'Applicant', '30487656');
+('kelvin chemey', 'kelvinchemey@gmail.com', '+254700392599', 'Applicant', '30487656'),
+('Kelvin Chemey', 'kserem20@gmail.com', '+254753710324', 'Applicant', '30487656');
 
 -- --------------------------------------------------------
 
@@ -7505,7 +7617,9 @@ CREATE TABLE `major_approval_workflow` (
 --
 
 INSERT INTO `major_approval_workflow` (`ID`, `Number`, `Fullname`, `Status`, `Approver`, `Remarks`, `Created_By`, `Approved_At`, `Created_At`) VALUES
-(1, 30487656, 0, 'Approved', 'Admin', 'nnn', 'Admin', '2020-05-22 11:57:29', '2020-05-22 11:57:29');
+(1, 30487656, 0, 'Approved', 'Admin', 'nnn', 'Admin', '2020-05-22 11:57:29', '2020-05-22 11:57:29'),
+(2, 30487656, 0, 'Approved', 'Admin', 'welcome back', 'Admin', '2020-05-27 08:56:38', '2020-05-27 08:56:38'),
+(3, 30487656, 0, 'Approved', 'Admin', 'welcome back', 'Admin', '2020-05-27 08:56:38', '2020-05-27 08:56:38');
 
 -- --------------------------------------------------------
 
@@ -7629,7 +7743,8 @@ CREATE TABLE `minormedical` (
 --
 
 INSERT INTO `minormedical` (`ID`, `Number`, `DOM`, `MedicalFacility`, `Result`, `Cost`, `Type`, `RepeatCost`, `Others`, `Status`, `Created_at`, `CreatedBy`, `UpdateBy`, `Updated_at`, `Deleted`, `Approve_at`) VALUES
-(1, 30487656, '2020-05-12 00:00:00', 'Crescent Medical', 'Pass', '500', 'New', '', '89', 'Approved', '2020-05-26 15:40:17', 'Admin', '0', '0000-00-00 00:00:00', 0, '2020-05-26 15:40:39');
+(1, 30487656, '2020-05-12 00:00:00', 'Crescent Medical', 'Pass', '500', 'New', '', '89', 'Approved', '2020-05-26 15:40:17', 'Admin', '0', '0000-00-00 00:00:00', 0, '2020-05-26 15:40:39'),
+(2, 30486756, '2020-06-17 00:00:00', 'Chaudhry', 'Pass', '500', 'New', '', '78', 'Pending Approval', '2020-06-08 15:38:49', 'Admin', '0', '0000-00-00 00:00:00', 0, NULL);
 
 -- --------------------------------------------------------
 
@@ -7660,18 +7775,15 @@ CREATE TABLE `minormedicalbuffer` (
   `Type` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `Cost` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `Created_at` datetime DEFAULT NULL
-) ENGINE=InnoDB AVG_ROW_LENGTH=8192 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `minormedicalbuffer`
 --
 
 INSERT INTO `minormedicalbuffer` (`Fullname`, `IDNumber`, `Number`, `DOM`, `MedicalFacility`, `Type`, `Cost`, `Created_at`) VALUES
-('martina Kalunde', '34564577', '34564577', '2020-04-15', 'Chaudhry', '0', '500', '2020-04-11 09:47:19'),
-('Kim kirwa', '35487656', '35487656', '2020-04-16', 'Chaudhry', 'New', '500', '2020-04-11 15:41:25'),
 ('Kelvin Chemey', '30487656', '30487656', '2020-05-12', 'Crescent Medical', 'New', '500', '2020-05-26 15:40:17'),
-('martina Kalunde', '34564577', '34564577', '2020-04-15', 'Chaudhry', '0', '500', '2020-04-11 09:47:19'),
-('Kim kirwa', '35487656', '35487656', '2020-04-16', 'Chaudhry', 'New', '500', '2020-04-11 15:41:25');
+('Kelvin Chemey', '30486756', '30486756', '2020-06-17', 'Chaudhry', 'New', '500', '2020-06-08 15:38:49');
 
 -- --------------------------------------------------------
 
@@ -7726,7 +7838,30 @@ CREATE TABLE `neaa` (
 --
 
 INSERT INTO `neaa` (`ID`, `Number`, `DOS`, `Approved_Status`, `DOA`, `Reason`, `RDate`, `Status`, `Created_at`, `CreatedBy`, `Updated_at`, `UpdatedBy`, `Deleted`, `Approve_at`) VALUES
-(1, 33487656, '2020-05-26 00:00:00', 'Approved', NULL, '', '0000-00-00 00:00:00', 'Pending Approval', '2020-05-26 11:46:03', 'Admin', '0000-00-00 00:00:00', '0', 0, NULL);
+(1, 33487656, '2020-05-26 00:00:00', 'Approved', NULL, '', '0000-00-00 00:00:00', 'Pending Approval', '2020-05-26 11:46:03', 'Admin', '0000-00-00 00:00:00', '0', 0, NULL),
+(2, 30487656, '2020-05-11 00:00:00', 'Approved', NULL, '', '0000-00-00 00:00:00', 'Approved', '2020-05-27 09:09:50', 'Admin', '0000-00-00 00:00:00', '0', 0, '2020-05-27 09:11:47');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `neaapprovalcontacts`
+--
+
+CREATE TABLE `neaapprovalcontacts` (
+  `Name` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `Email` varchar(150) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `Mobile` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `Msg` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `IDNumber` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `neaapprovalcontacts`
+--
+
+INSERT INTO `neaapprovalcontacts` (`Name`, `Email`, `Mobile`, `Msg`, `IDNumber`) VALUES
+('kelvin chemey', 'kelvinchemey@gmail.com', '+254700392599', 'Applicant', '30487656'),
+('Kelvin Chemey', 'kserem20@gmail.com', '+254753710324', 'Applicant', '30487656');
 
 -- --------------------------------------------------------
 
@@ -7745,6 +7880,13 @@ CREATE TABLE `neaa_approval_workflow` (
   `Approved_At` datetime DEFAULT NULL,
   `Created_At` datetime DEFAULT NULL
 ) ENGINE=InnoDB AVG_ROW_LENGTH=2340 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `neaa_approval_workflow`
+--
+
+INSERT INTO `neaa_approval_workflow` (`ID`, `Number`, `Fullname`, `Status`, `Approver`, `Remarks`, `Created_By`, `Approved_At`, `Created_At`) VALUES
+(1, 30487656, 0, 'Approved', 'Admin', 'tyy', 'Admin', '2020-05-27 09:11:47', '2020-05-27 09:11:47');
 
 -- --------------------------------------------------------
 
@@ -7793,53 +7935,22 @@ CREATE TABLE `notifications` (
 --
 
 INSERT INTO `notifications` (`ID`, `Username`, `Category`, `Description`, `Created_At`, `DueDate`, `Status`, `IDNumber`) VALUES
-(1, 'Admin', 'Final Medical Approval ', 'Final Medical pending approval', '2020-05-22 14:11:53', '2020-05-27 14:11:53', 'Resolved', '30487656'),
-(2, 'Admin', 'Contract Processing Approval', 'Contract pending approval', '2020-05-22 17:09:53', '2020-05-27 17:09:53', 'Resolved', ''),
-(3, 'Admin', 'Ticketing Approval', 'Ticketing pending approval', '2020-05-22 21:18:21', '2020-05-27 21:18:21', 'Resolved', '30487656'),
-(4, 'Admin', 'Travelling Approval', 'Travelling pending approval', '2020-05-22 22:00:29', '2020-05-27 22:00:29', 'Resolved', '30487656'),
-(5, 'Admin', 'Travelling Approval', 'Travelling pending approval', '2020-05-22 22:05:00', '2020-05-27 22:05:00', 'Resolved', '30487656'),
-(6, 'Admin', 'Applications Approval', 'Applications pending approval', '2020-05-24 15:21:30', '2020-05-27 15:21:30', 'Resolved', ''),
-(7, 'Admin', 'Applications Approval', 'Applications pending approval', '2020-05-24 16:00:54', '2020-05-27 16:00:54', 'Resolved', ''),
-(8, 'Admin', 'Applications Approval', 'Applications pending approval', '2020-05-25 09:30:37', '2020-05-28 09:30:37', 'Resolved', ''),
-(9, 'Admin', 'Applications Approval', 'Applications pending approval', '2020-05-26 09:49:31', '2020-05-29 09:49:31', 'Resolved', ''),
-(10, 'Admin', 'Minor Medical Approval', 'MinorMedical pending approval', '2020-05-26 09:55:12', '2020-05-29 09:55:12', 'Resolved', ''),
-(11, 'kavethe', 'Minor Medical Approval', 'MinorMedical pending approval', '2020-05-26 09:55:12', '2020-05-29 09:55:12', 'Resolved', ''),
-(13, 'Admin', 'DCI Approval', 'DCI pending approval', '2020-05-26 10:13:50', '2020-05-31 10:13:50', 'Resolved', ''),
-(14, 'Admin', 'Major Medical Approval', 'Major pending approval', '2020-05-26 11:12:38', '2020-05-29 11:12:38', 'Resolved', '33487656'),
-(15, 'Admin', 'Passport Approval', 'Passport pending approval', '2020-05-26 11:13:13', '2020-06-09 11:13:13', 'Resolved', ''),
-(16, 'Admin', 'Contract Processing Approval', 'Contract pending approval', '2020-05-26 11:29:26', '2020-05-31 11:29:26', 'Resolved', ''),
-(18, 'Admin', 'Training Approval', 'Training pending approval', '2020-05-26 11:36:02', '2020-05-31 11:36:02', 'Not Resolved', '33487656'),
-(19, 'Admin', 'NEA Approval', 'NEA pending approval', '2020-05-26 11:46:03', '2020-05-31 11:46:03', 'Resolved', '33487656'),
-(20, 'Admin', 'Attestation Approval', 'Attestation pending approval', '2020-05-26 11:50:55', '2020-05-31 11:50:55', 'Resolved', ''),
-(21, 'Admin', 'Visa Approval', 'Visa pending approval', '2020-05-26 11:53:40', '2020-05-31 11:53:40', 'Resolved', '33487656'),
-(22, 'Admin', 'Final Medical Approval ', 'Final Medical pending approval', '2020-05-26 11:55:36', '2020-05-31 11:55:36', 'Not Resolved', '33487656'),
-(23, 'Admin', 'Ticketing Approval', 'Ticketing pending approval', '2020-05-26 11:55:56', '2020-05-31 11:55:56', 'Resolved', '33487656'),
-(24, 'Admin', 'Travelling Approval', 'Travel  pending approval', '2020-05-26 11:57:48', '2020-05-31 11:57:48', 'Resolved', '33487656'),
-(25, 'Admin', 'Applications Approval', 'Applications pending approval', '2020-05-26 12:56:29', '2020-05-29 12:56:29', 'Resolved', '30487656'),
-(26, 'Admin', 'Applications Approval', 'Applications pending approval', '2020-05-26 13:44:15', '2020-05-29 13:44:15', 'Resolved', '30487656'),
-(27, 'Admin', 'Applications Approval', 'Applications pending approval', '2020-05-26 13:54:05', '2020-05-29 13:54:05', 'Resolved', '30487656'),
-(28, 'Admin', 'Applications Approval', 'Applications pending approval', '2020-05-26 14:01:58', '2020-05-29 14:01:58', 'Resolved', '30487656'),
-(29, 'Admin', 'Minor Medical Approval', 'MinorMedical pending approval', '2020-05-26 15:17:06', '2020-05-29 15:17:06', 'Resolved', ''),
-(30, 'kavethe', 'Minor Medical Approval', 'MinorMedical pending approval', '2020-05-26 15:17:06', '2020-05-29 15:17:06', 'Resolved', ''),
-(32, 'Admin', 'Minor Medical Approval', 'MinorMedical pending approval', '2020-05-26 15:26:40', '2020-05-29 15:26:40', 'Resolved', ''),
-(33, 'kavethe', 'Minor Medical Approval', 'MinorMedical pending approval', '2020-05-26 15:26:40', '2020-05-29 15:26:40', 'Resolved', ''),
-(35, 'Admin', 'Minor Medical Approval', 'MinorMedical pending approval', '2020-05-26 15:32:34', '2020-05-29 15:32:34', 'Resolved', ''),
-(36, 'kavethe', 'Minor Medical Approval', 'MinorMedical pending approval', '2020-05-26 15:32:34', '2020-05-29 15:32:34', 'Resolved', ''),
-(38, 'Admin', 'Minor Medical Approval', 'MinorMedical pending approval', '2020-05-26 15:40:18', '2020-05-29 15:40:18', 'Resolved', ''),
-(39, 'kavethe', 'Minor Medical Approval', 'MinorMedical pending approval', '2020-05-26 15:40:18', '2020-05-29 15:40:18', 'Resolved', ''),
-(41, 'Admin', 'DCI Approval', 'DCI pending approval', '2020-05-26 16:11:41', '2020-05-31 16:11:41', 'Resolved', ''),
-(42, 'Admin', 'DCI Approval', 'DCI pending approval', '2020-05-26 16:20:36', '2020-05-31 16:20:36', 'Resolved', ''),
-(43, 'Admin', 'DCI Approval', 'DCI pending approval', '2020-05-26 17:32:01', '2020-05-31 17:32:01', 'Resolved', ''),
-(44, 'Admin', 'DCI Approval', 'DCI pending approval', '2020-05-26 17:59:35', '2020-05-31 17:59:35', 'Resolved', ''),
-(45, 'Admin', 'DCI Approval', 'DCI pending approval', '2020-05-26 18:03:45', '2020-05-31 18:03:45', 'Resolved', ''),
-(46, 'Admin', 'DCI Approval', 'DCI pending approval', '2020-05-26 18:06:32', '2020-05-31 18:06:32', 'Resolved', ''),
-(47, 'Admin', 'Contract Processing Approval', 'Contract pending approval', '2020-05-26 18:21:50', '2020-05-31 18:21:50', 'Resolved', ''),
-(48, 'Admin', 'Attestation Approval', 'Attestation pending approval', '2020-05-26 16:19:11', '2020-05-31 16:19:11', 'Not Resolved', ''),
-(49, 'Admin', 'Contract Processing Approval', 'Contract pending approval', '2020-05-26 16:19:11', '2020-05-31 16:19:11', 'Not Resolved', ''),
-(50, 'Admin', 'DCI Approval', 'DCI pending approval', '2020-05-26 16:19:11', '2020-05-31 16:19:11', 'Not Resolved', ''),
-(51, 'Admin', 'Minor Medical Approval', 'MinorMedical pending approval', '2020-05-26 16:19:11', '2020-05-29 16:19:11', 'Not Resolved', ''),
-(52, 'kavethe', 'Minor Medical Approval', 'MinorMedical pending approval', '2020-05-26 16:19:11', '2020-05-29 16:19:11', 'Not Resolved', ''),
-(54, 'Admin', 'Passport Approval', 'Passport pending approval', '2020-05-26 16:19:12', '2020-06-09 16:19:12', 'Not Resolved', '');
+(1, 'Admin', 'DCI Approval', 'DCI pending approval', '2020-05-26 21:10:28', '2020-05-31 21:10:28', 'Resolved', ''),
+(2, 'Admin', 'Major Medical Approval', 'Major pending approval', '2020-05-27 08:56:13', '2020-05-30 08:56:13', 'Resolved', '30487656'),
+(3, 'Admin', 'NEA Approval', 'NEA pending approval', '2020-05-27 09:09:51', '2020-06-01 09:09:51', 'Resolved', '30487656'),
+(4, 'Admin', 'Contract Processing Approval', 'Contract pending approval', '2020-05-27 09:14:12', '2020-06-01 09:14:12', 'Resolved', ''),
+(5, 'Admin', 'Passport Approval', 'Passport pending approval', '2020-05-27 09:34:55', '2020-06-10 09:34:55', 'Resolved', ''),
+(6, 'Admin', 'Visa Approval', 'Visa pending approval', '2020-05-27 09:39:31', '2020-06-01 09:39:31', 'Resolved', '30487656'),
+(8, 'Admin', 'Attestation Approval', 'Attestation pending approval', '2020-05-27 10:06:45', '2020-06-01 10:06:45', 'Resolved', '30487656'),
+(9, 'Admin', 'Ticketing Approval', 'Ticketing pending approval', '2020-05-27 10:28:22', '2020-06-01 10:28:22', 'Resolved', '30487656'),
+(10, 'Admin', 'Final Medical Approval ', 'Final Medical pending approval', '2020-05-27 10:39:23', '2020-06-01 10:39:23', 'Resolved', '30487656'),
+(11, 'Admin', 'Travelling Approval', 'Travel pending approval', '2020-05-27 10:41:57', '2020-06-01 10:41:57', 'Resolved', '30487656'),
+(12, 'Admin', 'Applications Approval', 'Applications pending approval', '2020-06-08 15:16:49', '2020-06-11 15:16:49', 'Resolved', '30486756'),
+(13, 'Admin', 'Minor Medical Approval', 'MinorMedical pending approval', '2020-06-08 15:38:49', '2020-06-11 15:38:49', 'Not Resolved', ''),
+(14, 'kavethe', 'Minor Medical Approval', 'MinorMedical pending approval', '2020-06-08 15:38:49', '2020-06-11 15:38:49', 'Not Resolved', ''),
+(16, 'Admin', 'DCI Approval', 'DCI pending approval', '2020-06-08 20:01:34', '2020-06-13 20:01:34', 'Not Resolved', ''),
+(17, 'Admin', 'Passport Approval', 'Passport pending approval', '2020-06-08 20:03:28', '2020-06-22 20:03:28', 'Not Resolved', ''),
+(18, 'Admin', 'Contract Processing Approval', 'Contract pending approval', '2020-06-08 20:03:57', '2020-06-13 20:03:57', 'Not Resolved', '');
 
 -- --------------------------------------------------------
 
@@ -7897,10 +8008,8 @@ CREATE TABLE `passport` (
 --
 
 INSERT INTO `passport` (`ID`, `Number`, `POD`, `Tracking_Number`, `Passport_Status`, `Status`, `Passport_Collection_Date`, `PassPortNumber`, `PassportOption`, `Cost`, `CostIncurred`, `Location`, `Created_At`, `CreatedBy`, `Updated_at`, `UpdatedBy`, `Deleted`, `Approve_at`) VALUES
-(1, 30487656, '2020-05-21 00:00:00', '677', 'Approved', 'Collected', '2020-05-06 00:00:00', 'NNNN', 'New', '77', '777', 'Nairobi', '2020-05-14 12:00:29', 'Admin', '0000-00-00 00:00:00', '0', 0, '2020-05-14 13:21:37'),
-(2, 715760571, '2020-05-28 00:00:00', '677', 'Approved', 'Collected', '2020-05-21 00:00:00', 'NNNN', 'New', '777', '777', 'Nairobi', '2020-05-14 17:32:29', 'Admin', '2020-05-15 09:28:50', 'Admin', 0, '2020-05-15 09:24:53'),
-(5, 30476567, '2020-05-21 00:00:00', '677', 'Pending Approval', 'Collected', '2020-05-27 00:00:00', 'NNNN', 'Lost', '777', '777', 'Nairobi', '2020-05-14 17:34:40', 'Admin', '2020-05-15 09:46:11', 'Admin', 0, NULL),
-(6, 33487656, '2020-05-19 00:00:00', '677', 'Pending Approval', 'Collected', '2020-05-13 00:00:00', 'NNNN', 'New', '777', '777', 'Nairobi', '2020-05-26 11:13:13', 'Admin', '0000-00-00 00:00:00', '0', 0, NULL);
+(1, 30487656, '2020-05-12 00:00:00', '677', 'Approved', 'Collected', '2020-05-13 00:00:00', 'NNNN', 'New', '777', '777', 'Nairobi', '2020-05-27 09:34:55', 'Admin', '0000-00-00 00:00:00', '0', 0, '2020-05-27 09:35:13'),
+(2, 30486756, '2020-06-15 00:00:00', '677', 'Pending Approval', 'Collected', '2020-06-16 00:00:00', 'NNNN', 'New', '777', '777', 'Nairobi', '2020-06-08 20:03:28', 'Admin', '0000-00-00 00:00:00', '0', 0, NULL);
 
 -- --------------------------------------------------------
 
@@ -7921,8 +8030,8 @@ CREATE TABLE `passportapprovalcontacts` (
 --
 
 INSERT INTO `passportapprovalcontacts` (`Name`, `Email`, `Mobile`, `Msg`, `IDNumber`) VALUES
-('kelvin chemey', 'kelvinchemey20@gmail.com', '0700392598', 'Applicant', '715760571'),
-('Kelvin Chemey', 'kserem20@gmail.com', '715760571', 'Applicant', '715760571');
+('kelvin chemey', 'kelvinchemey@gmail.com', '+254700392599', 'Applicant', '30487656'),
+('Kelvin Chemey', 'kserem20@gmail.com', '+254753710324', 'Applicant', '30487656');
 
 -- --------------------------------------------------------
 
@@ -7975,9 +8084,7 @@ CREATE TABLE `passport_approval_workflow` (
 --
 
 INSERT INTO `passport_approval_workflow` (`ID`, `Number`, `Fullname`, `Status`, `Approver`, `Remarks`, `Created_By`, `Approved_At`, `Created_At`) VALUES
-(2, 30487656, 0, 'Approved', 'Admin', 'nnnn', 'Admin', '2020-05-14 12:01:26', '2020-05-14 12:01:26'),
-(3, 30487656, 0, 'Approved', 'Admin', 'nnn', 'Admin', '2020-05-14 13:21:37', '2020-05-14 13:21:37'),
-(4, 715760571, 0, 'Approved', 'Admin', 'nnn', 'Admin', '2020-05-15 09:24:53', '2020-05-15 09:24:53');
+(1, 30487656, 0, 'Approved', 'Admin', 'nn', 'Admin', '2020-05-27 09:35:13', '2020-05-27 09:35:13');
 
 -- --------------------------------------------------------
 
@@ -8052,7 +8159,8 @@ CREATE TABLE `registration` (
 --
 
 INSERT INTO `registration` (`IDNumber`, `Fullname`, `Gender`, `Phone`, `DOB`, `Email`, `Country`, `County`, `Village`, `Religion`, `Marital`, `Height`, `Weight`, `photo`, `FullPhoto`, `BirthCer`, `Husband`, `HusbandMobile`, `HusbandID`, `Languages`, `Skills`, `Classify`, `Agent`, `Job`, `Status`, `Created_at`, `CreatedBy`, `Updated_at`, `Updated_by`, `Deleted`, `Approve_at`) VALUES
-(30487656, 'Kelvin Chemey', 'Male', '254700392599', '2020-05-26 00:00:00', 'kserem20@gmail.com', 'Kenya', 'MOMBASA', 'olaare', 'Christianity', 'Single', 561, 788, '', '', '789', '', 0, 0, 'ertyuj', 'Developers', 'Walkin', '', 'kelivin', 'Approved', '2020-05-26 14:01:58', 'Admin', '0000-00-00 00:00:00', '0', 0, '2020-05-26 14:03:30');
+(30486756, 'Kelvin Chemey', 'Male', '25700392599', '2020-06-16 00:00:00', 'kelvinchemey@gmail.c', 'Kenya', 'KWALE', 'olaare', 'Islam', 'Single', 561, 78, '', '', '7878', '', 0, 0, 'ertyuj', '788', 'Refferal', 'james', 'kelivin', 'Approved', '2020-06-08 15:16:49', 'Admin', '0000-00-00 00:00:00', '0', 0, '2020-06-08 15:44:17'),
+(30487656, 'Kelvin Chemey', 'Male', '+254753710324', '2020-05-26 00:00:00', 'kserem20@gmail.com', 'Kenya', 'MOMBASA', 'olaare', 'Christianity', 'Single', 561, 788, '', '', '789', '', 0, 0, 'ertyuj', 'Developers', 'Walkin', '', 'kelivin', 'Approved', '2020-05-26 14:01:58', 'Admin', '0000-00-00 00:00:00', '0', 0, '2020-05-26 14:03:30');
 
 -- --------------------------------------------------------
 
@@ -8157,18 +8265,15 @@ CREATE TABLE `requesthandledbuffer1` (
   `Created_at` datetime DEFAULT NULL,
   `County` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `Fullname` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL
-) ENGINE=InnoDB AVG_ROW_LENGTH=8192 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `requesthandledbuffer1`
 --
 
 INSERT INTO `requesthandledbuffer1` (`IDNumber`, `Phone`, `DOB`, `Created_at`, `County`, `Fullname`) VALUES
-('35487656', '70494949', '2020-04-22', '2020-04-10 15:46:58', 'KWALE', 'Kim kirwa'),
-('38487656', '788900000', '2020-04-14', '2020-04-10 20:42:18', 'KWALE', 'Kim kirwa'),
-('30487656', '254700392599', '2020-05-26', '2020-05-26 14:01:58', 'MOMBASA', 'Kelvin Chemey'),
-('35487656', '70494949', '2020-04-22', '2020-04-10 15:46:58', 'KWALE', 'Kim kirwa'),
-('38487656', '788900000', '2020-04-14', '2020-04-10 20:42:18', 'KWALE', 'Kim kirwa');
+('30486756', '25700392599', '2020-06-16', '2020-06-08 15:16:49', 'KWALE', 'Kelvin Chemey'),
+('30487656', '+254753710324', '2020-05-26', '2020-05-26 14:01:58', 'MOMBASA', 'Kelvin Chemey');
 
 -- --------------------------------------------------------
 
@@ -8327,7 +8432,7 @@ CREATE TABLE `ticketapprovalcontacts` (
 --
 
 INSERT INTO `ticketapprovalcontacts` (`Name`, `Email`, `Mobile`, `Msg`, `IDNumber`) VALUES
-('Kelvin Chemey', 'kserem20@gmail.com', '700392599', 'Applicant', '30487656');
+('Kelvin Chemey', 'kserem20@gmail.com', '+254753710324', 'Applicant', '30487656');
 
 -- --------------------------------------------------------
 
@@ -8357,8 +8462,7 @@ CREATE TABLE `ticketing` (
 --
 
 INSERT INTO `ticketing` (`ID`, `Number`, `Ticket_status`, `Flight_Date`, `Destination`, `Airline`, `Cost`, `Status`, `Created_at`, `CreatedBy`, `Updated_at`, `UpdatedBy`, `Deleted`, `Approve_at`) VALUES
-(1, 30487656, 'Booked', '2020-05-07 00:00:00', '5666', '566', '777', 'Approved', '2020-05-22 21:18:21', '0', '0000-00-00 00:00:00', '0', 0, '2020-05-22 21:19:36'),
-(2, 33487656, 'Booked', '2020-05-27 00:00:00', '5666', '566', '777', 'Pending Approval', '2020-05-26 11:55:56', '0', '0000-00-00 00:00:00', '0', 0, NULL);
+(1, 30487656, 'Booked', '2020-05-11 00:00:00', '5666', '566', '777', 'Approved', '2020-05-27 10:28:22', '0', '0000-00-00 00:00:00', '0', 0, '2020-05-27 10:30:40');
 
 -- --------------------------------------------------------
 
@@ -8383,7 +8487,9 @@ CREATE TABLE `ticketing_approval_workflow` (
 --
 
 INSERT INTO `ticketing_approval_workflow` (`ID`, `Number`, `Fullname`, `Status`, `Approver`, `Remarks`, `Created_By`, `Approved_At`, `Created_At`) VALUES
-(1, 30487656, 0, 'Approved', 'Admin', 'nn', 'Admin', '2020-05-22 21:19:36', '2020-05-22 21:19:36');
+(1, 30487656, 0, 'Approved', 'Admin', 'mmm', 'Admin', '2020-05-27 10:28:35', '2020-05-27 10:28:35'),
+(2, 30487656, 0, 'Approved', 'Admin', 'mmmnnn', 'Admin', '2020-05-27 10:30:10', '2020-05-27 10:30:10'),
+(3, 30487656, 0, 'Approved', 'Admin', 'mmmnnn', 'Admin', '2020-05-27 10:30:40', '2020-05-27 10:30:40');
 
 -- --------------------------------------------------------
 
@@ -8484,8 +8590,8 @@ CREATE TABLE `travelapprovalcontacts` (
 --
 
 INSERT INTO `travelapprovalcontacts` (`Name`, `Email`, `Mobile`, `Msg`, `IDNumber`) VALUES
-('kelvin chemey', 'kelvinchemey20@gmail.com', '0700392598', 'Applicant', '30487656'),
-('Kelvin Chemey', 'kserem20@gmail.com', '700392599', 'Applicant', '30487656');
+('kelvin chemey', 'kelvinchemey@gmail.com', '+254700392599', 'Applicant', '30487656'),
+('Kelvin Chemey', 'kserem20@gmail.com', '+254753710324', 'Applicant', '30487656');
 
 -- --------------------------------------------------------
 
@@ -8513,7 +8619,8 @@ CREATE TABLE `travelling` (
 --
 
 INSERT INTO `travelling` (`ID`, `Number`, `DOT`, `Status`, `Cost`, `Approve_Status`, `Created_at`, `CreatedBy`, `Update_at`, `UpdateBy`, `Deleted`, `Approve_at`) VALUES
-(1, 33487656, '2020-05-27 00:00:00', 'Travelled', '777', 'Pending Approval', '2020-05-26 11:57:48', 'Admin', '0000-00-00 00:00:00', '0', 0, NULL);
+(1, 33487656, '2020-05-27 00:00:00', 'Travelled', '777', 'Pending Approval', '2020-05-26 11:57:48', 'Admin', '0000-00-00 00:00:00', '0', 0, NULL),
+(2, 30487656, '2020-05-27 00:00:00', 'Travelled', '777', 'Approved', '2020-05-27 10:41:57', 'Admin', '0000-00-00 00:00:00', '0', 0, '2020-05-27 10:44:05');
 
 -- --------------------------------------------------------
 
@@ -8538,7 +8645,9 @@ CREATE TABLE `travelling_approval_workflow` (
 --
 
 INSERT INTO `travelling_approval_workflow` (`ID`, `Number`, `Fullname`, `Status`, `Approver`, `Remarks`, `Created_By`, `Approved_At`, `Created_At`) VALUES
-(6, 30487656, 0, 'Approved', 'Admin', 'nn', 'Admin', '2020-05-22 22:05:31', '2020-05-22 22:05:31');
+(6, 30487656, 0, 'Approved', 'Admin', 'nn', 'Admin', '2020-05-22 22:05:31', '2020-05-22 22:05:31'),
+(7, 30487656, 0, 'Approved', 'Admin', 'uii', 'Admin', '2020-05-27 10:43:20', '2020-05-27 10:43:20'),
+(8, 30487656, 0, 'Approved', 'Admin', 'uiiyyy', 'Admin', '2020-05-27 10:44:05', '2020-05-27 10:44:05');
 
 -- --------------------------------------------------------
 
@@ -8650,26 +8759,26 @@ INSERT INTO `useraccess` (`Username`, `RoleID`, `Edit`, `Remove`, `AddNew`, `Vie
 ('kavethe', 31, 1, 1, 1, 1, 1, 'kavethe', 'Admin', '2020-03-31 09:47:23', '2020-05-02 22:04:11'),
 ('kavethe', 44, 1, 1, 1, 1, 1, 'kavethe', 'Admin', '2020-04-30 15:29:58', '2020-05-02 22:04:11'),
 ('kavethe', 45, 1, 1, 1, 1, 1, 'kavethe', 'Admin', '2020-04-30 15:29:39', '2020-05-02 22:04:11'),
-('kelvin', 1, 1, 1, 1, 1, 1, 'Admin', 'Admin', '2020-04-30 10:31:44', '2020-04-30 10:31:44'),
-('kelvin', 2, 1, 1, 1, 1, 1, 'Admin', 'Admin', '2020-04-30 10:31:44', '2020-04-30 10:31:44'),
-('kelvin', 3, 1, 1, 1, 1, 1, 'Admin', 'Admin', '2020-04-30 10:31:44', '2020-04-30 10:31:44'),
-('kelvin', 4, 1, 1, 1, 1, 1, 'Admin', 'Admin', '2020-04-30 10:31:44', '2020-04-30 10:31:44'),
-('kelvin', 5, 1, 1, 1, 1, 1, 'Admin', 'Admin', '2020-04-30 10:31:44', '2020-04-30 10:31:44'),
-('kelvin', 6, 1, 1, 1, 1, 1, 'Admin', 'Admin', '2020-04-30 10:31:44', '2020-04-30 10:31:44'),
-('kelvin', 7, 1, 1, 1, 1, 1, 'Admin', 'Admin', '2020-04-30 10:31:44', '2020-04-30 10:31:44'),
-('kelvin', 8, 1, 1, 1, 1, 1, 'Admin', 'Admin', '2020-04-30 10:31:44', '2020-04-30 10:31:44'),
-('kelvin', 9, 1, 1, 1, 1, 1, 'Admin', 'Admin', '2020-04-30 10:31:44', '2020-04-30 10:31:44'),
-('kelvin', 10, 1, 1, 1, 1, 1, 'Admin', 'Admin', '2020-04-30 10:31:44', '2020-04-30 10:31:44'),
-('kelvin', 11, 1, 1, 1, 1, 1, 'Admin', 'Admin', '2020-04-30 10:31:44', '2020-04-30 10:31:44'),
-('kelvin', 12, 1, 1, 1, 1, 1, 'Admin', 'Admin', '2020-04-30 10:31:44', '2020-04-30 10:31:44'),
-('kelvin', 14, 1, 1, 1, 1, 1, 'Admin', 'Admin', '2020-04-30 10:31:44', '2020-04-30 10:31:44'),
-('kelvin', 16, 1, 1, 1, 1, 1, 'Admin', 'Admin', '2020-04-30 10:31:44', '2020-04-30 10:31:44'),
-('kelvin', 26, 1, 1, 1, 1, 1, 'Admin', 'Admin', '2020-04-30 10:31:44', '2020-04-30 10:31:44'),
-('kelvin', 27, 1, 1, 1, 1, 1, 'Admin', 'Admin', '2020-04-30 10:31:44', '2020-04-30 10:31:44'),
-('kelvin', 32, 0, 1, 1, 1, 0, 'Admin', 'Admin', '2020-04-30 10:31:44', '2020-04-30 10:31:44'),
-('kelvin', 34, 0, 1, 0, 1, 0, 'Admin', 'Admin', '2020-04-30 10:31:44', '2020-04-30 10:31:44'),
-('kelvin', 37, 1, 1, 1, 1, 1, 'Admin', 'Admin', '2020-04-30 10:31:44', '2020-04-30 10:31:44'),
-('kelvin', 38, 1, 1, 1, 1, 1, 'Admin', 'Admin', '2020-04-30 10:31:44', '2020-04-30 10:31:44'),
+('kelvin', 1, 0, 0, 0, 0, 0, 'kelvin', 'Admin', '2020-04-30 10:31:44', '2020-06-10 15:06:02'),
+('kelvin', 2, 0, 0, 0, 0, 0, 'kelvin', 'Admin', '2020-04-30 10:31:44', '2020-06-10 15:06:02'),
+('kelvin', 3, 0, 0, 0, 0, 0, 'kelvin', 'Admin', '2020-04-30 10:31:44', '2020-06-10 15:06:02'),
+('kelvin', 4, 0, 0, 0, 0, 0, 'kelvin', 'Admin', '2020-04-30 10:31:44', '2020-06-10 15:06:02'),
+('kelvin', 5, 0, 0, 0, 0, 0, 'kelvin', 'Admin', '2020-04-30 10:31:44', '2020-06-10 15:06:02'),
+('kelvin', 6, 0, 0, 0, 0, 0, 'kelvin', 'Admin', '2020-04-30 10:31:44', '2020-06-10 15:06:02'),
+('kelvin', 7, 0, 0, 0, 0, 0, 'kelvin', 'Admin', '2020-04-30 10:31:44', '2020-06-10 15:06:02'),
+('kelvin', 8, 0, 0, 0, 0, 0, 'kelvin', 'Admin', '2020-04-30 10:31:44', '2020-06-10 15:06:02'),
+('kelvin', 9, 0, 0, 0, 0, 0, 'kelvin', 'Admin', '2020-04-30 10:31:44', '2020-06-10 15:06:02'),
+('kelvin', 10, 0, 0, 0, 0, 0, 'kelvin', 'Admin', '2020-04-30 10:31:44', '2020-06-10 15:06:02'),
+('kelvin', 11, 0, 0, 0, 0, 0, 'kelvin', 'Admin', '2020-04-30 10:31:44', '2020-06-10 15:06:02'),
+('kelvin', 12, 0, 0, 0, 0, 0, 'kelvin', 'Admin', '2020-04-30 10:31:44', '2020-06-10 15:06:02'),
+('kelvin', 14, 0, 0, 0, 0, 0, 'kelvin', 'Admin', '2020-04-30 10:31:44', '2020-06-10 15:06:02'),
+('kelvin', 16, 0, 0, 0, 0, 0, 'kelvin', 'Admin', '2020-04-30 10:31:44', '2020-06-10 15:06:02'),
+('kelvin', 26, 0, 0, 0, 0, 0, 'kelvin', 'Admin', '2020-04-30 10:31:44', '2020-06-10 15:06:02'),
+('kelvin', 27, 0, 0, 0, 0, 0, 'kelvin', 'Admin', '2020-04-30 10:31:44', '2020-06-10 15:06:02'),
+('kelvin', 32, 0, 0, 0, 0, 0, 'kelvin', 'Admin', '2020-04-30 10:31:44', '2020-06-10 15:06:02'),
+('kelvin', 34, 0, 0, 0, 0, 0, 'kelvin', 'Admin', '2020-04-30 10:31:44', '2020-06-10 15:06:02'),
+('kelvin', 37, 0, 0, 0, 0, 0, 'kelvin', 'Admin', '2020-04-30 10:31:44', '2020-06-10 15:06:02'),
+('kelvin', 38, 0, 0, 0, 0, 0, 'kelvin', 'Admin', '2020-04-30 10:31:44', '2020-06-10 15:06:02'),
 ('paul', 8, 1, 1, 1, 1, 1, 'paul', 'Admin', '2020-03-31 09:44:09', '2020-05-14 09:12:10'),
 ('paul', 9, 1, 1, 1, 1, 1, 'paul', 'Admin', '2020-03-31 09:41:28', '2020-05-14 09:12:10'),
 ('paul', 10, 1, 1, 1, 1, 1, 'paul', 'Admin', '2020-03-31 09:41:28', '2020-05-14 09:12:10'),
@@ -8677,7 +8786,27 @@ INSERT INTO `useraccess` (`Username`, `RoleID`, `Edit`, `Remove`, `AddNew`, `Vie
 ('paul', 29, 1, 1, 1, 1, 1, 'paul', 'Admin', '2020-03-31 09:41:28', '2020-05-14 09:12:10'),
 ('paul', 30, 1, 1, 1, 1, 1, 'paul', 'Admin', '2020-03-31 09:41:28', '2020-05-14 09:12:10'),
 ('paul', 31, 1, 1, 1, 1, 1, 'paul', 'Admin', '2020-03-31 09:41:28', '2020-05-14 09:12:10'),
-('paul', 43, 1, 1, 1, 1, 1, 'paul', 'Admin', '2020-05-14 09:11:35', '2020-05-14 09:12:10');
+('paul', 43, 1, 1, 1, 1, 1, 'paul', 'Admin', '2020-05-14 09:11:35', '2020-05-14 09:12:10'),
+('vokechem', 6, 0, 0, 0, 0, 0, 'Admin', 'Admin', '2020-06-10 15:07:59', '2020-06-10 15:07:59'),
+('vokechem', 8, 1, 1, 1, 1, 1, 'Admin', 'Admin', '2020-06-10 15:07:59', '2020-06-10 15:07:59'),
+('vokechem', 9, 1, 1, 1, 1, 1, 'Admin', 'Admin', '2020-06-10 15:07:59', '2020-06-10 15:07:59'),
+('vokechem', 10, 1, 1, 1, 1, 1, 'Admin', 'Admin', '2020-06-10 15:07:59', '2020-06-10 15:07:59'),
+('vokechem', 11, 1, 1, 1, 1, 1, 'Admin', 'Admin', '2020-06-10 15:07:59', '2020-06-10 15:07:59'),
+('vokechem', 17, 1, 1, 1, 1, 1, 'Admin', 'Admin', '2020-06-10 15:07:59', '2020-06-10 15:07:59'),
+('vokechem', 19, 1, 1, 1, 1, 1, 'Admin', 'Admin', '2020-06-10 15:07:59', '2020-06-10 15:07:59'),
+('vokechem', 23, 1, 1, 1, 1, 1, 'Admin', 'Admin', '2020-06-10 15:07:59', '2020-06-10 15:07:59'),
+('vokechem', 24, 1, 1, 1, 1, 1, 'Admin', 'Admin', '2020-06-10 15:07:59', '2020-06-10 15:07:59'),
+('vokechem', 25, 1, 1, 1, 1, 1, 'Admin', 'Admin', '2020-06-10 15:07:59', '2020-06-10 15:07:59'),
+('vokechem', 27, 0, 0, 0, 0, 0, 'Admin', 'Admin', '2020-06-10 15:07:59', '2020-06-10 15:07:59'),
+('vokechem', 28, 1, 1, 1, 1, 1, 'Admin', 'Admin', '2020-06-10 15:07:59', '2020-06-10 15:07:59'),
+('vokechem', 29, 1, 1, 1, 1, 1, 'Admin', 'Admin', '2020-06-10 15:07:59', '2020-06-10 15:07:59'),
+('vokechem', 30, 1, 1, 1, 1, 1, 'Admin', 'Admin', '2020-06-10 15:07:59', '2020-06-10 15:07:59'),
+('vokechem', 31, 1, 1, 1, 1, 1, 'Admin', 'Admin', '2020-06-10 15:07:59', '2020-06-10 15:07:59'),
+('vokechem', 43, 1, 1, 1, 1, 1, 'Admin', 'Admin', '2020-06-10 15:07:59', '2020-06-10 15:07:59'),
+('vokechem', 44, 1, 1, 1, 1, 1, 'Admin', 'Admin', '2020-06-10 15:07:59', '2020-06-10 15:07:59'),
+('vokechem', 45, 1, 1, 1, 1, 1, 'Admin', 'Admin', '2020-06-10 15:07:59', '2020-06-10 15:07:59'),
+('vokechem', 46, 0, 0, 0, 0, 0, 'Admin', 'Admin', '2020-06-10 15:07:59', '2020-06-10 15:07:59'),
+('vokechem', 47, 1, 1, 1, 1, 1, 'Admin', 'Admin', '2020-06-10 15:07:59', '2020-06-10 15:07:59');
 
 -- --------------------------------------------------------
 
@@ -8746,12 +8875,13 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`Name`, `Username`, `Email`, `Password`, `Phone`, `Create_at`, `Update_at`, `Login_at`, `Deleted`, `IsActive`, `IsEmailverified`, `ActivationCode`, `ResetPassword`, `UserGroupID`, `CreatedBy`, `UpdatedBy`, `Photo`, `Category`, `Signature`, `IDnumber`, `Gender`, `DOB`, `ChangePassword`, `Board`) VALUES
-('kelvin chemey', 'Admin', 'kelvinchemey@gmail.com', '$2b$10$W5YQ2FfNM3pc7poT7Blpz.Rws/nb6zHPo88EU0C1O0BEIWbrssWH6', '+254700392599', '2019-07-12 15:50:56', '2020-05-26 13:35:48', '2019-07-12 15:50:56', 0, 1, 1, 'QDrts', '', 1, 'kim', 'Admin', '1588922116830-kelvinPassport.jfif', 'System_User', '1565251011001-signature.jpg', '31547833', 'Male', '1994-12-31 00:00:00', NULL, 1),
+('kelvin chemey', 'Admin', 'kelvinchemey@gmail.com', '$2b$10$W5YQ2FfNM3pc7poT7Blpz.Rws/nb6zHPo88EU0C1O0BEIWbrssWH6', '+254700392599', '2019-07-12 15:50:56', '2020-06-08 14:36:10', '2019-07-12 15:50:56', 0, 1, 1, 'QDrts', '', 1, 'kim', 'Admin', '1591616166779-kelvin.png', 'System_User', '1565251011001-signature.jpg', '31547833', 'Male', '1994-12-31 00:00:00', NULL, 1),
 ('kelvin cheruiyot', 'cheruiyot', 'kserem@gmail.com', '$2a$10$OEQx2/tDIaqc005OCQXE5unqhT8pDtariQAwWUBUlZbRJ0mrsyFQu', '0780000000', '2020-05-19 19:48:55', NULL, NULL, 0, 1, 0, 'Fp8eR', NULL, 4, 'Admin', NULL, 'default.png', 'System_User', '', '30678978', 'Male', '2020-05-27 00:00:00', 1, 1),
 ('kavethe', 'kavethe', 'kavethe@gmail.com', '$2a$10$yjcRPMdaW0gc9I1IgzJp2uUl.JvRFuTSrlI9ZsDL0bYdyr12Ku1TS', '07004959990', '2020-03-31 09:47:23', '2020-05-12 18:27:11', NULL, 0, 1, 0, 'yn6Bj', NULL, 5, 'Admin', 'kavethe', '1589297226337-skim2.jpg', 'System_User', '', '303030330', 'Male', '2020-03-17 00:00:00', 1, 0),
 ('Kelvin  chemey', 'kelvin', 'kelvinchemey44@gmail.com', '$2a$10$zylrmKQMOay2fOZTZPemJO476MKvrezbhXQnSQQm.XrLS6HeuoGfm', '0771635492', '2020-04-30 10:31:44', NULL, NULL, 0, 1, 0, 'qH1gI', NULL, 1, 'Admin', NULL, 'default.png', 'System_User', '1565251011001-signature.jpg', '2147483647', 'Male', '2020-04-15 00:00:00', 1, 1),
 ('chemei', 'kserem', 'kserem20@gmail.com', '$2a$10$1.6IQKyqQ6NN1CfXu3hq9ujFRnF3a0suOQ1iptPjyXXvclP/gyI/O', '0700392599', '2020-03-24 22:09:05', NULL, NULL, 1, 1, 0, 'y1lm9', NULL, 5, 'Admin', NULL, 'default.png', 'System_User', '1565251011001-signature.jpg', '340506060', 'Male', '2020-03-09 00:00:00', 1, 1),
-('paul ', 'paul', 'paul@gmail.com', '$2a$10$km/7smwUDOV6.nPnLedH3.Qudw7/RDubO1YiXXmx40eOiQCZ.9xXK', '0703925999', '2020-03-31 09:41:28', '2020-05-14 09:11:47', NULL, 1, 0, 0, 'MO1w0', NULL, 4, 'Admin', 'Admin', 'default.png', 'System_User', '', '230403040', 'Male', '2004-05-10 00:00:00', 1, 0);
+('paul ', 'paul', 'paul@gmail.com', '$2a$10$km/7smwUDOV6.nPnLedH3.Qudw7/RDubO1YiXXmx40eOiQCZ.9xXK', '0703925999', '2020-03-31 09:41:28', '2020-05-14 09:11:47', NULL, 1, 0, 0, 'MO1w0', NULL, 4, 'Admin', 'Admin', 'default.png', 'System_User', '', '230403040', 'Male', '2004-05-10 00:00:00', 1, 0),
+('kelvin chemey', 'vokechem', 'kserem2@gmail.com', '$2a$10$0N8ScIvw04Td57WO9/zBcOQyDNY/XosTshM61WTwZDdpsEtx9up/a', '254753710324', '2020-06-10 15:07:59', NULL, NULL, 0, 1, 0, 'PxqAs', NULL, 4, 'Admin', NULL, 'default.png', 'System_User', '1565251011001-signature.jpg', '36678978', 'Male', '2020-06-24 00:00:00', 1, 1);
 
 -- --------------------------------------------------------
 
@@ -8780,7 +8910,8 @@ CREATE TABLE `visa` (
 --
 
 INSERT INTO `visa` (`ID`, `Number`, `VAD`, `VID`, `Status`, `Cost`, `Visa_Status`, `Created_at`, `CreatedBy`, `Updated_at`, `UpdatedBy`, `Deleted`, `Approve_at`) VALUES
-(1, 33487656, '2020-05-26 00:00:00', '2020-05-26 00:00:00', 'Issued', '0', 'Pending Approval', '2020-05-26 11:53:40', 'Admin', '0000-00-00 00:00:00', '0', 0, NULL);
+(1, 33487656, '2020-05-26 00:00:00', '2020-05-26 00:00:00', 'Issued', '0', 'Pending Approval', '2020-05-26 11:53:40', 'Admin', '0000-00-00 00:00:00', '0', 0, NULL),
+(2, 30487656, '2020-05-20 00:00:00', '2020-05-27 00:00:00', 'Issued', '0', 'Approved', '2020-05-27 09:39:31', 'Admin', '0000-00-00 00:00:00', '0', 0, '2020-05-27 09:40:50');
 
 -- --------------------------------------------------------
 
@@ -8801,8 +8932,8 @@ CREATE TABLE `visaapprovalcontacts` (
 --
 
 INSERT INTO `visaapprovalcontacts` (`Name`, `Email`, `Mobile`, `Msg`, `IDNumber`) VALUES
-('kelvin chemey', 'kelvinchemey20@gmail.com', '0700392598', 'Applicant', '30487656'),
-('Kelvin Chemey', 'kserem20@gmail.com', '700392599', 'Applicant', '30487656');
+('kelvin chemey', 'kelvinchemey@gmail.com', '+254700392599', 'Applicant', '30487656'),
+('Kelvin Chemey', 'kserem20@gmail.com', '+254753710324', 'Applicant', '30487656');
 
 -- --------------------------------------------------------
 
@@ -8821,6 +8952,15 @@ CREATE TABLE `visa_approval_workflow` (
   `Approved_At` datetime DEFAULT NULL,
   `Created_At` datetime DEFAULT NULL
 ) ENGINE=InnoDB AVG_ROW_LENGTH=2340 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `visa_approval_workflow`
+--
+
+INSERT INTO `visa_approval_workflow` (`ID`, `Number`, `Fullname`, `Status`, `Approver`, `Remarks`, `Created_By`, `Approved_At`, `Created_At`) VALUES
+(1, 30487656, 0, 'Approved', 'Admin', 'dgjhj', 'Admin', '2020-05-27 09:40:03', '2020-05-27 09:40:03'),
+(2, 30487656, 0, 'Approved', 'Admin', 'dgjhj', 'Admin', '2020-05-27 09:40:34', '2020-05-27 09:40:34'),
+(3, 30487656, 0, 'Approved', 'Admin', 'dgjhj', 'Admin', '2020-05-27 09:40:50', '2020-05-27 09:40:50');
 
 --
 -- Indexes for dumped tables
@@ -9156,13 +9296,13 @@ ALTER TABLE `visa_approval_workflow`
 -- AUTO_INCREMENT for table `applicationsequence`
 --
 ALTER TABLE `applicationsequence`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
 
 --
 -- AUTO_INCREMENT for table `applications_approval_workflow`
 --
 ALTER TABLE `applications_approval_workflow`
-  MODIFY `ID` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `ID` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `approvalmodules`
@@ -9180,19 +9320,19 @@ ALTER TABLE `approvers`
 -- AUTO_INCREMENT for table `attestation`
 --
 ALTER TABLE `attestation`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `attestation_approval_workflow`
 --
 ALTER TABLE `attestation_approval_workflow`
-  MODIFY `ID` bigint(20) NOT NULL AUTO_INCREMENT;
+  MODIFY `ID` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `audittrails`
 --
 ALTER TABLE `audittrails`
-  MODIFY `AuditID` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=411;
+  MODIFY `AuditID` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=454;
 
 --
 -- AUTO_INCREMENT for table `configurations`
@@ -9204,13 +9344,13 @@ ALTER TABLE `configurations`
 -- AUTO_INCREMENT for table `contract`
 --
 ALTER TABLE `contract`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `contract_approval_workflow`
 --
 ALTER TABLE `contract_approval_workflow`
-  MODIFY `ID` bigint(20) NOT NULL AUTO_INCREMENT;
+  MODIFY `ID` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `counties`
@@ -9228,13 +9368,13 @@ ALTER TABLE `countries`
 -- AUTO_INCREMENT for table `dci`
 --
 ALTER TABLE `dci`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `dci_approval_workflow`
 --
 ALTER TABLE `dci_approval_workflow`
-  MODIFY `ID` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `ID` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `educationaldetails`
@@ -9246,7 +9386,7 @@ ALTER TABLE `educationaldetails`
 -- AUTO_INCREMENT for table `finalmedical`
 --
 ALTER TABLE `finalmedical`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `final_approval_workflow`
@@ -9258,13 +9398,13 @@ ALTER TABLE `final_approval_workflow`
 -- AUTO_INCREMENT for table `major`
 --
 ALTER TABLE `major`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `major_approval_workflow`
 --
 ALTER TABLE `major_approval_workflow`
-  MODIFY `ID` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `ID` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `medicalfacility`
@@ -9282,7 +9422,7 @@ ALTER TABLE `medicalform`
 -- AUTO_INCREMENT for table `minormedical`
 --
 ALTER TABLE `minormedical`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `minormedical_approval_workflow`
@@ -9294,13 +9434,13 @@ ALTER TABLE `minormedical_approval_workflow`
 -- AUTO_INCREMENT for table `neaa`
 --
 ALTER TABLE `neaa`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `neaa_approval_workflow`
 --
 ALTER TABLE `neaa_approval_workflow`
-  MODIFY `ID` bigint(20) NOT NULL AUTO_INCREMENT;
+  MODIFY `ID` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `nextofkin`
@@ -9312,7 +9452,7 @@ ALTER TABLE `nextofkin`
 -- AUTO_INCREMENT for table `notifications`
 --
 ALTER TABLE `notifications`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=55;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT for table `parents`
@@ -9324,13 +9464,13 @@ ALTER TABLE `parents`
 -- AUTO_INCREMENT for table `passport`
 --
 ALTER TABLE `passport`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `passport_approval_workflow`
 --
 ALTER TABLE `passport_approval_workflow`
-  MODIFY `ID` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `ID` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `processing`
@@ -9378,13 +9518,13 @@ ALTER TABLE `smtpdetails`
 -- AUTO_INCREMENT for table `ticketing`
 --
 ALTER TABLE `ticketing`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `ticketing_approval_workflow`
 --
 ALTER TABLE `ticketing_approval_workflow`
-  MODIFY `ID` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `ID` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `training`
@@ -9402,13 +9542,13 @@ ALTER TABLE `training_approval_workflow`
 -- AUTO_INCREMENT for table `travelling`
 --
 ALTER TABLE `travelling`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `travelling_approval_workflow`
 --
 ALTER TABLE `travelling_approval_workflow`
-  MODIFY `ID` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `ID` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `usergroups`
@@ -9420,13 +9560,13 @@ ALTER TABLE `usergroups`
 -- AUTO_INCREMENT for table `visa`
 --
 ALTER TABLE `visa`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `visa_approval_workflow`
 --
 ALTER TABLE `visa_approval_workflow`
-  MODIFY `ID` bigint(20) NOT NULL AUTO_INCREMENT;
+  MODIFY `ID` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- Constraints for dumped tables
